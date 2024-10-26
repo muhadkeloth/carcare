@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import NavLogin from './NavLogin';
 import carlogo from '../assets/images/CarCare-white.png';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
     console.log('Logging in with:', { email, password });
+    try{
+      const response = await axios.post("http://192.168.1.7:5000/login",{
+        email,password,
+      });
+      console.log('frontend response',response)
+      const token = response.data.token;
+      localStorage.setItem('token',token);
+      navigate('/');
+    }catch(error){
+      console.log('login failed:',error)
+    }
   };
 
   return (
