@@ -1,6 +1,7 @@
 #Ignored in frontend
 frontend/node_modules/
 frontend/dist
+frontend/.env
 
 #Ignored in backend
 backend/node_modules

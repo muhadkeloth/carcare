@@ -1,20 +1,37 @@
 import React, { useState } from 'react';
 import NavLogin from './NavLogin';
-import carlogo from '../assets/images/CarCare-white.png';
+import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { emailValidation, passwordValidation } from '../utilities/validation';
+import { handleForgotPass, handleSignUpClick } from '../utilities/navigate';
+
 
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passError, setPassError] = useState('');
   const navigate = useNavigate();
+
 
   const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Logging in with:', { email, password });
+
+    const emailvalidation = emailValidation(email)
+    if(emailvalidation){
+      setEmailError(emailvalidation);
+      return
+    }else{ setEmailError('') }
+    const passwordvalidation = passwordValidation(password)
+    if(passwordvalidation){
+      setPassError(passwordvalidation);
+      return;
+    }else{ setPassError('') }
+
     try{
-      const response = await axios.post("http://192.168.1.7:5000/login",{
+      const response = await axios.post("http://192.168.1.3:3000/login",{
         email,password,
       });
       console.log('frontend response',response)
@@ -25,6 +42,8 @@ const Login: React.FC = () => {
       console.log('login failed:',error)
     }
   };
+
+
 
   return (
     <>
@@ -37,7 +56,7 @@ const Login: React.FC = () => {
           <h2 className="text-2xl text-center font-bold mb-4">Login</h2>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="email">
-              Email
+              Email 
             </label>
             <input 
               type="email" 
@@ -45,17 +64,16 @@ const Login: React.FC = () => {
               placeholder='email@address.com'
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
-              className="border border-gray-300 rounded w-full p-2 "
-              required
+              className="border border-gray-300 rounded w-full p-2 "   
+              style={emailError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}           
             />
+              <span className='block text-red-600 font-light opacity-80 text-end pe-2'>{emailError}</span>
           </div>
           <div className="mb-4">
             <label className="text-gray-700 flex justify-between items-center mb-2" htmlFor="password">
-              Password <a href='#' className='text-maincol opacity-80 hover:underline ml-2'>Forgot your password?</a>
+              Password
+               <span onClick={()=>handleForgotPass(navigate)} className='text-maincol opacity-80 hover:underline hover:cursor-pointer ml-2'>Forgot your password?</span>
             </label>
-            <div className="relative">
-
-            </div>
             <input 
             type="password"
             id="password" 
@@ -63,8 +81,9 @@ const Login: React.FC = () => {
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             className="border border-gray-300 rounded w-full p-2"
-            required
+            style={passError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
+              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{passError}</span>
           </div>
           <button 
             type="submit" 
@@ -72,6 +91,9 @@ const Login: React.FC = () => {
           >
             Login
           </button>
+        <p className='text-center mt-3'>Don't have an account?{" "} 
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>handleSignUpClick(navigate)}>Sign Up</span>
+          </p>
         </form>
       </div>
     </>
