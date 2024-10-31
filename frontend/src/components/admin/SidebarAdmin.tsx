@@ -15,7 +15,7 @@ const SidebarAdmin:React.FC<AdminSidebarProps> = ({ showMenu, handleActiveSectio
                 <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
                 <nav className="flex flex-col space-y-4">
                     <button
-                        className="flex items-center space-x-2 hover:text-maincoldark"
+                        className="flex items-center space-x-2 hover:text-maincoldark "
                         onClick={() => handleActiveSection('Dashboard')}
                     >
                         <FontAwesomeIcon icon={faChartBar} />
@@ -36,7 +36,7 @@ const SidebarAdmin:React.FC<AdminSidebarProps> = ({ showMenu, handleActiveSectio
                         <span>Shop Management</span>
                     </button>
                     <button
-                        className="flex items-center space-x-2 hover:text-maincoldark underline hover:underline"
+                        className="flex items-center space-x-2 hover:text-maincoldark "
                         onClick={handleLogout}
                     >
                         <FontAwesomeIcon icon={faArrowRightFromBracket} />
@@ -57,7 +57,7 @@ const SidebarAdmin:React.FC<AdminSidebarProps> = ({ showMenu, handleActiveSectio
                         <span>Dashboard</span>
                     </button>
                     <button
-                        className="flex items-center space-x-2 hover:text-maincoldark"
+                        className="flex items-center space-x-2 bg- hover:text-maincoldark"
                         onClick={() => handleActiveSection('User Management')}
                     >
                         <FontAwesomeIcon icon={faUserCog} />
@@ -71,7 +71,7 @@ const SidebarAdmin:React.FC<AdminSidebarProps> = ({ showMenu, handleActiveSectio
                         <span>Shop Management</span>
                     </button>
                     <button
-                        className="flex items-center space-x-2 hover:text-maincoldark underline hover:underline"
+                        className="flex items-center space-x-2 hover:text-maincoldark  hover:underline"
                         onClick={handleLogout}
                     >
                         <FontAwesomeIcon icon={faArrowRightFromBracket} />

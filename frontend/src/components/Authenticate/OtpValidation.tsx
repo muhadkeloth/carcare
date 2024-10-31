@@ -1,19 +1,65 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { navigateLogin, navigatePasswordChange } from '../utilities/navigate';
 
 
 const OtpValidation:React.FC = () => {
   const [otp,setOtp] = useState<string[]>(Array(6).fill(''));
   const [otpError,setOtpError] = useState('');
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const location = useLocation();
+  const {email} = location.state || {};
+  const navigate = useNavigate();
+
+
+  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes in seconds
+  const [showResend, setShowResend] = useState(false);
+
+  // Countdown timer logic
+  useEffect(() => {
+      if (timeLeft > 0) {
+          const timer = setInterval(() => {
+              setTimeLeft((prev) => prev - 1);
+          }, 1000);
+          return () => clearInterval(timer); // Cleanup on unmount
+      } else {
+          setShowResend(true); // Show resend option once the timer reaches 0
+      }
+  }, [timeLeft]);
+
+  // Format the time as MM:SS
+  const formatTime = (seconds:number):string => {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  // Resend OTP function
+  const resendOtp = async () => {
+      // try {
+      //     const response = await axios.post('http://192.168.1.3:3000/otpgenerate', { email });
+      //     if (response.status === 201) {
+      //         setTimeLeft(120); // Reset the timer to 2:00
+      //         setShowResend(false); // Hide the resend option
+      //     }
+      // } catch (error) {
+      //     console.error('Error resending OTP:', error);
+      // }
+  };
+
+
+
 
   const validateOtp = async (otp: string) => {
     try{
-      const response = await axios.post('http://192.168.1.3:3000/otpvalidation',{ otp });
-      if(response.data.isValid) {
-        console.log('OTP validated successfully!');
+      const response = await axios.post('http://192.168.1.3:3000/otpvalidation',{ otp, email });
+      // if(response.data.isValid) {
+      if(response.status == 201) {
+        console.log('F : OTP validated successfully!');
+        navigatePasswordChange(navigate,email);
       }else{
         setOtpError('Invalid OTP. Please try again.')
       }
@@ -55,7 +101,7 @@ const OtpValidation:React.FC = () => {
           <h2 className="text-2xl text-center font-bold mb-4">OTP Verification</h2>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="number">
-              Enter Otp send to your email
+              Check mail for OTP: <span className='font-semibold underline'>{ email}</span>
             </label>
               <div className="flex justify-between mb-4">
           {otp.map((digit, index) => (
@@ -84,7 +130,15 @@ const OtpValidation:React.FC = () => {
             VERIFY OTP
           </button>
         <p className='text-center mt-3'>Don't you receive OTP? {" "}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' >Resend OTP **time*</span>
+          { showResend ? (
+            <span className='hover:underline hover:cursor-pointer' onClick={resendOtp}>Resend OTP</span>
+          ) : (
+            `${formatTime(timeLeft)}`
+          ) }
+          {/* <span className='text-maincol font-medium hover:underline hover:cursor-pointer' >Resend OTP **time*</span> */}
+          </p>
+          <p className='text-center mt-3'>Back to  {" "}
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
           </p>
         </form>
       </div>

@@ -1,9 +1,9 @@
 
-type returnvalue = string | undefined
+type returnvalue = string | undefined;
 
 export function emailValidation(email:string):returnvalue{
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!emailPattern.test(email)) return 'Email not valid'
+    if(!emailPattern.test(email)) return 'Entered Invalid Email Address'
     return undefined
 }
 
@@ -24,4 +24,9 @@ export function passwordConfirmValidation(password:string,confirmPassword:string
 export function nameValidation(name:string):returnvalue{
     if(name.length<4 || name.length>14)return "Name must be at least 4 characters long."
     return undefined
+}
+
+export const phoneNumberValidation = (number:string):returnvalue => {
+    console.log
+    if(number.length !== 10) return 'Invalid phone number';
 }

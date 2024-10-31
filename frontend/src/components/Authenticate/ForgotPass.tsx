@@ -2,19 +2,36 @@ import React, { useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
+import { navigateLogin, navigateOtpValidate } from '../utilities/navigate';
+import { emailValidation } from '../utilities/validation';
+import axios from 'axios';
 
 
 const ForgotPass:React.FC = () => {
     const [email,setEmail] = useState('')
-    const Navigate = useNavigate()
+    const [emailError,setEmailError] = useState('')
+    const navigate = useNavigate()
 
-    const handleLoginClick = () => {
-        Navigate('/login')
+
+    const handleForgotPass = async (event:React.FormEvent) => {
+      event.preventDefault();
+      const emailvalidation = emailValidation(email)
+      if(emailvalidation){ setEmailError(emailvalidation);return; }
+      else{ setEmailError('') }
+
+      try{
+        const response = await axios.post('http://192.168.1.3:3000/otpgenerate',{ email })
+        if(response.status == 201){
+          navigateOtpValidate(navigate,email )
+        }
+      }catch(error){
+        if(axios.isAxiosError(error)){
+          console.error(error.response?.data.message)
+        }
+      }
+
     }
 
-    const handleForgotPass = () => {
-
-    }
   return (
     <div>
          <NavLogin />
@@ -35,8 +52,9 @@ const ForgotPass:React.FC = () => {
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               className="border border-gray-300 rounded w-full p-2 "
-              required
+              style={emailError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
+            <span className='block text-red-600 font-light opacity-80 text-end pe-2'>{emailError}</span>
           </div>
           <button 
             type="submit" 
@@ -45,7 +63,7 @@ const ForgotPass:React.FC = () => {
             GET OTP
           </button>
         <p className='text-center mt-3'>Back to{' '}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={handleLoginClick}>Log In</span>
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
           </p>
         </form>
       </div>

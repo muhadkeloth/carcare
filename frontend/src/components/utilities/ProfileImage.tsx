@@ -10,10 +10,10 @@ const ProfileImage: React.FC = () => {
     <img
             src={imageUrl || placeholderImage}
             alt="Profile"
-            className="rounded-full"
+            className="rounded-full pe-1"
             style={{
-                width: 50,
-                height: 50,
+                width: 45,
+                height: 45,
                 objectFit: 'cover',
             }}
         />

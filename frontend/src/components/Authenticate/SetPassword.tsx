@@ -1,14 +1,48 @@
 import React, { useState } from 'react'
 import NavLogin from './NavLogin';
 import carlogo from '../../assets/images/CarCare-white.png';
+import { navigateLogin } from '../utilities/navigate';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { passwordConfirmValidation, passwordValidation } from '../utilities/validation';
+import axios from 'axios';
 
 
 
 const SetPassword:React.FC = () => {
     const [password,setPassword] = useState('')
     const [confirmPassword,setConfirmPassword] = useState('')
+    const [passwordError,setPasswordError] = useState('')
+    const [confirmPasswordError,setConfirmPasswordError] = useState('')
+    const navigate = useNavigate()
+    const location = useLocation();
+    const { email } = location.state || {};
 
-    const handleSetPassword = () => {
+    const handleSetPassword = async (event:React.FormEvent) => {
+      event.preventDefault();
+
+      const passwordvalidation = passwordValidation(password)
+      if(passwordvalidation){
+        setPasswordError(passwordvalidation)
+        return
+      }else{ setPasswordError('') } 
+      
+      const passConfirmvalidation = passwordConfirmValidation(password,confirmPassword)
+      if(passConfirmvalidation){
+        setConfirmPasswordError(passConfirmvalidation)
+        return
+      }else{ setConfirmPasswordError('') } 
+
+      try{
+        const response = await axios.post('http://192.168.1.3:3000/resetPassword',{email,password});
+        if(response.status == 201){
+          navigateLogin(navigate);
+        }
+      }catch(error){
+        if(axios.isAxiosError(error)){
+          console.error(error.response?.data.message)
+        }
+      }
+
 
     }
 
@@ -32,7 +66,7 @@ const SetPassword:React.FC = () => {
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             className="border border-gray-300 rounded w-full p-2"
-            required
+            style={passwordError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
           </div>
           <div className="mb-4">
@@ -46,7 +80,7 @@ const SetPassword:React.FC = () => {
             value={confirmPassword} 
             onChange={(e) => setConfirmPassword(e.target.value)} 
             className="border border-gray-300 rounded w-full p-2"
-            required
+            style={confirmPasswordError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
           </div>
           <button 
@@ -55,6 +89,9 @@ const SetPassword:React.FC = () => {
           >
             Reset Password
           </button>
+          <p className='text-center mt-3'>Back to  {" "}
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
+          </p>
         </form>
       </div>
     </div>

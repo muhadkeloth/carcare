@@ -4,16 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios from 'axios';
 import { navigateLogin } from '../utilities/navigate';
-import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation } from '../utilities/validation';
+import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
 
 
 const Signup:React.FC = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [nameError, setNameError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [phoneNumberError, setPhoneNumberError] = useState('');
     const [passError, setPassError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const navigate = useNavigate();
@@ -34,6 +36,12 @@ const Signup:React.FC = () => {
         return
       }else{ setEmailError('') }
 
+      const phoneNumbervalidation = phoneNumberValidation(phoneNumber)
+      if(phoneNumbervalidation){
+        setPhoneNumberError(phoneNumbervalidation);
+        return
+      }else{ setPhoneNumberError('') }
+
       const passwordvalidation = passwordValidation(password)
       if(passwordvalidation){
         setPassError(passwordvalidation);
@@ -49,6 +57,7 @@ const Signup:React.FC = () => {
       const userData = {
         username:name,
         email,
+        phoneNumber,
         password,
         confirmPassword,
       }
@@ -110,6 +119,23 @@ const Signup:React.FC = () => {
 
           </div>
           <div className="mb-2">
+            <label className="block text-gray-700 mb-2" htmlFor="number">
+              Phone Number
+            </label>
+            <input 
+              type="number" 
+              id="number" 
+              placeholder='+91 0000 000 000'
+              value={phoneNumber} 
+              onChange={(e) => setPhoneNumber(e.target.value)} 
+              className="border border-gray-300 rounded w-full p-2 appearance-none"
+              style={phoneNumberError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+            />
+              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{phoneNumberError}</span>
+
+
+          </div>
+          <div className="mb-2">
             <label className="text-gray-700 flex justify-between items-center mb-2" htmlFor="password">
                Password 
             </label>
@@ -145,7 +171,7 @@ const Signup:React.FC = () => {
             type="submit" 
             className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
           >
-            Login
+            Sign Up
           </button>
         <p className='text-center mt-3'>Have Account?  {" "}
           <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>

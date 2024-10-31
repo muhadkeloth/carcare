@@ -26,20 +26,20 @@ const AdminDash: React.FC = () => {
 
     
   return (
- <div className="flex flex-col h-screen">
+ <div className="flex flex-col ">
 
     <NavLogin />
-    <div className="flex justify-between items-center p-2 ">
-        <button onClick={() => console.log("Go back")} className="text-2xl text-maincol ps-1">
+    <div className="flex justify-between items-center my-1 ">
+        <button onClick={() => console.log("Go back")} className="text-2xl text-maincol ps-2">
             <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <ProfileImage />
-        <button onClick={() => setShowMenu(!showMenu)} className="text-2xl text-maincol pe-1 md:hidden">
+        <button onClick={() => setShowMenu(!showMenu)} className="text-2xl text-maincol pe-2 md:hidden">
             <FontAwesomeIcon icon={faBars} />
         </button>
     </div>
 
-<div className="flex">
+<div className="flex flex-col md:flex-row h-screen">
 
     <AdminSidebar
     showMenu={showMenu}
