@@ -16,7 +16,15 @@ app.use(cors({
     methods:['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials:true,
 }));
+
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+
+app.use('../public/',express.static('public'))
+
+mongoose.connect(process.env.MONGODB_URI || '')
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log('connectiong mongo error: ',err));
 
 
 app.use('/admin',adminRouter)
@@ -25,9 +33,5 @@ app.use('/login',loginRouter)
 
 app.use('/',userRouter)
 
-
-mongoose.connect(process.env.MONGODB_URI || '')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('connectiong mongo error: ',err));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

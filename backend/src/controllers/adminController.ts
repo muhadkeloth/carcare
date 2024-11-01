@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/User";
+import Shop from "../models/Shop";
 
 
 
@@ -34,10 +35,27 @@ export const toggleStatus = async (req:Request, res:Response) => {
 }
 
 export const addShop = async (req:Request,res:Response) => {
-    const {name} = req.body;
-    console.log(req.body)
+    try {
+        const { name, address, phoneNumber, location } = req.body;
+        console.log('addshop',name, address, phoneNumber, location )
+        const parsedLocation  = JSON.parse(location);
+
+        const newShop = new Shop({
+            shopName:'someting',
+            location:parsedLocation ,
+            address,
+            image:req.file ? req.file.path :null,
+        })
+        const updatedShop = await newShop.save()
+        console.log('updatedshop',updatedShop)
+        res.status(201).json({message:"shop added successfully",shop:newShop})
+    } catch (error) {
+        console.log(error)
+        res.status(404).json({message:'failed to add shop'})
+    }
 }
 
 export const shopdetails = async (req:Request,res:Response) => {
-    
+    console.log('shopdetails here')
+    res.status(201).json({message:'here shop details'})
 }

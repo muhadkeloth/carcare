@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface IUser extends Document {
      username:string;
@@ -6,7 +6,7 @@ export interface IUser extends Document {
      email:string;
      password:string;
      isActive:boolean;
-     role:'user' | 'admin' | 'workshop';
+     role:'user' | 'admin';
      otp?: string;
      otpExpiry?:Date;
      createdAt?:Date;
