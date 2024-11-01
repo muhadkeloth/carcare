@@ -32,3 +32,12 @@ export const toggleStatus = async (req:Request, res:Response) => {
         return res.status(500).json({message:'Error updating status'})
     }
 }
+
+export const addShop = async (req:Request,res:Response) => {
+    const {name} = req.body;
+    console.log(req.body)
+}
+
+export const shopdetails = async (req:Request,res:Response) => {
+    
+}

@@ -54,7 +54,7 @@ const UserManagement:React.FC = () => {
   },[currentPage]);
 
   return (
-    <div className=''>
+     <>
       <h2 className="text-2xl font-bold mb-4 text-gray-800">User Management</h2>
 
       <div className="relative overflow-x-auto shadow-md rounded-lg">
@@ -105,7 +105,7 @@ const UserManagement:React.FC = () => {
          </button>
 
       </div>
-    </div>
+   </>
   )
 }
 
