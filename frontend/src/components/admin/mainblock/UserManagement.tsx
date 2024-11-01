@@ -19,8 +19,10 @@ const UserManagement:React.FC = () => {
   const itemsPerPage = 10;
 
   const fetchUsers = async(page:number)=>{
+    console.log('usermanage')
     try{
       const response = await axios.get(`http://192.168.1.3:3000/admin/users?page=${page}&limit=${itemsPerPage}`);
+      console.log('usermanage2')
       console.log('response',response)
       setUsers(response.data.users);
       setTotalPages(response.data.totalPages);

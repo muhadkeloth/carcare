@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react'
 import Dashboard from './mainblock/Dashboard';
 import UserManagement from './mainblock/UserManagement';
-import ShopManagement from './mainblock/ShopManagement';
+import ShopManagement from './mainblock/shopManage/ShopManagement';
 
 
 interface AdminMainProps {
