@@ -27,12 +27,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faX } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
 import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import L from 'leaflet';
 import LocationPicker from './LocationPicker';
+import { getAddressFromCoordinatesOSM } from '../../../utilities/functions';
 
 
 
@@ -74,17 +75,19 @@ const ShopManagement: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newShop, setNewShop] = useState<NewShop>({ shopName: '', ownerName: '',email:'', image: null, phoneNumber: '', location:'' });
   const [previewUrl,setPreviewUrl] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  
-  
+  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number }>({ latitude: 0, longitude: 0 });
   const [image,setImage] = useState<File|null>(null);
-  const [location,setLocation] = useState(null)
-  // Fetch shop details from backend
+  const [currentPage,setCurrentPage] = useState(1);
+  const [totalPages,setTotalPages] = useState(1);
+  const itemsPerPage = 10;
 
-  const fetchShops = async () => {
+
+  const fetchShops = async (page:number) => {
     try {
-      const response = await axios.get('http://192.168.1.3:3000/admin/shopdetails');
-      setShops(response.data.shops); 
+      const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
+      setShops(response.data.workShop); 
+
+      setTotalPages(response.data.totalPages)
     } catch (error) {
       console.error('Failed to fetch shops:', error);
     }
@@ -93,46 +96,51 @@ const ShopManagement: React.FC = () => {
   // Add a new shop
   const addShop = async () => {
     const formData = new FormData();
-    formData.append('name',newShop.shopName);
+    formData.append('shopName',newShop.shopName);
     formData.append('ownerName',newShop.ownerName)
+    formData.append('email',newShop.email)
     formData.append('phoneNumber',newShop.phoneNumber)
     formData.append('location',JSON.stringify(selectedLocation));
-      if(newShop.image) formData.append('image',newShop.image);
+    if(newShop.image) formData.append('image',newShop.image);
+    
+    try{
+      const address = await getAddressFromCoordinatesOSM(selectedLocation.latitude,selectedLocation.longitude);
+      formData.append('address',JSON.stringify(address) )       
+    }catch(error){
+      console.error('error fetching address from coordinates:',error);
+      formData.append('address',JSON.stringify({street:'',city:'',state:'',country:'',pincode:''}));
+    }
+    console.log('newShop',newShop)
       try {
-        await axios.post('http://192.168.1.3:3000/admin/addShop', formData);
+        await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/admin/addShop`, formData,{
+          headers:{
+            'Content-Type':'multipart/form-data'
+          }
+        });
         console.log('here')
-        setShowAddModal(false); // Close modal after adding
-        fetchShops(); // Refresh shop list
+        setShowAddModal(false); 
+        fetchShops(currentPage); 
       } catch (error) {
         console.error('Failed to add shop:', error);
     }
   };
-  
 
-      
-      // const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-      //   if(event.target.files && event?.target.files[0]){
-      //     setNewShop({...newShop, image: event.target.files[0]});
-      //   }
-      // }
-
-
-      const handleImageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+  const handleImageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if(file) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
+    setNewShop({ ...newShop, image: file })
+    setPreviewUrl(URL.createObjectURL(file));
   }
+}
 
   const handleRemoveImage = () => {
-    setImage(null);
+    setNewShop({ ...newShop, image: null })
     setPreviewUrl('');
   }
 
   useEffect(() => {
-    fetchShops();
-  }, []);
+    fetchShops(currentPage);
+  }, [currentPage]);
 
   return (
     <div className="p-4">
@@ -154,19 +162,25 @@ const ShopManagement: React.FC = () => {
           <thead>
             <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">  {/*leading-normal*/}
               <th className="py-3 px-4 text-left border-b border-gray-200">
+                Image
+              </th>
+              <th className="py-3 px-4 text-left border-b border-gray-200">
                 Shop Name
               </th>
               <th className="py-3 px-4 text-left border-b border-gray-200">
               ownerName
               </th>
               <th className="py-3 px-4 text-left border-b border-gray-200">
+                email
+              </th>
+              <th className="py-3 px-4 text-left border-b border-gray-200">
                 Phone Number
               </th>
               <th className="py-3 px-4 text-left border-b border-gray-200">
-                Location
+                Address
               </th>
               <th className="py-3 px-4 text-left border-b border-gray-200">
-                Image
+                Status
               </th>
             </tr>
           </thead>
@@ -177,24 +191,49 @@ const ShopManagement: React.FC = () => {
                   key={shop._id}
                   className="border-b border-gray-200 hover:bg-gray-50 text-gray-700 text-sm"
                 >
-                  <td className="py-3 px-4">{shop.shopName}</td>
-                  <td className="py-3 px-4">{shop.ownerName}</td>
-                  <td className="py-3 px-4">{shop.phoneNumber}</td>
-                  <td className="py-3 px-4">{shop.isActive}</td>
                   <td className="py-3 px-4">
-                    <img src={shop.image} alt={shop.shopName} className="w-16 h-16 object-cover rounded" />
+                    <img src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop.image}`} alt={shop.shopName} className="w-16 h-16 object-cover rounded" />
                   </td>
+                  <td className="py-3 px-4">
+                  {shop.shopName}
+                  </td>
+                  <td className="py-3 px-4">{shop.ownerName}</td>
+                  <td className="py-3 px-4">{shop.email}</td>
+                  <td className="py-3 px-4">{shop.phoneNumber}</td>
+                  <td className="py-3 px-4">{Object.values(shop.address).join(' ')}</td>
+                  <td
+                   className={`py-3 px-4 hover:cursor-pointer ${shop.isActive ? 'text-green-600 hover:text-green-400' : 'text-red-600 hover:text-red-400'}`}>
+                    {shop.isActive ? 'Active':'Block'}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center py-3">
+                <td colSpan={7} className="text-center py-3">
                   No shops available.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex justify-center items-center mt-4">
+        <button
+        onClick={()=>setCurrentPage((prev)=> Math.max(prev-1,1))}
+        disabled={currentPage === 1 }
+        className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </button>
+        <span className='text-sm mx-2 text-gray-600'>
+          Page {currentPage} of { totalPages }
+        </span>
+        <button
+        onClick={()=>setCurrentPage((prev)=> Math.min(prev+1,totalPages))}
+        disabled={currentPage === totalPages}
+         className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+          <FontAwesomeIcon icon={faAngleRight} />
+         </button>
+
       </div>
 
       {/* Add Shop Modal */}
@@ -252,7 +291,7 @@ const ShopManagement: React.FC = () => {
                 Phone Number
               </label>
               <input
-                type="text"
+                type="number"
                 value={newShop.phoneNumber}
                 onChange={(e) =>
                   setNewShop({ ...newShop, phoneNumber: e.target.value })

@@ -21,7 +21,8 @@ const UserManagement:React.FC = () => {
   const fetchUsers = async(page:number)=>{
     console.log('usermanage')
     try{
-      const response = await axios.get(`http://192.168.1.3:3000/admin/users?page=${page}&limit=${itemsPerPage}`);
+      // const response = await axios.get(`http://192.168.1.3:3000/admin/users?page=${page}&limit=${itemsPerPage}`);
+      const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
       console.log('usermanage2')
       console.log('response',response)
       setUsers(response.data.users);
@@ -72,7 +73,8 @@ const UserManagement:React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user)=>(
+            {users && users.length > 0 ? (
+              users.map((user)=>(
             // <tr key={user._id} className="border-b border-gray-200 hover:hg-gray-50 text-gray-700 text-sm">
             <tr key={user._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95">
               <th scope='row' className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.username}</th>
@@ -84,7 +86,14 @@ const UserManagement:React.FC = () => {
               {user.isActive ? 'Active' : 'Block' }
               </td>
             </tr>
-            ))}
+            ))
+          ):(
+            <tr>
+                <td colSpan={4} className="text-center py-3">
+                  No user listed.
+                </td>
+              </tr>
+          )}
           </tbody>
         </table>
       </div>
@@ -93,7 +102,7 @@ const UserManagement:React.FC = () => {
         <button
         onClick={()=>setCurrentPage((prev)=> Math.max(prev-1,1))}
         disabled={currentPage ===1}
-        className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-2000">
+        className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
           <FontAwesomeIcon icon={faAngleLeft} />
         </button>
         <span className='text-sm mx-2 text-gray-600'>

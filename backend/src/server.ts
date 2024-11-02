@@ -6,6 +6,7 @@ import userRouter from './routes/userRouter';
 import outletRouter from './routes/outletRouter';
 import adminRouter from './routes/adminRouter';
 import loginRouter from './routes/loginRouter';
+import path from 'path';
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -20,7 +21,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.use('../public/',express.static('public'))
+// app.use('../public/',express.static('public'))
+app.use('/public',express.static(path.join(__dirname,'../public')))
 
 mongoose.connect(process.env.MONGODB_URI || '')
   .then(() => console.log('MongoDB connected'))

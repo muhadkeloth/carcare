@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import Shop from "../models/Shop";
+import { randomPassword } from "../utils/functions";
 
 
 
@@ -10,8 +11,8 @@ export const userDetails = async (req:Request,res:Response) => {
     const skip = (page-1) * limit;
     console.log('page admin')
     try{
-        const users = await User.find({role:"user"}).skip(skip).limit(limit);
-        const totalUsers = await User.countDocuments();
+        const users = await User.find({role:"user"}).sort({createdAt:-1}).skip(skip).limit(limit);
+        const totalUsers = await User.countDocuments({role:'user'});
         console.log(users)
         res.status(201).json({users,totalPages:Math.ceil(totalUsers/limit),currentPage:page});
     }catch(error){
@@ -36,14 +37,21 @@ export const toggleStatus = async (req:Request, res:Response) => {
 
 export const addShop = async (req:Request,res:Response) => {
     try {
-        const { name, address, phoneNumber, location } = req.body;
-        console.log('addshop',name, address, phoneNumber, location )
+        const { shopName, ownerName, email, phoneNumber, address, location } = req.body;
+        console.log('addshop', phoneNumber, location )
+        const parseAddress = JSON.parse(address);
+        console.log('parseAddress', parseAddress )
         const parsedLocation  = JSON.parse(location);
+        const otp = randomPassword(8);
 
         const newShop = new Shop({
-            shopName:'someting',
+            shopName,
+            ownerName,
+            email,
+            phoneNumber,
+            address:parseAddress,
+            otp,
             location:parsedLocation ,
-            address,
             image:req.file ? req.file.path :null,
         })
         const updatedShop = await newShop.save()
@@ -56,6 +64,16 @@ export const addShop = async (req:Request,res:Response) => {
 }
 
 export const shopdetails = async (req:Request,res:Response) => {
-    console.log('shopdetails here')
-    res.status(201).json({message:'here shop details'})
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page-1) * limit;
+
+    try{
+        const workShop = await Shop.find().sort({createdAt:-1}).skip(skip).limit(limit);
+        const totalWorkShop = await Shop.countDocuments();
+        console.log('workshop',workShop)
+        res.status(201).json({workShop,totalPages:Math.ceil(totalWorkShop/limit),currentPage:page})
+    }catch(error){
+        res.status(500).json({message:'failed to fetch workShop details',error})
+    }
 }
