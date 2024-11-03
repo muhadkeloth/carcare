@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import NavLogin from './NavLogin'
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { navigateLogin } from '../utilities/navigate';
 import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { ErrorResponse } from '../utilities/interface';
 
 
 const Signup:React.FC = () => {
@@ -62,7 +64,7 @@ const Signup:React.FC = () => {
         confirmPassword,
       }
       try{
-        const response = await axios.post('http://192.168.1.3:3000/signup',userData);
+        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/signup`,userData);
         console.log('res',response)
         if(response.status == 201){
           console.log('here')
@@ -71,6 +73,19 @@ const Signup:React.FC = () => {
       }catch(error){
         if(axios.isAxiosError(error)){
           console.error(error.response?.data.message)
+          const err = error as AxiosError<ErrorResponse>;
+          const errorMessage = err?.response?.data?.message || 'signup error';  
+          toast.error(errorMessage, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+            });
         }
       }
     }
@@ -79,8 +94,17 @@ const Signup:React.FC = () => {
   return (
     <div>
         <NavLogin />
+
+        <ToastContainer
+        limit={2}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+      />
+        <ToastContainer />
+
         <div className="flex items-center justify-center mt-2 ">
-        <form onSubmit={handleSignup} className="w-96 p-4">
+        <form onSubmit={handleSignup} className="w-96 p-4 mb-9">
           <div className='flex justify-center mb-5 '>
             <img src={carlogo} className='w-48' alt="carCare Logo..." />
           </div>

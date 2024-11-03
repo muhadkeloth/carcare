@@ -9,13 +9,13 @@ export const randomPassword = (length:number):string => {
         uppercase.charAt(Math.floor(Math.random() * uppercase.length)),
     ];
     
-    for (let i = passwordArray.length; i < length-2; i++) {
-        passwordArray.push(lowercase.charAt(Math.random() * lowercase.length))
+    for (let i = 1; i < length-2; i++) {
+        passwordArray.push(lowercase.charAt(Math.floor(Math.random() * lowercase.length)))
     }
     passwordArray.push(
         specialCharacters.charAt(Math.floor(Math.random() * specialCharacters.length)), // 1 special char
         numbers.charAt(Math.floor(Math.random() * numbers.length)), 
     )
     
-    return passwordArray.sort(() => 0.5 - Math.random()).join('');
+    return passwordArray.join('');
 }

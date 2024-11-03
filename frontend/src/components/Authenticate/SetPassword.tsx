@@ -4,7 +4,9 @@ import carlogo from '../../assets/images/CarCare-white.png';
 import { navigateLogin } from '../utilities/navigate';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { passwordConfirmValidation, passwordValidation } from '../utilities/validation';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { ErrorResponse } from '../utilities/interface';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 
 
@@ -33,13 +35,26 @@ const SetPassword:React.FC = () => {
       }else{ setConfirmPasswordError('') } 
 
       try{
-        const response = await axios.post('http://192.168.1.3:3000/resetPassword',{email,password});
+        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/resetPassword`,{email,password});
         if(response.status == 201){
           navigateLogin(navigate);
         }
       }catch(error){
         if(axios.isAxiosError(error)){
           console.error(error.response?.data.message)
+          const err = error as AxiosError<ErrorResponse>;
+          const errorMessage = err?.response?.data?.message || 'error on reset password';
+          toast.error(errorMessage, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+            });
         }
       }
 
@@ -49,6 +64,15 @@ const SetPassword:React.FC = () => {
   return (
     <div>
         <NavLogin />
+
+        <ToastContainer
+        limit={2}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+      />
+      <ToastContainer />
+
       <div className="flex items-center justify-center mt-5 ">
         <form onSubmit={handleSetPassword} className="w-96 p-6">
           <div className='flex justify-center mb-5 mt-2'>

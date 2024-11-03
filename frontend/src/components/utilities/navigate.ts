@@ -18,3 +18,11 @@ export const navigateOtpValidate = (navigate:any,email:string) => {
 export const navigatePasswordChange = (navigate:any,email:string) => {
   navigate('/setpassword',{ state:{email} })
 }
+
+export const navigateHome = (navigate:any,role:string):void => {
+  if(role == 'user'){
+    navigate(`/`)
+  }else{
+    navigate(`/${role}`)
+  }
+}

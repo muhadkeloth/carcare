@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import NavLogin from '../Authenticate/NavLogin'
+import NavLogin from '../authenticate/NavLogin'
 import AdminMain from './MainAdmin'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons'

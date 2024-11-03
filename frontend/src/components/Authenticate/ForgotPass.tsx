@@ -4,7 +4,9 @@ import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
 import { navigateLogin, navigateOtpValidate } from '../utilities/navigate';
 import { emailValidation } from '../utilities/validation';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { ErrorResponse } from '../utilities/interface';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 
 const ForgotPass:React.FC = () => {
@@ -20,13 +22,26 @@ const ForgotPass:React.FC = () => {
       else{ setEmailError('') }
 
       try{
-        const response = await axios.post('http://192.168.1.3:3000/otpgenerate',{ email })
+        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/otpgenerate`,{ email })
         if(response.status == 201){
           navigateOtpValidate(navigate,email )
         }
       }catch(error){
         if(axios.isAxiosError(error)){
           console.error(error.response?.data.message)
+          const err = error as AxiosError<ErrorResponse>;
+        const errorMessage = err?.response?.data?.message || 'error on otp generat.';
+        toast.error(errorMessage, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+          });
         }
       }
 
@@ -35,6 +50,15 @@ const ForgotPass:React.FC = () => {
   return (
     <div>
          <NavLogin />
+
+         <ToastContainer
+        limit={2}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+      />
+      <ToastContainer />
+
       <div className="flex items-center justify-center mt-5 ">
         <form onSubmit={handleForgotPass} className="w-96 p-6">
           <div className='flex justify-center mb-5 mt-2'>

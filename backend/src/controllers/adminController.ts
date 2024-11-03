@@ -2,8 +2,31 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import Shop from "../models/Shop";
 import { randomPassword } from "../utils/functions";
+import { sendOtpEmail } from "../utils/emailService";
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs';
 
 
+export const login = async (req:Request,res:Response) => {
+    console.log('admin login')
+    const {email,password} = req.body;
+    try{
+        const admin = await User.findOne({email,role:'admin'});
+        if(!admin) return res.status(400).json({message:"email not found"});
+        // if(!admin.isActive ) 
+            // return res.status(400).json({message:"Account is blocked. Please contact customer care."});
+        
+        const isPasswordValid = await bcrypt.compare(password,admin.password);
+        if(!isPasswordValid) return res.status(400).json({message:"Invalid password"});
+        
+        const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
+        const token = jwt.sign({id:admin._id,role:'admin'}, JWT_SALT , {expiresIn:"1D"})
+
+        res.status(201).json({token,role:'admin', message:"Login successful"})
+    }catch(error){
+        res.status(500).json({message:"Server error"});
+    }
+}
 
 export const userDetails = async (req:Request,res:Response) => {
     const page = parseInt(req.query.page as string) || 1;
@@ -43,6 +66,7 @@ export const addShop = async (req:Request,res:Response) => {
         console.log('parseAddress', parseAddress )
         const parsedLocation  = JSON.parse(location);
         const otp = randomPassword(8);
+        await sendOtpEmail(email,otp);
 
         const newShop = new Shop({
             shopName,

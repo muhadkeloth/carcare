@@ -21,7 +21,7 @@ const UserManagement:React.FC = () => {
   const fetchUsers = async(page:number)=>{
     console.log('usermanage')
     try{
-      // const response = await axios.get(`http://192.168.1.3:3000/admin/users?page=${page}&limit=${itemsPerPage}`);
+      // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
       const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
       console.log('usermanage2')
       console.log('response',response)
@@ -34,7 +34,7 @@ const UserManagement:React.FC = () => {
 
   const toggleStatus = async(id:number) =>{
     try{
-      const response = await axios.patch(`http://192.168.1.3:3000/admin/user/${id}`);
+      const response = await axios.patch(`${import.meta.env.VITE_ENDPORTFRONT}/admin/user/${id}`);
       if(response.status = 200){
         console.log('User status updated successfully:', response.data);
         const index = users.findIndex(user => user._id == id);

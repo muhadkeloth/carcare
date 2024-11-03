@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { navigateLogin, navigatePasswordChange } from '../utilities/navigate';
+import { ErrorResponse } from '../utilities/interface';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 
 const OtpValidation:React.FC = () => {
@@ -15,39 +17,49 @@ const OtpValidation:React.FC = () => {
   const navigate = useNavigate();
 
 
-  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(120); 
   const [showResend, setShowResend] = useState(false);
 
-  // Countdown timer logic
   useEffect(() => {
       if (timeLeft > 0) {
           const timer = setInterval(() => {
               setTimeLeft((prev) => prev - 1);
           }, 1000);
-          return () => clearInterval(timer); // Cleanup on unmount
+          return () => clearInterval(timer); 
       } else {
-          setShowResend(true); // Show resend option once the timer reaches 0
+          setShowResend(true); 
       }
   }, [timeLeft]);
 
-  // Format the time as MM:SS
   const formatTime = (seconds:number):string => {
       const minutes = Math.floor(seconds / 60);
       const secs = seconds % 60;
       return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  // Resend OTP function
   const resendOtp = async () => {
-      // try {
-      //     const response = await axios.post('http://192.168.1.3:3000/otpgenerate', { email });
-      //     if (response.status === 201) {
-      //         setTimeLeft(120); // Reset the timer to 2:00
-      //         setShowResend(false); // Hide the resend option
-      //     }
-      // } catch (error) {
-      //     console.error('Error resending OTP:', error);
-      // }
+      try {
+          const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/otpgenerate`, { email });
+          if (response.status === 201) {
+              setTimeLeft(120); 
+              setShowResend(false); 
+          }
+      } catch (error) {
+          console.error('Error resending OTP:', error);
+          const err = error as AxiosError<ErrorResponse>;
+          const errorMessage = err?.response?.data?.message || 'oops please go back to login';
+          toast.error(errorMessage, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+            });
+      }
   };
 
 
@@ -55,7 +67,7 @@ const OtpValidation:React.FC = () => {
 
   const validateOtp = async (otp: string) => {
     try{
-      const response = await axios.post('http://192.168.1.3:3000/otpvalidation',{ otp, email });
+      const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/otpvalidation`,{ otp, email });
       // if(response.data.isValid) {
       if(response.status == 201) {
         console.log('F : OTP validated successfully!');
@@ -66,6 +78,19 @@ const OtpValidation:React.FC = () => {
     }catch(error){
       console.error('OTP validation failed:', error);
       setOtpError('Validation error. Please try again.')
+      const err = error as AxiosError<ErrorResponse>;
+          const errorMessage = err?.response?.data?.message || 'otp validation error';
+          toast.error(errorMessage, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+            });
     }
   }
 
@@ -93,6 +118,15 @@ const OtpValidation:React.FC = () => {
   return (
     <div>
        <NavLogin />
+
+       <ToastContainer
+        limit={2}
+        newestOnTop={false}
+        rtl={false}
+        pauseOnFocusLoss
+      />
+      <ToastContainer />
+
       <div className="flex items-center justify-center mt-5 ">
         <form onSubmit={(event)=>event.preventDefault()} className="w-96 p-6">
           <div className='flex justify-center mb-5 mt-2'>
@@ -100,8 +134,8 @@ const OtpValidation:React.FC = () => {
           </div>
           <h2 className="text-2xl text-center font-bold mb-4">OTP Verification</h2>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="number">
-              Check mail for OTP: <span className='font-semibold underline'>{ email}</span>
+            <label className="block font-light text-gray-700 mb-4" htmlFor="number">
+              Check mail for OTP: <span className='font-semibold'>"{ email}"</span>
             </label>
               <div className="flex justify-between mb-4">
           {otp.map((digit, index) => (
@@ -131,9 +165,9 @@ const OtpValidation:React.FC = () => {
           </button>
         <p className='text-center mt-3'>Don't you receive OTP? {" "}
           { showResend ? (
-            <span className='hover:underline hover:cursor-pointer' onClick={resendOtp}>Resend OTP</span>
+            <span className='text-maincol font-medium hover:text-maincoldark hover:cursor-pointer ' onClick={resendOtp}>Resend OTP</span>
           ) : (
-            `${formatTime(timeLeft)}`
+            ` ${formatTime(timeLeft)}`
           ) }
           {/* <span className='text-maincol font-medium hover:underline hover:cursor-pointer' >Resend OTP **time*</span> */}
           </p>
@@ -149,86 +183,3 @@ const OtpValidation:React.FC = () => {
 export default OtpValidation
 
 
-// import React, { useState, useRef } from 'react';
-// import axios from 'axios';
-
-
-  // const [otp, setOtp] = useState<string[]>(Array(6).fill('')); // Array to hold each digit
-  // const [otpError, setOtpError] = useState('');
-  // const inputRefs = useRef<Array<HTMLInputElement | null>>([]); // Ref for input elements
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-  //   const value = e.target.value;
-  //   if (/\D/.test(value)) return; // Allow only numbers
-
-  //   const updatedOtp = [...otp];
-  //   updatedOtp[index] = value;
-  //   setOtp(updatedOtp);
-
-  //   if (value && index < 5) {
-  //     inputRefs.current[index + 1]?.focus(); // Move to the next input box
-  //   } else if (index === 5) {
-  //     validateOtp(updatedOtp.join('')); // Auto-fetch validation on full input
-  //   }
-  // };
-
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-  //   if (e.key === 'Backspace' && !otp[index] && index > 0) {
-  //     inputRefs.current[index - 1]?.focus(); // Go back to the previous input on backspace
-  //   }
-  // };
-
-  // const validateOtp = async (otp: string) => {
-  //   try {
-  //     const response = await axios.post('http://localhost:3000/otpvalidation', { otp });
-  //     if (response.data.isValid) {
-  //       console.log('OTP validated successfully!');
-  //     } else {
-  //       setOtpError('Invalid OTP. Please try again.');
-  //     }
-  //   } catch (error) {
-  //     console.error('OTP validation failed:', error);
-  //     setOtpError('Validation error. Please try again.');
-  //   }
-  // }
-
-        // <h2 className="text-2xl text-center font-bold mb-4">OTP Verification</h2>
-        // <label className="block text-gray-700 mb-2 text-center">
-        //   Enter OTP sent to your email
-        // </label>
-//         <div className="flex justify-between mb-4">
-//           {otp.map((digit, index) => (
-//             <input
-//               key={index}
-//               type="text"
-//               inputMode="numeric"
-//               maxLength={1}
-//               value={digit}
-//               onChange={(e) => handleChange(e, index)}
-//               onKeyDown={(e) => handleKeyDown(e, index)}
-//               ref={(el) => (inputRefs.current[index] = el)}
-//               className="border border-gray-300 rounded w-12 h-12 text-center text-lg font-semibold"
-//               autoFocus={index === 0}
-//             />
-//           ))}
-//         </div>
-//         {otpError && <p className="text-red-600 text-center mb-2">{otpError}</p>}
-//         <button
-//           type="button"
-//           onClick={() => validateOtp(otp.join(''))}
-//           className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
-//         >
-//           VERIFY OTP
-//         </button>
-//         <p className="text-center mt-3">
-//           Didn’t receive OTP?{" "}
-//           <span className="text-maincol font-medium hover:underline hover:cursor-pointer">
-//             Resend OTP
-//           </span>
-//         </p>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default OtpForm;

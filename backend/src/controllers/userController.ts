@@ -3,7 +3,28 @@ import User, { IUser } from "../models/User";
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendOtpEmail } from "../utils/emailService";
+import jwt from 'jsonwebtoken'
 
+
+export const login = async (req:Request, res:Response)=>{
+    const {email,password} = req.body;
+    try{
+        const user = await User.findOne({email,role:'user'});
+        if(!user) return res.status(400).json({message:"User not found"});
+        if(!user.isActive ) 
+            return res.status(400).json({message:"Account is blocked. Please contact customer care."});
+        
+        const isPasswordValid = await bcrypt.compare(password,user.password);
+        if(!isPasswordValid) return res.status(400).json({message:"Invalid password"});
+        
+        const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
+        const token = jwt.sign({id:user._id,role:'user'}, JWT_SALT , {expiresIn:"1D"})
+
+        res.status(201).json({token,role:'', message:"Login successful"})
+    }catch(error){
+        res.status(500).json({message:"Server error"});
+    }
+}
 
 export const signup = async (req:Request, res:Response) => {
     const { username, phoneNumber, email, password } = req.body;
@@ -31,7 +52,7 @@ export const otpgenerate = async (req:Request, res:Response) => {
     const { email } = req.body;
     
     try{
-        const existingUser:IUser|null = await User.findOne({email});
+        const existingUser:IUser|null = await User.findOne({email,role:'user'});
         if(!existingUser) return res.status(404).json({message:"Email not found in our records please Signup"});
         if(!existingUser.isActive ) 
             return res.status(404).json({message:"Account is blocked. Please contact customer care."});
@@ -52,7 +73,7 @@ export const otpgenerate = async (req:Request, res:Response) => {
 export const otpvalidation = async(req:Request, res:Response) => {
     const { otp, email } = req.body;
     try{
-        const userDetails:IUser|null = await User.findOne({email});
+        const userDetails:IUser|null = await User.findOne({email,role:'user'});
         if(!userDetails) return res.status(500).json({message:'email not found'});
         if(otp !== userDetails?.otp) return res.status(404).json({message:'otp is not currect'});
         if(userDetails?.otpExpiry && new Date() > userDetails.otpExpiry) return res.status(404).json({message:'otp expired!'})

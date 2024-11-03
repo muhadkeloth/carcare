@@ -16,9 +16,8 @@ const NavLogin: React.FC = () => {
 
 
 
-  return (
-    
-    <div className=" flex items-center justify-between  p-2 border-b border-black shadow-sm">
+  return ( 
+    <header className=" flex items-center justify-between  p-2 border-b border-black shadow-sm">
         <div className='w-10 h-4 mt-3 overflow-hidden'>
           <img src={carcare_cut} alt="carcare logo" className='w-full h-full object-cover' />
         </div>
@@ -29,10 +28,7 @@ const NavLogin: React.FC = () => {
         onClick={routetoHome}>
           Home</button>)
           }
-
-        
-  </div>
-
+  </header>
   );
 };
 

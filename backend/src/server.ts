@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import userRouter from './routes/userRouter';
-import outletRouter from './routes/outletRouter';
+import shopRouter from './routes/shopRouter';
 import adminRouter from './routes/adminRouter';
-import loginRouter from './routes/loginRouter';
+// import loginRouter from './routes/loginRouter';
 import path from 'path';
 
 dotenv.config();
@@ -21,7 +21,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-// app.use('../public/',express.static('public'))
 app.use('/public',express.static(path.join(__dirname,'../public')))
 
 mongoose.connect(process.env.MONGODB_URI || '')
@@ -30,8 +29,8 @@ mongoose.connect(process.env.MONGODB_URI || '')
 
 
 app.use('/admin',adminRouter)
-app.use('/outlet',outletRouter)
-app.use('/login',loginRouter)
+app.use('/shop',shopRouter)
+// app.use('/login',loginRouter)
 
 app.use('/',userRouter)
 
