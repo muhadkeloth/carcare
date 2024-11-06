@@ -1,20 +1,39 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { AppError } from "./errorHandler";
+
+interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }
 
 
-const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
-
-export const authenticateToken = (req:Request, res:Response, next:NextFunction) => {
+export const authenticateToken = (req:AuthenticatedRequest, res:Response, next:NextFunction) => {
+    const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
     const token = req.header('Authorization')?.split(' ')[1];
 
-    if(!token) return res.status(401).json({message:"Access Denied"});
+    if(!token) throw new AppError("Access Denied",401);
 
     try{
-        const verified = jwt.verify(token, JWT_SALT);
-        (req as any).user = verified;
-        // req. = verified;
-        next();
+        // const verified = jwt.verify(token, JWT_SALT, );
+        // if(!verified || typeof verified !== 'object'){
+        //    return next(new AppError("Invalid token payload",403));
+        // }
+        // req.user = verified;
+        // next();
+        const verified = jwt.verify(token, JWT_SALT, (err, user) => {
+            if(err){
+                return next(new AppError("Invalid token payload",403));
+            }
+            req.user = user;
+            next();
+        });
     }catch(error){
-        res.status(400).json({message:"Invalid token" });
+        // res.status(400).json({message: });
+        next(new AppError("Invalid token",401));
+        // if (error instanceof jwt.TokenExpiredError) {
+        //     return next(new AppError("Token has expired", 401)); 
+        // } else if (error instanceof jwt.JsonWebTokenError) {
+        //     return next(new AppError("Invalid token", 403)); 
+        // } else {
+        //     return next(new AppError("Token verification failed", 500));
+        // }
     }
 }

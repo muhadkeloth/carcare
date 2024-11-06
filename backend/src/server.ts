@@ -5,8 +5,8 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRouter';
 import shopRouter from './routes/shopRouter';
 import adminRouter from './routes/adminRouter';
-// import loginRouter from './routes/loginRouter';
 import path from 'path';
+import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -30,9 +30,9 @@ mongoose.connect(process.env.MONGODB_URI || '')
 
 app.use('/admin',adminRouter)
 app.use('/shop',shopRouter)
-// app.use('/login',loginRouter)
-
 app.use('/',userRouter)
+
+app.use(errorHandler)
 
 
 // app.use('*', (req: Request, res: Response, next: NextFunction) => {

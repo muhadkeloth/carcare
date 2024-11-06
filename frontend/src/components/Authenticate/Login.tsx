@@ -53,17 +53,19 @@ const Login: React.FC<RoleProps> = ({ role }) => {
         setEmailError('  ')
         const err = error as AxiosError<ErrorResponse>;
         const errorMessage = err?.response?.data?.message || 'Login failed. Please try again.';
-        toast.error(errorMessage, {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-          });
+        errorMessage == "Invalid password" ? setPassError(errorMessage) : (
+          toast.error(errorMessage, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+            })
+        );
     }
   };
 
@@ -79,12 +81,12 @@ const Login: React.FC<RoleProps> = ({ role }) => {
   return (
     <>
       <NavLogin />
-      <ToastContainer
+      {/* <ToastContainer
         limit={2}
         newestOnTop={false}
         rtl={false}
         pauseOnFocusLoss
-      />
+      /> */}
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">

@@ -12,3 +12,24 @@ icon set
    shadowSize: [41, 41],
  });
  Locationpicker -> < Marker icon={defaultIcon} />
+
+
+ export const login = async (req:Request, res:Response )=>{
+    const {email,password} = req.body;
+    try{
+        const user = await User.findOne({email,role:'user'});
+        if(!user) return res.status(400).json({message:"User not found"});
+        if(!user.isActive ) 
+            return res.status(400).json({message:"Account is blocked. Please contact customer care."});
+        
+        const isPasswordValid = await bcrypt.compare(password,user.password);
+        if(!isPasswordValid) return res.status(400).json({message:"Invalid password"});
+        
+        const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
+        const token = jwt.sign({id:user._id,role:'user'}, JWT_SALT , {expiresIn:"1D"})
+
+        res.status(201).json({token,role:'', message:"Login successful"})
+    }catch(error){
+        res.status(500).json({message:"Server error"});
+    }
+}
