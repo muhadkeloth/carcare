@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 // get Address from location
-export const getAddressFromCoordinatesOSM = async (latitude: number, longitude: number) => {
+export const getAddressFromCoordinates = async (latitude: number, longitude: number) => {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
   
     try {

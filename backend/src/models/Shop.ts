@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface Shop extends Document {
+export interface IShop extends Document {
     shopName:string;
     ownerName:string;
     phoneNumber:string;
@@ -17,8 +17,10 @@ export interface Shop extends Document {
         pincode: string;
     };
     location:{
-        latitude:number;
-        longitude:number;
+        type:"Point";
+        coordinates: [number, number];
+        // latitude:number;
+        // longitude:number;
     };
     image:string;
     createdAt?:Date;
@@ -42,8 +44,13 @@ const ShopSchema:Schema = new Schema(
             pincode: {type:String},
         },
         location:{
-            latitude:{type:Number,required:true},
-            longitude:{type:Number,required:true}
+            type:{type:String,enum:["Point"], required: true },
+            coordinates:{
+                type:[Number],
+                required:true,
+            },
+            // latitude:{type:Number,required:true},
+            // longitude:{type:Number,required:true}
         },
         image:{type:String,required:true},
         createdAt: { type: Date, default: Date.now },
@@ -51,7 +58,8 @@ const ShopSchema:Schema = new Schema(
     { timestamps: true }
 );
 
+ShopSchema.index({ location:"2dsphere"});
 
-const Shop = mongoose.model<Shop>("Shop",ShopSchema);
+const Shop = mongoose.model<IShop>("Shop",ShopSchema);
 export default Shop;
 

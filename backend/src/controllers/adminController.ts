@@ -5,6 +5,7 @@ import { randomPassword } from "../utils/functions";
 import { sendOtpEmail } from "../utils/emailService";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs';
+import { otpgenerateFn, otpvalidationFn, resetPasswordFn } from "./commonController";
 
 
 export const login = async (req:Request,res:Response) => {
@@ -26,6 +27,38 @@ export const login = async (req:Request,res:Response) => {
     }catch(error){
         res.status(500).json({message:"Server error"});
     }
+}
+
+export const otpgenerate = async (req:Request,res:Response) => {
+    const { email, role } = req.body;
+    try {
+        const response = await otpgenerateFn(email, role);
+        res.status(response.status).json({message:response.message})
+    } catch (error) {
+        res.status(500).json({message:"an error occured.please try again."})
+    }
+}
+
+export const otpvalidation = async (req:Request,res:Response) => {
+    const { otp, email ,role } = req.body;
+    try{
+        const response = await otpvalidationFn(email,otp,role)
+        res.status(response.status).json({message:response.message})
+    }catch(error){
+        console.log('otp error:',error);
+        res.status(500).json({message:'an error on otp validation'})
+    }
+}
+
+export const resetPassword = async (req:Request,res:Response) => {
+    const {email,password, role} = req.body;
+    try{
+        const response = await resetPasswordFn(email, password, role);
+        res.status(response.status).json({message:response.message})
+    }catch(error){
+        console.log('reset password error backend')
+        res.status(500).json({message:'errorin resetpasss'})
+    }  
 }
 
 export const userDetails = async (req:Request,res:Response) => {
@@ -61,9 +94,7 @@ export const toggleStatus = async (req:Request, res:Response) => {
 export const addShop = async (req:Request,res:Response) => {
     try {
         const { shopName, ownerName, email, phoneNumber, address, location } = req.body;
-        console.log('addshop', phoneNumber, location )
         const parseAddress = JSON.parse(address);
-        console.log('parseAddress', parseAddress )
         const parsedLocation  = JSON.parse(location);
         const otp = randomPassword(8);
         await sendOtpEmail(email,otp);
@@ -75,9 +106,13 @@ export const addShop = async (req:Request,res:Response) => {
             phoneNumber,
             address:parseAddress,
             otp,
-            location:parsedLocation ,
+            otpExpiry:new Date(Date.now() + 5 * 60 * 1000),               
+            location:{
+                type:"Point",
+                coordinates:[parsedLocation.longitude,parsedLocation.latitude],
+            },
             image:req.file ? req.file.path :null,
-        })
+        });
         const updatedShop = await newShop.save()
         console.log('updatedshop',updatedShop)
         res.status(201).json({message:"shop added successfully",shop:newShop})

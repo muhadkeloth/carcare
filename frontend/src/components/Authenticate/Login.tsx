@@ -4,13 +4,13 @@ import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
 import { emailValidation, passwordValidation } from '../utilities/validation';
-import { handleForgotPass, handleSignUpClick, navigateHome } from '../utilities/navigate';
-import { ErrorResponse, LoginProps } from '../utilities/interface';
+import { handleForgotPass, handleSignUpClick, navigateHome, navigatePasswordChange } from '../utilities/navigate/common';
+import { ErrorResponse, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 
 
-const Login: React.FC<LoginProps> = ({ role }) => {
+const Login: React.FC<RoleProps> = ({ role }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -39,11 +39,14 @@ const Login: React.FC<LoginProps> = ({ role }) => {
         });
 
         if(response.status == 201){
+          if(response.data.token){
             localStorage.setItem(`${role}_token`,response.data.token);
           // navigate(`/${response.data.role}`);
           navigateHome(navigate, role);
-        }
-        
+          }else if(response.data?.validotp) {
+            navigatePasswordChange(navigate,email,role)
+          }
+        }        
       }catch(error){
         console.log('login failed:',error)
         setPassError('  ')
@@ -65,9 +68,10 @@ const Login: React.FC<LoginProps> = ({ role }) => {
   };
 
   useEffect(()=>{
-    const token = localStorage.getItem(`${role}_token`);
+    const rol = role == '' ? 'user' : role ;
+    const token = localStorage.getItem(`${rol}_token`);
     if(token){
-      navigateHome(navigate, role)
+      navigateHome(navigate, rol)
     }
   },[navigate])
 
@@ -120,7 +124,7 @@ const Login: React.FC<LoginProps> = ({ role }) => {
             >
               Password
               <span
-                onClick={() => handleForgotPass(navigate)}
+                onClick={() => handleForgotPass(navigate,role)}
                 className="text-maincol opacity-80 hover:underline hover:cursor-pointer ml-2"
               >
                 Forgot your password?

@@ -2,12 +2,19 @@ import React, { useState } from 'react'
 import carcare_logo from '../../../assets/images/Car_Care_logo.png'
 import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate } from 'react-router-dom';
+import { navigateLogout } from '../../utilities/navigate/common';
 
 
 
 const Header:React.FC = () => {
     const [isUserDropdownOpen,setIsUserDropdownOpen] = useState(false);
     const [isNavOpen, setIsNavOpen] = useState(false);
+    const navigate = useNavigate()
+
+    const handleLogout = () => {
+      navigateLogout(navigate,'user')
+    }
 
   return (   
 
@@ -39,7 +46,7 @@ const Header:React.FC = () => {
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
           </li> */}
           <li>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+            <span onClick={() => {navigateLogout(navigate,'user')}}  className="block px-4 py-2 text-sm text-gray-700 hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</span>
           </li>
         </ul>
       </div>            

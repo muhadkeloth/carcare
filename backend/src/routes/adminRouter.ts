@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { addShop, login, shopdetails, toggleStatus, userDetails } from '../controllers/adminController';
+import { addShop, login, otpgenerate, otpvalidation, resetPassword, shopdetails, toggleStatus, userDetails } from '../controllers/adminController';
 import upload from '../middleware/upload';
 
 
@@ -11,6 +11,10 @@ router.get('/users', async (req:Request,res:Response)=> {await userDetails(req,r
 router.patch('/user/:id', async (req:Request,res:Response)=> {await toggleStatus(req,res)});
 router.get('/shopdetails', async (req:Request,res:Response)=> {await shopdetails(req,res)});
 router.post('/addShop', upload.single('image'), async (req:Request,res:Response)=> {await addShop(req,res)});
+
+router.post('/otpgenerate', async (req:Request,res:Response)=> {await otpgenerate(req,res)});
+router.post('/otpvalidation', async (req:Request,res:Response)=> {await otpvalidation(req,res)});
+router.post('/resetPassword', async (req:Request,res:Response)=> {await resetPassword(req,res)});
 
 
 export default router;

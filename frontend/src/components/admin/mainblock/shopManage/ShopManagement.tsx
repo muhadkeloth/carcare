@@ -33,7 +33,7 @@ import 'leaflet/dist/leaflet.css';
 
 import L from 'leaflet';
 import LocationPicker from './LocationPicker';
-import { getAddressFromCoordinatesOSM } from '../../../utilities/functions';
+import { getAddressFromCoordinates } from '../../../utilities/functions';
 
 
 
@@ -66,10 +66,6 @@ interface NewShop {
 }
 
 
-
-
-
-
 const ShopManagement: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -86,14 +82,13 @@ const ShopManagement: React.FC = () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
       setShops(response.data.workShop); 
-
       setTotalPages(response.data.totalPages)
     } catch (error) {
       console.error('Failed to fetch shops:', error);
     }
   };
 
-  // Add a new shop
+
   const addShop = async () => {
     const formData = new FormData();
     formData.append('shopName',newShop.shopName);
@@ -104,7 +99,7 @@ const ShopManagement: React.FC = () => {
     if(newShop.image) formData.append('image',newShop.image);
     
     try{
-      const address = await getAddressFromCoordinatesOSM(selectedLocation.latitude,selectedLocation.longitude);
+      const address = await getAddressFromCoordinates(selectedLocation.latitude,selectedLocation.longitude);
       formData.append('address',JSON.stringify(address) )       
     }catch(error){
       console.error('error fetching address from coordinates:',error);
@@ -113,11 +108,8 @@ const ShopManagement: React.FC = () => {
     console.log('newShop',newShop)
       try {
         await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/admin/addShop`, formData,{
-          headers:{
-            'Content-Type':'multipart/form-data'
-          }
+          headers:{ 'Content-Type':'multipart/form-data' }
         });
-        console.log('here')
         setShowAddModal(false); 
         fetchShops(currentPage); 
       } catch (error) {

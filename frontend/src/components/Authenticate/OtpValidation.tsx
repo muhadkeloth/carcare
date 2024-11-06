@@ -3,7 +3,7 @@ import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios, { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { navigateLogin, navigatePasswordChange } from '../utilities/navigate';
+import { navigateLogin, navigatePasswordChange } from '../utilities/navigate/common';
 import { ErrorResponse } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 
@@ -13,7 +13,7 @@ const OtpValidation:React.FC = () => {
   const [otpError,setOtpError] = useState('');
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const location = useLocation();
-  const {email} = location.state || {};
+  const {email,role} = location.state || {};
   const navigate = useNavigate();
 
 
@@ -39,7 +39,8 @@ const OtpValidation:React.FC = () => {
 
   const resendOtp = async () => {
       try {
-          const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/otpgenerate`, { email });
+        const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate`;
+          const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`, { email,role });
           if (response.status === 201) {
               setTimeLeft(120); 
               setShowResend(false); 
@@ -67,11 +68,12 @@ const OtpValidation:React.FC = () => {
 
   const validateOtp = async (otp: string) => {
     try{
-      const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/otpvalidation`,{ otp, email });
+      const url = role == 'user' ? '/otpvalidation' : `/${role}/otpvalidation`;
+      const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ otp, email,role });
       // if(response.data.isValid) {
       if(response.status == 201) {
         console.log('F : OTP validated successfully!');
-        navigatePasswordChange(navigate,email);
+        navigatePasswordChange(navigate,email,role);
       }else{
         setOtpError('Invalid OTP. Please try again.')
       }
@@ -172,7 +174,7 @@ const OtpValidation:React.FC = () => {
           {/* <span className='text-maincol font-medium hover:underline hover:cursor-pointer' >Resend OTP **time*</span> */}
           </p>
           <p className='text-center mt-3'>Back to  {" "}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
           </p>
         </form>
       </div>

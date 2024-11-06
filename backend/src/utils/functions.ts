@@ -3,7 +3,7 @@ export const randomPassword = (length:number):string => {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numbers = '0123456789';
-    const specialCharacters = '!@#$%&*-_?';
+    const specialCharacters = '!@#$%&*|<>?';
 
     const passwordArray = [
         uppercase.charAt(Math.floor(Math.random() * uppercase.length)),

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import NavLogin from './NavLogin';
 import carlogo from '../../assets/images/CarCare-white.png';
-import { navigateLogin } from '../utilities/navigate';
+import { navigateHome, navigateLogin } from '../utilities/navigate/common';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { passwordConfirmValidation, passwordValidation } from '../utilities/validation';
 import axios, { AxiosError } from 'axios';
@@ -17,7 +17,7 @@ const SetPassword:React.FC = () => {
     const [confirmPasswordError,setConfirmPasswordError] = useState('')
     const navigate = useNavigate()
     const location = useLocation();
-    const { email } = location.state || {};
+    const { email,role } = location.state || {};
 
     const handleSetPassword = async (event:React.FormEvent) => {
       event.preventDefault();
@@ -35,11 +35,19 @@ const SetPassword:React.FC = () => {
       }else{ setConfirmPasswordError('') } 
 
       try{
-        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/resetPassword`,{email,password});
+        const url = role == 'user' ? '/resetPassword':`/${role}/resetPassword`
+        console.log('setpass here',url)
+        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{email,password,role});
         if(response.status == 201){
-          navigateLogin(navigate);
+          if(role == 'shop'){
+            localStorage.setItem(`${role}_token`,response.data.token);
+            navigateHome(navigate,role);
+          }else{
+            navigateLogin(navigate,role);
+          }
         }
       }catch(error){
+        console.log('error')
         if(axios.isAxiosError(error)){
           console.error(error.response?.data.message)
           const err = error as AxiosError<ErrorResponse>;
@@ -57,8 +65,6 @@ const SetPassword:React.FC = () => {
             });
         }
       }
-
-
     }
 
   return (
@@ -114,7 +120,7 @@ const SetPassword:React.FC = () => {
             Reset Password
           </button>
           <p className='text-center mt-3'>Back to  {" "}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
           </p>
         </form>
       </div>

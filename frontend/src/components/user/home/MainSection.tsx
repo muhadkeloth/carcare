@@ -27,7 +27,7 @@ const MainSection:React.FC = () => {
     </div>
     <div className="mt-20 w-full h-96 bg-cover bg-center" style={{backgroundImage:`url(${bg_blue})`}}>
     <h1 className='text-3xl pt-12 text-white font-bold md:text-6xl mb-2 text-center'>One place for all your car needs.</h1>
-    <p className='mt-6 mb-9 text-base pt-3 text-white font-medium text-center'>Get help with maintaining your vehicle, fixing problems, and more. </p>
+    <p className='mt-6 mb-9 text-xs md:text-lg pt-3 text-white font-light text-center'>Get help with maintaining your vehicle, fixing problems, and more. </p>
     {/* something here */}
     </div>
     </>

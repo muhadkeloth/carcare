@@ -3,7 +3,7 @@ import NavLogin from './NavLogin'
 import {  useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios, { AxiosError } from 'axios';
-import { navigateLogin } from '../utilities/navigate';
+import { navigateLogin } from '../utilities/navigate/common';
 import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { ErrorResponse } from '../utilities/interface';
@@ -68,7 +68,7 @@ const Signup:React.FC = () => {
         console.log('res',response)
         if(response.status == 201){
           console.log('here')
-          navigateLogin(navigate);
+          navigateLogin(navigate,'user');
         }
       }catch(error){
         if(axios.isAxiosError(error)){
@@ -198,7 +198,7 @@ const Signup:React.FC = () => {
             Sign Up
           </button>
         <p className='text-center mt-3'>Have Account?  {" "}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,'user')}>Log In</span>
           </p>
         </form>
       </div>

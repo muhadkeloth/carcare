@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendOtpEmail } from "../utils/emailService";
 import jwt from 'jsonwebtoken'
+import Shop from "../models/Shop";
+import { otpgenerateFn, otpvalidationFn, resetPasswordFn } from "./commonController";
 
 
 export const login = async (req:Request, res:Response)=>{
@@ -49,35 +51,21 @@ export const signup = async (req:Request, res:Response) => {
 }
 
 export const otpgenerate = async (req:Request, res:Response) => {
-    const { email } = req.body;
+    const { email, role } = req.body;
     
     try{
-        const existingUser:IUser|null = await User.findOne({email,role:'user'});
-        if(!existingUser) return res.status(404).json({message:"Email not found in our records please Signup"});
-        if(!existingUser.isActive ) 
-            return res.status(404).json({message:"Account is blocked. Please contact customer care."});
-
-        existingUser.otp = crypto.randomInt(100001,999999).toString();
-        existingUser.otpExpiry = new Date(Date.now() + 5 * 60 * 1000)
-        existingUser.save();
-
-        await sendOtpEmail(email,existingUser.otp);
-
-        res.status(201).json({message:"otp sent to your email addrss."})
+        const response = await otpgenerateFn(email,role);
+        res.status(response.status).json({message:response.message})
     }catch(error){
-        console.error('otp generation error:',error);
         res.status(500).json({message:'an error occured.please try again.'})
     }
 }
 
 export const otpvalidation = async(req:Request, res:Response) => {
-    const { otp, email } = req.body;
+    const { otp, email ,role } = req.body;
     try{
-        const userDetails:IUser|null = await User.findOne({email,role:'user'});
-        if(!userDetails) return res.status(500).json({message:'email not found'});
-        if(otp !== userDetails?.otp) return res.status(404).json({message:'otp is not currect'});
-        if(userDetails?.otpExpiry && new Date() > userDetails.otpExpiry) return res.status(404).json({message:'otp expired!'})
-        res.status(201).json({message:'otp verified'})
+        const response = await otpvalidationFn(email,otp,role)
+        res.status(response.status).json({message:response.message})
     }catch(error){
         console.log('otp error:',error);
         res.status(500).json({message:'an error on otp validation'})
@@ -85,17 +73,43 @@ export const otpvalidation = async(req:Request, res:Response) => {
 }
 
 export const resetPassword = async(req:Request,res:Response) => {
-    const {email,password} = req.body;
+    const {email,password, role} = req.body;
     try{
-        const userDetails:IUser|null = await User.findOne({email});
-        if(!userDetails) return res.status(404).json({message:"email not found"});
-        
-        userDetails.password = await bcrypt.hash(password, 10);
-        userDetails.save();
-        res.status(201).json({message:"password reset successfully"})
-
+        const response = await resetPasswordFn(email, password, role);
+        res.status(response.status).json({message:response.message})
     }catch(error){
         console.log('reset password error backend')
         res.status(500).json({message:'errorin resetpasss'})
     }
 }
+
+export const getNearShops = async (req:Request,res:Response) => {
+    const { latitude, longitude } = req.query;
+    const radiusInKm = 20;
+    
+    if(!latitude || !longitude){
+        return res.status(400).json({message:"Latitude and longitude are required."});
+    }
+    try {
+        const shops = await Shop.aggregate([
+            {
+                $geoNear:{
+                    near: { type: "Point", coordinates: [parseFloat(longitude as string), parseFloat(latitude as string)] },
+                    distanceField:"distance",
+                    maxDistance:radiusInKm * 1000,
+                    spherical:true
+                }
+            },
+            {
+                $match:{isActive:true}
+            }
+        ]);
+        console.log('shop',shops)
+
+        res.status(200).json({shops,message:'successfully fetch shops '});
+    } catch (error) {
+        console.error("error fetching nearby shops:",error);
+        res.status(500).json({message:"server error fetching nearby shops."})
+    }
+}
+

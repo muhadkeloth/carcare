@@ -19,15 +19,22 @@ const App:React.FC = () => {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login role="user" />} />
       <Route path='/signup' element={<Signup  />} />
-      <Route path='/forgotpass' element={<ForgotPass />} />
-      <Route path='/Otpvalidation' element={<OtpValidation />} />
-      <Route path='/setpassword' element={<SetPassword />} />
+      <Route path='/forgotpass' element={<ForgotPass role="user" />} />
+      <Route path='/Otpvalidation' element={<OtpValidation  />} />
+      <Route path='/setpassword' element={<SetPassword  />} />
 
       <Route path='/shop/login' element={<Login role='shop' />} />
       <Route path='/shop' element={<Shop />} />
+      <Route path='/shop/forgotpass' element={<ForgotPass role="shop" />} />
+      <Route path='/shop/Otpvalidation' element={<OtpValidation />} />
+      <Route path='/shop/setpassword' element={<SetPassword  />} />
 
       <Route path='/admin/login' element={<Login role="admin" />} />
       <Route path='/admin' element={<AdminDash />} />
+      <Route path='/admin/forgotpass' element={<ForgotPass role="admin" />} />
+      <Route path='/admin/Otpvalidation' element={<OtpValidation  />} />
+      <Route path='/admin/setpassword' element={<SetPassword  />} />
+
     </Routes>
     </BrowserRouter>
   )

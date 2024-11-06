@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(cors({
-    origin:['http://192.168.1.3:5173','http://localhost:5173'],
+    origin:[process.env.ENDPORT_FRONTEND || '', process.env.ENDPORT_FRONTEND_LOCAL || ''],
     methods:['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials:true,
 }));
@@ -35,4 +35,15 @@ app.use('/shop',shopRouter)
 app.use('/',userRouter)
 
 
+// app.use('*', (req: Request, res: Response, next: NextFunction) => {
+//   next(new AppError(`Route ${req.originalUrl} not found`, 404));
+// });
+
+
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+
+

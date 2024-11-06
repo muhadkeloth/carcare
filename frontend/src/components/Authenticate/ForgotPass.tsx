@@ -2,18 +2,17 @@ import React, { useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
-import { navigateLogin, navigateOtpValidate } from '../utilities/navigate';
+import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
 import { emailValidation } from '../utilities/validation';
 import axios, { AxiosError } from 'axios';
-import { ErrorResponse } from '../utilities/interface';
+import { ErrorResponse, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 
-const ForgotPass:React.FC = () => {
+const ForgotPass:React.FC<RoleProps> = ({ role }) => {
     const [email,setEmail] = useState('')
     const [emailError,setEmailError] = useState('')
     const navigate = useNavigate()
-
 
     const handleForgotPass = async (event:React.FormEvent) => {
       event.preventDefault();
@@ -22,9 +21,11 @@ const ForgotPass:React.FC = () => {
       else{ setEmailError('') }
 
       try{
-        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/otpgenerate`,{ email })
+        const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate` ;
+        console.log("url",import.meta.env.VITE_ENDPORTFRONT+url)
+        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ email, role })
         if(response.status == 201){
-          navigateOtpValidate(navigate,email )
+          navigateOtpValidate(navigate,email,role )
         }
       }catch(error){
         if(axios.isAxiosError(error)){
@@ -44,13 +45,11 @@ const ForgotPass:React.FC = () => {
           });
         }
       }
-
     }
 
   return (
     <div>
          <NavLogin />
-
          <ToastContainer
         limit={2}
         newestOnTop={false}
@@ -87,7 +86,7 @@ const ForgotPass:React.FC = () => {
             GET OTP
           </button>
         <p className='text-center mt-3'>Back to{' '}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate)}>Log In</span>
+          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
           </p>
         </form>
       </div>

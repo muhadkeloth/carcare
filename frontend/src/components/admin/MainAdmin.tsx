@@ -4,11 +4,10 @@ import React, { useState } from 'react'
 import Dashboard from './mainblock/Dashboard';
 import UserManagement from './mainblock/UserManagement';
 import ShopManagement from './mainblock/shopManage/ShopManagement';
+import { AdminMainProps } from '../utilities/interface';
 
 
-interface AdminMainProps {
-  activeSection: string;
-}
+
 
 const AdminMain: React.FC<AdminMainProps> = ({ activeSection }) => {
   return (

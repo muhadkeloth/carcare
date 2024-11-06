@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NavLogin from '../authenticate/NavLogin'
 import AdminMain from './MainAdmin'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons'
 import ProfileImage from '../utilities/ProfileImage'
 import AdminSidebar from './SidebarAdmin'
+import { navigateLogin, navigateLogout } from '../utilities/navigate/common'
+import { useNavigate } from 'react-router-dom'
 
 const AdminDash: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [activeSection, setActiveSection] = useState('Dashboard');
-
+    const navigate = useNavigate();
 
     const handleLogout = () => {
-      // Add your logout logic here
-      console.log('Logging out...');
+      navigateLogout(navigate,'admin')
   };
 
   const handleActiveSection = (section: string) => {
@@ -22,7 +23,10 @@ const AdminDash: React.FC = () => {
       console.log('Active section:', section);
   };
 
-
+useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if(!token) navigateLogin(navigate,'admin')
+},[navigate])
 
     
   return (

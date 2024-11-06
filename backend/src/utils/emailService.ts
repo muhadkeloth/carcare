@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 dotenv.config();
 
 
@@ -12,13 +14,22 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendOtpEmail = async (to: string,otp: string) => {
-    console.log(process.env.MAILERPASSWORD)
-    console.log(process.env.MAILERID,)
+
+    const templatePath = path.join(__dirname,'emailTemplates','OtpEmailTemplate.html');
+    const template = fs.readFileSync(templatePath,'utf-8');
+    const isOTP = otp.length == 6;
+    const subject = isOTP ? 'OTP for Account Verification':'Your Login Password for Secure Access';
+    
+    const emailBody = template.replace('{{subject}}',subject)
+                              .replace('{{otpType}}',isOTP?'OTP code':'password')
+                              .replace('{{carCareUrl}}',`${process.env.CarCare_icon}/public/images/CarCare_icon.png`)
+                              .replace('{{otp}}',otp)
+
     const mailOptions = {
         from: process.env.MAILERID,
         to,
-        subject:'Your OTP Code',
-        text: `your otp code is ${otp}. It is valid for 5 minutes.`,
+        subject: `CarCare: ${subject}`,
+        html: emailBody,
     };
     try{
         await transporter.sendMail(mailOptions);
