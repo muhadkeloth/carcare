@@ -3,10 +3,11 @@ import NavLogin from './NavLogin'
 import {  useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios, { AxiosError } from 'axios';
-import { navigateLogin } from '../utilities/navigate/common';
+import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
 import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { ErrorResponse } from '../utilities/interface';
+import { fetchSignup } from '../../services/common';
 
 
 const Signup:React.FC = () => {
@@ -64,11 +65,12 @@ const Signup:React.FC = () => {
         confirmPassword,
       }
       try{
-        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/signup`,userData);
-        console.log('res',response)
+        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/signup`,userData);
+        const response = await fetchSignup('/signup',userData)
         if(response.status == 201){
           console.log('here')
-          navigateLogin(navigate,'user');
+          // navigateLogin(navigate,'user');
+          navigateOtpValidate(navigate,email,'user' )
         }
       }catch(error){
         if(axios.isAxiosError(error)){

@@ -8,9 +8,7 @@ import { navigateHome } from '../utilities/navigate/common';
 const NavLogin: React.FC = () => {
   const navigate = useNavigate();
 
-  const routetoHome = ():void =>{
-    navigateHome(navigate,'user');
-  }
+
 
   return ( 
     <header className=" flex items-center justify-between  p-2 border-b border-black shadow-sm">

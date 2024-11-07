@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { navigateLogin, navigatePasswordChange } from '../utilities/navigate/common';
 import { ErrorResponse } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { fetchOtpGenerate, fetchOtpValidate } from '../../services/common';
 
 
 const OtpValidation:React.FC = () => {
@@ -40,7 +41,8 @@ const OtpValidation:React.FC = () => {
   const resendOtp = async () => {
       try {
         const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate`;
-          const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`, { email,role });
+          // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`, { email,role });
+          const response = await fetchOtpGenerate(url,email,role)
           if (response.status === 201) {
               setTimeLeft(120); 
               setShowResend(false); 
@@ -69,7 +71,8 @@ const OtpValidation:React.FC = () => {
   const validateOtp = async (otp: string) => {
     try{
       const url = role == 'user' ? '/otpvalidation' : `/${role}/otpvalidation`;
-      const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ otp, email,role });
+      // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ otp, email,role });
+      const response = await fetchOtpValidate(url,{ otp, email,role })
       // if(response.data.isValid) {
       if(response.status == 201) {
         console.log('F : OTP validated successfully!');

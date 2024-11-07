@@ -28,7 +28,6 @@ useEffect(() => {
     if(!token) navigateLogin(navigate,'admin')
 },[navigate])
 
-    
   return (
  <div className="flex flex-col ">
 

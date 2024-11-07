@@ -7,6 +7,7 @@ import { passwordConfirmValidation, passwordValidation } from '../utilities/vali
 import axios, { AxiosError } from 'axios';
 import { ErrorResponse } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { fetchSetPassword } from '../../services/common';
 
 
 
@@ -37,7 +38,8 @@ const SetPassword:React.FC = () => {
       try{
         const url = role == 'user' ? '/resetPassword':`/${role}/resetPassword`
         console.log('setpass here',url)
-        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{email,password,role});
+        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{email,password,role});
+        const response = await fetchSetPassword(url,{email,password,role});
         if(response.status == 201){
           if(role == 'shop'){
             localStorage.setItem(`${role}_token`,response.data.token);

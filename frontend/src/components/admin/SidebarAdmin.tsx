@@ -1,12 +1,9 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar, faUserCog, faStore, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { AdminSidebarProps } from '../utilities/interface';
 
-interface AdminSidebarProps {
-    showMenu: boolean;
-    handleActiveSection: (section: string) => void;
-    handleLogout: () => void;
-}
+
 
 const SidebarAdmin:React.FC<AdminSidebarProps> = ({ showMenu, handleActiveSection, handleLogout }) => {
   return (

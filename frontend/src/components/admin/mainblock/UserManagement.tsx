@@ -2,15 +2,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { User } from '../../utilities/interface';
+import { fetchAllUsers } from '../../../services/adminService';
 
 
-interface User {
-  _id: number;
-  username: string;
-  email: string;
-  phoneNumber: string;
-  isActive: boolean ;
-}
+
 
 const UserManagement:React.FC = () => {
   const [users,setUsers] = useState<User[]>([]);
@@ -22,11 +18,10 @@ const UserManagement:React.FC = () => {
     console.log('usermanage')
     try{
       // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
-      const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
-      console.log('usermanage2')
-      console.log('response',response)
-      setUsers(response.data.users);
-      setTotalPages(response.data.totalPages);
+      // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
+      const usersData = await fetchAllUsers(page);
+      setUsers(usersData.users);
+      setTotalPages(usersData.totalPages);
     }catch(error){
       console.error('failed to fetch users:',error)
     }

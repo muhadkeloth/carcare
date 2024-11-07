@@ -17,7 +17,7 @@ router.post('/otpvalidation', otpvalidation);
 router.post('/resetPassword', resetPassword);
 
 // router.get('/getnearshops', async (req:Request,res:Response, next:NextFunction)=> {await getNearShops(req, res, next)});
-router.get('/getnearshops', authenticateToken, getNearShops);
+router.get('/getnearshops', getNearShops);
 
 
 

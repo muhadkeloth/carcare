@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
+import { LocationPickerProps } from "../../../utilities/interface";
 
-interface LocationPickerProps {
-    onLocationChange:(location:{latitude:number;longitude:number}) => void;
-}
+
 
 const LocationPicker: React.FC<LocationPickerProps> = ({onLocationChange}) => {
     const map = useMap();

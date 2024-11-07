@@ -23,4 +23,6 @@ router.post('/otpvalidation', otpvalidation);
 router.post('/resetPassword', resetPassword);
 
 
+
+
 export default router;

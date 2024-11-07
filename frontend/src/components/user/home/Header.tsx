@@ -12,12 +12,7 @@ const Header:React.FC = () => {
     const [isNavOpen, setIsNavOpen] = useState(false);
     const navigate = useNavigate()
 
-    const handleLogout = () => {
-      navigateLogout(navigate,'user')
-    }
-
   return (   
-
  <nav className="bg-white border-gray-200 dark:bg-gray-900"> {/*  */}
   <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-3 sm:p-4">
       <img src={carcare_logo} className="h-8" alt="carCare" />

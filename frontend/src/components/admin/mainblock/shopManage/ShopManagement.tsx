@@ -34,6 +34,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import LocationPicker from './LocationPicker';
 import { getAddressFromCoordinates } from '../../../utilities/functions';
+import { NewShop } from '../../../utilities/interface';
+import { addNewShop, fetchAllShop } from '../../../../services/adminService';
 
 
 
@@ -56,14 +58,7 @@ interface Shop {
   // location: {latitude:number,longitude:number}; 
 }
 
-interface NewShop {
-  shopName: string;
-  ownerName: string;
-  email: string;
-  image: File | null;
-  phoneNumber: string;
-  location: string;
-}
+
 
 
 const ShopManagement: React.FC = () => {
@@ -80,9 +75,12 @@ const ShopManagement: React.FC = () => {
 
   const fetchShops = async (page:number) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
-      setShops(response.data.workShop); 
-      setTotalPages(response.data.totalPages)
+      // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
+      // setShops(response.data.workShop); 
+      // setTotalPages(response.data.totalPages)
+      const shopsData = await fetchAllShop(page);
+      setShops(shopsData.workShop); 
+      setTotalPages(shopsData.totalPages)
     } catch (error) {
       console.error('Failed to fetch shops:', error);
     }
@@ -107,9 +105,10 @@ const ShopManagement: React.FC = () => {
     }
     console.log('newShop',newShop)
       try {
-        await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/admin/addShop`, formData,{
-          headers:{ 'Content-Type':'multipart/form-data' }
-        });
+        // await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/admin/addShop`, formData,{
+        //   headers:{ 'Content-Type':'multipart/form-data' }
+        // });
+        await addNewShop(formData);
         setShowAddModal(false); 
         fetchShops(currentPage); 
       } catch (error) {

@@ -7,6 +7,7 @@ import { emailValidation, passwordValidation } from '../utilities/validation';
 import { handleForgotPass, handleSignUpClick, navigateHome, navigatePasswordChange } from '../utilities/navigate/common';
 import { ErrorResponse, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { fetchLogin } from '../../services/common';
 
 
 
@@ -26,18 +27,15 @@ const Login: React.FC<RoleProps> = ({ role }) => {
       setEmailError(emailvalidation);
       return
     }else{ setEmailError('') }
-    const passwordvalidation = passwordValidation(password)
-    if(passwordvalidation){
-      setPassError(passwordvalidation);
-      return;
-    }else{ setPassError('') }
+
 
 
     try{
-        const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/${role}/login`,{
-          email,password,
-        });
+        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/${role}/login`,{
+        //   email,password,
+        // });
 
+        const response = await fetchLogin(role,email,password);
         if(response.status == 201){
           if(response.data.token){
             localStorage.setItem(`${role}_token`,response.data.token);

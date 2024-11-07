@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from "./errorHandler";
 
-interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }
+interface AuthenticatedRequest extends Request { user?: string|JwtPayload; }
+// interface AuthenticatedRequest extends Request { user?: {
+//     id:string;
+//     role:string;
+// }; }
 
 
 export const authenticateToken = (req:AuthenticatedRequest, res:Response, next:NextFunction) => {
@@ -12,19 +16,20 @@ export const authenticateToken = (req:AuthenticatedRequest, res:Response, next:N
     if(!token) throw new AppError("Access Denied",401);
 
     try{
-        // const verified = jwt.verify(token, JWT_SALT, );
-        // if(!verified || typeof verified !== 'object'){
-        //    return next(new AppError("Invalid token payload",403));
-        // }
-        // req.user = verified;
-        // next();
-        const verified = jwt.verify(token, JWT_SALT, (err, user) => {
-            if(err){
-                return next(new AppError("Invalid token payload",403));
-            }
-            req.user = user;
-            next();
-        });
+        const verified = jwt.verify(token, JWT_SALT );
+        if(!verified || typeof verified !== 'object'){
+           return next(new AppError("Invalid token payload",403));
+        }
+        req.user = verified;
+        console.log('req.user:',req.user)
+        next();
+        // const verified = jwt.verify(token, JWT_SALT, (err, user) => {
+        //     if(err){
+        //         return next(new AppError("Invalid token payload",403));
+        //     }
+        //     req.user = user;
+        //     next();
+        // });
     }catch(error){
         // res.status(400).json({message: });
         next(new AppError("Invalid token",401));
