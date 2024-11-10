@@ -1,5 +1,6 @@
+import { returnvalue } from "./types";
 
-type returnvalue = string | undefined;
+
 
 export function emailValidation(email:string):returnvalue{
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

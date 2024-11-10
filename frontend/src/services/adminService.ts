@@ -5,8 +5,15 @@ import api from "./axiosConfig";
 export const fetchAllShop = async (page:number):Promise<{ workShop:any[]; totalPages:number }> => {
     const itemsPerPage = 10;
     try{
-        const {data} = await api.get(`/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
-        return { workShop:data.workShop, totalPages:data.totalPages };
+        const response = await api.get(`/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== 201) throw new Error(`unexpected status when shop details fetch code:${response.status}`)
+        
+        const {data} = response;
+        if(data && data.workShop){
+            return { workShop:data.workShop, totalPages:data.totalPages };
+        }else{
+            throw new Error('Invalid shop details response structure.')
+        }
     }catch(error){
         console.error("Error fetching nearby shops:", error);
         throw new Error("Unable to fetch nearby shops.");
@@ -25,10 +32,26 @@ export const addNewShop = async (formData:any) => {
 export const fetchAllUsers = async (page:number):Promise<{users:any[]; totalPages:number}> => {
     const itemsPerPage = 10;
     try {
-        const {data} = await api.get(`/admin/users?page=${page}&limit=${itemsPerPage}`);
-        return {users:data.users, totalPages:data.totalPages }
+        const response = await api.get(`/admin/users?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== 201)throw new Error(`unexpected status code:${response.status}`);
+    
+            const {data} = response;
+            if(data && data.users ){
+                return {users:data.users, totalPages:data.totalPages }
+            }else{
+                throw new Error('Invalid userdetails response structure.')
+            }
     } catch (error) {
         console.error('error fetching users',error);
         throw new Error('unable to fetch users')
+    }
+}
+
+export const toggleuserStatus = async (url:string):Promise<{status:number,data:any}> => {
+    try {
+        return api.patch(url)
+    } catch (error) {
+        console.error('unable to change user status',error)
+        throw new Error(`unable to change user status${error}`)
     }
 }

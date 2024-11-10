@@ -21,7 +21,7 @@ const MainSection:React.FC = () => {
 
             <button 
             className="bg-maincol rounded w-full md:w-auto p-4 hover:bg-maincoldark text-white flex items-center justify-center">
-                Find Repair Location {/* need to add arrow in big sceen */}
+                Find Near WorkShop {/* need to add arrow in big sceen */}
                 </button>
         </div>
     </div>

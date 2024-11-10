@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import Home from '../user/Home'
+import Home from '../user/home/Home'
 import Login from '../authenticate/Login'
 import Signup from '../authenticate/Signup'
 import ForgotPass from '../authenticate/ForgotPass'
@@ -8,6 +8,8 @@ import SetPassword from '../authenticate/SetPassword'
 import OtpValidation from '../authenticate/OtpValidation'
 
 const User:React.FC = () => {
+
+
   return (
     <Routes>
       <Route path='' element={<Home />} />

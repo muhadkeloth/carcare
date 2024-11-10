@@ -7,7 +7,7 @@ import { passwordConfirmValidation, passwordValidation } from '../utilities/vali
 import axios, { AxiosError } from 'axios';
 import { ErrorResponse } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { fetchSetPassword } from '../../services/common';
+import { fetchSetPassword } from '../../services/apiCall';
 
 
 
@@ -55,14 +55,10 @@ const SetPassword:React.FC = () => {
           const err = error as AxiosError<ErrorResponse>;
           const errorMessage = err?.response?.data?.message || 'error on reset password';
           toast.error(errorMessage, {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
+            position: "bottom-right", autoClose: 3000,
+            hideProgressBar: false, closeOnClick: true,
+            pauseOnHover: true, draggable: true,
+            progress: undefined, theme: "dark",
             transition: Bounce,
             });
         }
@@ -73,12 +69,12 @@ const SetPassword:React.FC = () => {
     <div>
         <NavLogin />
 
-        <ToastContainer
+        {/* <ToastContainer
         limit={2}
         newestOnTop={false}
         rtl={false}
         pauseOnFocusLoss
-      />
+      /> */}
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">

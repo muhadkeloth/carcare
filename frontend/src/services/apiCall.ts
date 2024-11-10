@@ -1,38 +1,35 @@
+import { bodyEmailvsRole, returnApiPromise } from "../components/utilities/types";
 import api from "./axiosConfig"
 
 
-export const fetchForgotPass = async (url:string,email:string,role:string):Promise<{status:number;data:any}> => {
+export const fetchForgotPass = async (url:string,body:bodyEmailvsRole):Promise<returnApiPromise> => {
     try {
-        // const response = await api.post(url, {email,role});
-        // return response;
-        return await api.post(url, {email,role});
+        return await api.post(url, body);
     } catch (error) {
         console.error("Error on submit forget:", error);
         throw new Error("Error on submit forget.");  
     }
 }
 
-export const fetchLogin = async (url:string,email:string,password:string):Promise<{status:number;data:any}> => {
+export const fetchLogin = async (url:string,body:{email:string,password:string}):Promise<returnApiPromise> => {
     try {
-        // const response = await api.post(`/${url}/login`,{email,password});
-        // return response;
-        return await api.post(`/${url}/login`,{email,password});
+        return await api.post(`/${url}/login`,body);
     } catch (error) {
         console.error("Error on submit password:", error);
         throw new Error("Error on submit password.");  
     }
 }
 
-export const fetchOtpGenerate = async(url:string,email:string,role:string):Promise<{status:number;data:any}> => {
+export const fetchOtpGenerate = async(url:string,body:bodyEmailvsRole):Promise<returnApiPromise> => {
     try {
-        return await api.post(url,{email,role})
+        return await api.post(url,body)
     } catch (error) {
         console.error("Error on otp generate:", error);
         throw new Error("Error on otp generate.");
     }
 }
 
-export const fetchOtpValidate = async (url:string,body:any):Promise<{status:number;data:any}> => {
+export const fetchOtpValidate = async (url:string,body:bodyEmailvsRole & {otp:string}):Promise<returnApiPromise> => {
     try {
         return await api.post(url,body)
     } catch (error) {
@@ -41,7 +38,7 @@ export const fetchOtpValidate = async (url:string,body:any):Promise<{status:numb
     }
 }
 
-export const fetchSetPassword = async (url:string,body:any):Promise<{status:number;data:any}> => {
+export const fetchSetPassword = async (url:string,body:bodyEmailvsRole & {password:string}):Promise<returnApiPromise> => {
     try {
         return await api.post(url,body);
     } catch (error) {
@@ -50,7 +47,7 @@ export const fetchSetPassword = async (url:string,body:any):Promise<{status:numb
     }
 }
 
-export const fetchSignup = async (url:string,userData:any):Promise<{status:number,data:any}> => {
+export const fetchSignup = async (url:string,userData:any):Promise<returnApiPromise> => {
     try {
         return await api.post(url,userData)
     } catch (error) {
@@ -58,3 +55,5 @@ export const fetchSignup = async (url:string,userData:any):Promise<{status:numbe
         throw new Error("Error on fetch signup.");
     }
 }
+
+

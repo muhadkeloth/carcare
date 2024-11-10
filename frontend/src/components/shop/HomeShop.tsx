@@ -5,12 +5,18 @@ import NavLogin from '../authenticate/NavLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
 import ProfileImage from '../utilities/ProfileImage';
+import ShopMain from './MainShop';
+import SidebarShop from './SidebarShop';
 
 
-const Shop:React.FC = () => {
+const ShopHome:React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [activeSection, setActiveSection] = useState('Dashboard');
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigateLogout(navigate,'shop')
+};
 
   const handleActiveSection = (section: string) => {
     setActiveSection(section)
@@ -42,9 +48,19 @@ const Shop:React.FC = () => {
     </div>
 
     <div className="flex flex-col md:flex-row h-screen">
+    <SidebarShop
+    showMenu={showMenu}
+    handleActiveSection={handleActiveSection}
+    handleLogout={handleLogout}
+/> 
+    <ShopMain activeSection={activeSection} />
+
     </div>
+
+    
+
   </div>
   )
 }
 
-export default Shop
+export default ShopHome

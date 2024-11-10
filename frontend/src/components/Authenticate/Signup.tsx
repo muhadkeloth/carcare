@@ -7,7 +7,10 @@ import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common
 import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { ErrorResponse } from '../utilities/interface';
-import { fetchSignup } from '../../services/common';
+import { fetchSignup } from '../../services/apiCall';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSignupDetails } from '../../features/otpSlice';
+import { RootState } from '../../store';
 
 
 const Signup:React.FC = () => {
@@ -22,6 +25,9 @@ const Signup:React.FC = () => {
     const [passError, setPassError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const newUserDetails = useSelector((state:RootState) => state.otp.signupDetails)
 
     const handleSignup = async (e:React.FormEvent) => {
       e.preventDefault();
@@ -57,20 +63,18 @@ const Signup:React.FC = () => {
         return;
       }else{ setConfirmPasswordError('') }
 
-      const userData = {
-        username:name,
-        email,
-        phoneNumber,
-        password,
-        confirmPassword,
-      }
       try{
-        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/signup`,userData);
-        const response = await fetchSignup('/signup',userData)
+        const response = await fetchSignup('/signupOtpGenerate',{email,phoneNumber});
         if(response.status == 201){
-          console.log('here')
-          // navigateLogin(navigate,'user');
-          navigateOtpValidate(navigate,email,'user' )
+          const userData = {
+            username:name,
+            email,
+            phoneNumber,
+            password,
+            otp:response.data.otp 
+          }
+          dispatch(setSignupDetails(userData));
+          navigateOtpValidate(navigate,email,'userSign' )
         }
       }catch(error){
         if(axios.isAxiosError(error)){
@@ -78,14 +82,10 @@ const Signup:React.FC = () => {
           const err = error as AxiosError<ErrorResponse>;
           const errorMessage = err?.response?.data?.message || 'signup error';  
           toast.error(errorMessage, {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
+            position: "bottom-right", autoClose: 3000,
+            hideProgressBar: false, closeOnClick: true,
+            pauseOnHover: true, draggable: true,
+            progress: undefined, theme: "dark",
             transition: Bounce,
             });
         }
@@ -97,12 +97,12 @@ const Signup:React.FC = () => {
     <div>
         <NavLogin />
 
-        <ToastContainer
+        {/* <ToastContainer
         limit={2}
         newestOnTop={false}
         rtl={false}
         pauseOnFocusLoss
-      />
+      /> */}
         <ToastContainer />
 
         <div className="flex items-center justify-center mt-2 ">

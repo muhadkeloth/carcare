@@ -1,9 +1,10 @@
-import Shop, { IShop } from "../models/Shop";
-import User, { IUser } from "../models/User";
+import Shop from "../models/Shop";
+import User from "../models/User";
 import { sendOtpEmail } from "../utils/emailService";
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
+import { IShop, IUser } from "../utils/interface";
 
 export const otpgenerateFn = async (email:string,role:string) => {    
     try{
@@ -20,9 +21,9 @@ export const otpgenerateFn = async (email:string,role:string) => {
         existingUser.otp = crypto.randomInt(100001,999999).toString();
         existingUser.otpExpiry = new Date(Date.now() + 5 * 60 * 1000)
         existingUser.save();
-
+        
         await sendOtpEmail(email,existingUser.otp);
-
+        
         return {status:201,message:"otp sent to your email addrss."};
     }catch(error){
         console.error('otp generation error:',error);
@@ -30,6 +31,18 @@ export const otpgenerateFn = async (email:string,role:string) => {
     }
 }
 
+export const otpgeneraterForSignup = async (email:string) => {
+    try {
+        const otp = crypto.randomInt(100001,999999).toString();
+        await sendOtpEmail(email,otp);
+        const hashedOtp = await bcrypt.hash(otp, 10);
+        return {status:201,hashedOtp,message:'otp sent to your email address.'}
+        
+    } catch (error) {
+        console.error('otp generation sign error:',error);
+        return {status:500,message:'error occured sign generate .please try again.'};
+    }
+}
 
 // export const otpgenerate = async (req:Request, res:Response) => {
 //     const { email, role } = req.body;

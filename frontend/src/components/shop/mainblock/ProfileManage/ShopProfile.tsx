@@ -1,46 +1,21 @@
-// import React from 'react'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faPlus, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-
-// const ShopManagement:React.FC = () => {
-//   return (
-//     <>
-//     <div className="flex justify-between mt-1 mb-4 pe-2">
-//       <h2 className="text-2xl font-bold ms-1  text-gray-800">Shop Management</h2>
-//       <button className="font-medium rounded bg-maincol  text-white px-2 hover:bg-maincoldark">
-//         <FontAwesomeIcon icon={faPlus} /> Add
-//       </button>
-//     </div>
-
-
-//     </>
-//   )
-// }
-
-// export default ShopManagement
-
-
-
-
 
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight, faPencil, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
 import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-
 import L from 'leaflet';
-import LocationPicker from './LocationPicker';
+import LocationPicker from '../../../admin/mainblock/shopManage/LocationPicker';
 import { getAddressFromCoordinates } from '../../../utilities/functions';
 import { NewShop, Shop } from '../../../utilities/interface';
 import { addNewShop, fetchAllShop } from '../../../../services/adminService';
+import { ToastContainer } from 'react-toastify';
 
 
 
 
-const ShopManagement: React.FC = () => {
+const ShopProfile: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newShop, setNewShop] = useState<NewShop>({ shopName: '', ownerName: '',email:'', image: null, phoneNumber: '', location:'' });
@@ -49,8 +24,6 @@ const ShopManagement: React.FC = () => {
   const [image,setImage] = useState<File|null>(null);
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
-  const itemsPerPage = 10;
-
 
   const fetchShops = async (page:number) => {
     try {
@@ -114,97 +87,26 @@ const ShopManagement: React.FC = () => {
 
   return (
     <div className="p-4">
+        <ToastContainer />
+
       <div className="flex justify-between mt-1 mb-4 pe-1">
         <h2 className="text-2xl font-bold ms-1 text-gray-800">
-          Shop Management
+          Profile Management
         </h2>
         <button
           className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
           onClick={() => setShowAddModal(true)}
         >
-          <FontAwesomeIcon icon={faPlus} /> Add
+          <FontAwesomeIcon icon={faPencil} /> Edit
         </button>
       </div>
 
       {/* Shop List */}
       <div className="overflow-x-auto w-full mb-6">
-        <table className="min-w-full border-collapse border border-gray-300"> {/*mb-6*/}
-          <thead>
-            <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">  {/*leading-normal*/}
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-                Image
-              </th>
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-                Shop Name
-              </th>
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-              ownerName
-              </th>
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-                email
-              </th>
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-                Phone Number
-              </th>
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-                Address
-              </th>
-              <th className="py-3 px-4 text-left border-b border-gray-200">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {shops && shops.length > 0 ? (
-              shops.map((shop) => (
-                <tr
-                  key={shop._id}
-                  className="border-b border-gray-200 hover:bg-gray-50 text-gray-700 text-sm"
-                >
-                  <td className="py-3 px-4">
-                    <img src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop.image}`} alt={shop.shopName} className="w-16 h-16 object-cover rounded" />
-                  </td>
-                  <td className="py-3 px-4">
-                  {shop.shopName}
-                  </td>
-                  <td className="py-3 px-4">{shop.ownerName}</td>
-                  <td className="py-3 px-4">{shop.email}</td>
-                  <td className="py-3 px-4">{shop.phoneNumber}</td>
-                  <td className="py-3 px-4">{Object.values(shop.address).join(' ')}</td>
-                  <td
-                   className={`py-3 px-4 hover:cursor-pointer ${shop.isActive ? 'text-green-600 hover:text-green-400' : 'text-red-600 hover:text-red-400'}`}>
-                    {shop.isActive ? 'Active':'Block'}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="text-center py-3">
-                  No shops available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        
       </div>
 
-      <div className="flex justify-center items-center mt-4">
-        <button
-        onClick={()=>setCurrentPage((prev)=> Math.max(prev-1,1))}
-        disabled={currentPage === 1 }
-        className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </button>
-        <span className='text-sm mx-2 text-gray-600'>
-          Page {currentPage} of { totalPages }
-        </span>
-        <button
-        onClick={()=>setCurrentPage((prev)=> Math.min(prev+1,totalPages))}
-        disabled={currentPage === totalPages}
-         className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
-          <FontAwesomeIcon icon={faAngleRight} />
-         </button>
-
-      </div>
+ 
 
       {/* Add Shop Modal */}
       {showAddModal && (
@@ -328,4 +230,4 @@ const ShopManagement: React.FC = () => {
   );
 };
 
-export default ShopManagement;
+export default ShopProfile;

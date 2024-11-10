@@ -1,19 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { fetchNearbyShops } from '../../../services/userService';
+import { Shop } from '../../utilities/interface';
 
-interface Shop {
-    _id:string;
-    shopName:string;
-    image:string;
-    distance?:number;
-    address?:{
-        street?:string;
-        city?:string;
-        state?:string;
-        country?:string;
-        pincode?:string;
-    };
-}
+
 
 const Shops:React.FC = () => {
     const [shops,setShops] = useState<Shop[]>([]);
@@ -25,11 +14,6 @@ const Shops:React.FC = () => {
                 const { latitude, longitude } = position.coords;
 
                 console.log('now showing fetch')
-                // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/getnearshops`, {
-                //     params:{ latitude, longitude }
-                // });
-                // console.log('res',response.data)
-                // setShops(response.data.shops);
 
                 const shopsData = await fetchNearbyShops(latitude, longitude);
                 setShops(shopsData);
@@ -51,8 +35,8 @@ const Shops:React.FC = () => {
   return (
     <div className="flex flex-wrap gap-4 m-14 justify-center ">
       {shops.length > 0 ? (
-        shops.map((shop) => (
-          <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 ">
+        shops.map((shop,index) => (
+          <div key={index} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 ">
             <a href="#"
               className="flex flex-col  bg-white border border-gray-200 rounded-lg shadow  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700" >
               <img

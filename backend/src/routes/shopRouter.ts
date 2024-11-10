@@ -1,5 +1,6 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { login, otpgenerate, otpvalidation, resetPassword } from '../controllers/shopController';
+import express from 'express';
+import { addVehicleDetails, login, otpgenerate, otpvalidation, resetPassword, vehicleDetails } from '../controllers/shopController';
+import { authenticateToken } from '../middleware/auth';
 // import { login } from '../controllers/loginController';
 
 const router = express.Router();
@@ -13,6 +14,9 @@ router.post('/login', login);
 router.post('/otpgenerate', otpgenerate);
 router.post('/otpvalidation', otpvalidation);
 router.post('/resetPassword', resetPassword);
+
+router.get('/vehicledetails', authenticateToken,  vehicleDetails);//auth
+router.post('/addvehicle', authenticateToken,  addVehicleDetails);//auth
 
 
 export default router;

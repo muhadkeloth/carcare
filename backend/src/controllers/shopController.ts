@@ -4,6 +4,9 @@ import bcrypt from 'bcryptjs'
 import Shop from "../models/Shop";
 import { otpgenerateFn, otpvalidationFn, resetPasswordFn } from "./commonController";
 import { AppError } from "../middleware/errorHandler";
+import { AuthenticatedRequest } from "../utils/interface";
+import Vehicle from "../models/Vehicle";
+import mongoose from "mongoose";
 
 
 export const login = async (req:Request, res:Response, next:NextFunction) =>{
@@ -86,7 +89,7 @@ export const resetPassword = async (req:Request,res:Response, next:NextFunction)
     const {email, password, role } = req.body;
     try {
         const response = await resetPasswordFn(email,password, role);
-        res.status(response.status).json({message:response.message})
+        res.status(response.status).json({token:response.token,message:response.message})
     } catch (error) {
         console.log('reset password error backend');
         // res.status(500).json({message:'error in resetpass'})
@@ -94,5 +97,62 @@ export const resetPassword = async (req:Request,res:Response, next:NextFunction)
     }
 }
 
+export const vehicleDetails = async (req:AuthenticatedRequest, res:Response, next:NextFunction) => {
+    if(!req.user) throw new AppError('error to find shopid',404);
+
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page-1) * limit;
+    console.log('here in backend vehicle shop details fetch')
+    try {
+        const shopdetails = await Shop.findById(req.user);
+        if(!shopdetails)throw new AppError('finding shop vehicle details error',404);
+
+        const vehicleIds = shopdetails.vehicleIds;
+        if(!vehicleIds || vehicleIds.length == 0 ){
+            res.status(201).json({shopVehicle:[],totalPages:1,currentPage:page})
+        }else{
+            const vehicles = await Vehicle.find({_id:{$in:vehicleIds}}).skip(skip).limit(limit)
+            console.log('vehicle details from backend');
+            
+            res.status(201).json({shopVehicle:vehicles,totalPages: Math.ceil(vehicles.length / limit), currentPage: page,})
+        }
+
+    } catch (error) {
+        console.error('error fetching vehicle details in shop ',error);
+        next(error);
+    }
+} 
+
+export const addVehicleDetails = async (req:AuthenticatedRequest, res:Response, next:NextFunction) => {
+    if(!req.user) throw new AppError('error to find shopid',404);
+        const { brand, vehicleModel, year } = req.body;
+
+        if(!brand || !vehicleModel || !year || !Array.isArray(year)){
+            throw new AppError('Invalid vehicle details',400)
+        }
+        try {
+            let vehicle = await Vehicle.findOne({brand,vehicleModel});
+            if(!vehicle){
+                vehicle = await Vehicle.create({brand,vehicleModel, year});
+            }
+            if(!vehicle)throw new AppError('failed to create or find vehicle ',500)
+
+            const shopUser = await Shop.findById(req.user);
+            if(!shopUser) throw new AppError('shop user not found',404);
+
+             let vehicleId = vehicle._id as mongoose.Types.ObjectId;
+            if (!shopUser.vehicleIds.some((id) => id.toString() === vehicleId.toString())) {
+                shopUser.vehicleIds.push(vehicleId);
+                await shopUser.save();
+              }
+
+            res.status(201).json({ message: 'Vehicle added successfully' });
+        } catch (error) {
+            console.error('Error adding vehicle details:', error);
+            next(error);
+        }
+        
+}
 
 

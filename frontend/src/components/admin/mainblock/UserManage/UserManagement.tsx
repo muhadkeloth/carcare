@@ -2,8 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { User } from '../../utilities/interface';
-import { fetchAllUsers } from '../../../services/adminService';
+import { User } from '../../../utilities/interface';
+import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminService';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 
 
@@ -12,24 +13,30 @@ const UserManagement:React.FC = () => {
   const [users,setUsers] = useState<User[]>([]);
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
-  const itemsPerPage = 10;
 
   const fetchUsers = async(page:number)=>{
     console.log('usermanage')
     try{
-      // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
-      // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/users?page=${page}&limit=${itemsPerPage}`);
       const usersData = await fetchAllUsers(page);
+      if(!usersData || !usersData.users) throw new Error('user data not found')
       setUsers(usersData.users);
       setTotalPages(usersData.totalPages);
     }catch(error){
       console.error('failed to fetch users:',error)
+      const errorMessage = error instanceof Error?error.message:'error on fetching shop vehicle';
+      toast.error(errorMessage, {
+        position: "bottom-right", autoClose: 3000,
+        hideProgressBar: false, closeOnClick: true,
+        pauseOnHover: true, draggable: true,
+        progress: undefined, theme: "dark",
+        transition: Bounce,
+        })
     }
   }
 
-  const toggleStatus = async(id:number) =>{
+  const toggleStatus = async(id:string) =>{
     try{
-      const response = await axios.patch(`${import.meta.env.VITE_ENDPORTFRONT}/admin/user/${id}`);
+      const response = await toggleuserStatus(`/admin/user/${id}`);
       if(response.status = 200){
         console.log('User status updated successfully:', response.data);
         const index = users.findIndex(user => user._id == id);
@@ -43,7 +50,7 @@ const UserManagement:React.FC = () => {
         }
       }
     }catch(error){
-
+      console.error('error on toggle status',error);
     }
   }
 
@@ -54,6 +61,8 @@ const UserManagement:React.FC = () => {
   return (
      <>
       <h2 className="text-2xl font-bold mb-4 text-gray-800">User Management</h2>
+
+      <ToastContainer />
 
       <div className="relative overflow-x-auto shadow-md rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">

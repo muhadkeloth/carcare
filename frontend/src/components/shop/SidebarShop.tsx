@@ -1,15 +1,15 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faUserCog, faStore, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faUserCog, faStore, faArrowRightFromBracket, faCar } from '@fortawesome/free-solid-svg-icons';
 import { SidebarProps } from '../utilities/interface';
 
 
 
-const SidebarAdmin:React.FC<SidebarProps> = ({ showMenu, handleActiveSection, handleLogout }) => {
+const SidebarShop:React.FC<SidebarProps> = ({ showMenu, handleActiveSection, handleLogout }) => {
   return (
     <div className='md:w-1/6'>
                    <div className="bg-maincol  flex-col items-start p-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
-                <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
+                <h2 className="text-xl font-bold mb-6">Shop Management</h2>
                 <nav className="flex flex-col space-y-4">
                     <button
                         className="flex items-center space-x-2 hover:text-maincoldark "
@@ -20,17 +20,17 @@ const SidebarAdmin:React.FC<SidebarProps> = ({ showMenu, handleActiveSection, ha
                     </button>
                     <button
                         className="flex items-center space-x-2 hover:text-maincoldark"
-                        onClick={() => handleActiveSection('User Management')}
+                        onClick={() => handleActiveSection('Vehicle Management')}
                     >
-                        <FontAwesomeIcon icon={faUserCog} />
-                        <span>User Management</span>
+                        <FontAwesomeIcon icon={faCar} />
+                        <span>Add Vehicle</span>
                     </button>
                     <button
                         className="flex items-center space-x-2 hover:text-maincoldark"
-                        onClick={() => handleActiveSection('Shop Management')}
+                        onClick={() => handleActiveSection('Profile Management')}
                     >
-                        <FontAwesomeIcon icon={faStore} />
-                        <span>Shop Management</span>
+                        <FontAwesomeIcon icon={faUserCog} />
+                        <span>Profile</span>
                     </button>
                     <button
                         className="flex items-center space-x-2 hover:text-maincoldark "
@@ -54,18 +54,18 @@ const SidebarAdmin:React.FC<SidebarProps> = ({ showMenu, handleActiveSection, ha
                         <span>Dashboard</span>
                     </button>
                     <button
-                        className="flex items-center space-x-2 bg- hover:text-maincoldark"
-                        onClick={() => handleActiveSection('User Management')}
+                        className="flex items-center space-x-2 hover:text-maincoldark"
+                        onClick={() => handleActiveSection('Vehicle Management')}
                     >
-                        <FontAwesomeIcon icon={faUserCog} />
-                        <span>User Management</span>
+                        <FontAwesomeIcon icon={faCar} />
+                        <span>Add Vehicle</span>
                     </button>
                     <button
                         className="flex items-center space-x-2 hover:text-maincoldark"
-                        onClick={() => handleActiveSection('Shop Management')}
+                        onClick={() => handleActiveSection('Profile Management')}
                     >
-                        <FontAwesomeIcon icon={faStore} />
-                        <span>Shop Management</span>
+                        <FontAwesomeIcon icon={faUserCog} />
+                        <span>Profile</span>
                     </button>
                     <button
                         className="flex items-center space-x-2 hover:text-maincoldark  hover:underline"
@@ -80,4 +80,4 @@ const SidebarAdmin:React.FC<SidebarProps> = ({ showMenu, handleActiveSection, ha
   )
 }
 
-export default SidebarAdmin
+export default SidebarShop

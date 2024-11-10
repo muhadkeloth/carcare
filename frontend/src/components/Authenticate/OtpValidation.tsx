@@ -3,10 +3,13 @@ import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios, { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { navigateLogin, navigatePasswordChange } from '../utilities/navigate/common';
+import { navigateHome, navigateLogin, navigatePasswordChange } from '../utilities/navigate/common';
 import { ErrorResponse } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { fetchOtpGenerate, fetchOtpValidate } from '../../services/common';
+import { fetchOtpGenerate, fetchOtpValidate, fetchSignup } from '../../services/apiCall';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearOtpState, setResetOtp } from '../../features/otpSlice';
+import { RootState } from '../../store';
 
 
 const OtpValidation:React.FC = () => {
@@ -16,21 +19,11 @@ const OtpValidation:React.FC = () => {
   const location = useLocation();
   const {email,role} = location.state || {};
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
+  const newUserDetails = useSelector((state:RootState) => state.otp.signupDetails)
 
   const [timeLeft, setTimeLeft] = useState(120); 
   const [showResend, setShowResend] = useState(false);
-
-  useEffect(() => {
-      if (timeLeft > 0) {
-          const timer = setInterval(() => {
-              setTimeLeft((prev) => prev - 1);
-          }, 1000);
-          return () => clearInterval(timer); 
-      } else {
-          setShowResend(true); 
-      }
-  }, [timeLeft]);
 
   const formatTime = (seconds:number):string => {
       const minutes = Math.floor(seconds / 60);
@@ -40,10 +33,17 @@ const OtpValidation:React.FC = () => {
 
   const resendOtp = async () => {
       try {
-        const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate`;
-          // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`, { email,role });
-          const response = await fetchOtpGenerate(url,email,role)
-          if (response.status === 201) {
+        let status;
+        if(role == 'userSign'){
+          const response = await fetchSignup('/signupOtpGenerate',{email});
+          dispatch(setResetOtp(response.data.otp))
+          status = response.status;
+        }else{
+          const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate`;
+          const response = await fetchOtpGenerate(url,{email,role})
+          status = response.status;
+        }
+          if (status === 201) {
               setTimeLeft(120); 
               setShowResend(false); 
           }
@@ -52,33 +52,38 @@ const OtpValidation:React.FC = () => {
           const err = error as AxiosError<ErrorResponse>;
           const errorMessage = err?.response?.data?.message || 'oops please go back to login';
           toast.error(errorMessage, {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
+            position: "bottom-right", autoClose: 3000,
+            hideProgressBar: false, closeOnClick: true,
+            pauseOnHover: true, draggable: true,
+            progress: undefined, theme: "dark",
             transition: Bounce,
             });
       }
   };
 
 
-
-
   const validateOtp = async (otp: string) => {
-    try{
-      const url = role == 'user' ? '/otpvalidation' : `/${role}/otpvalidation`;
-      // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ otp, email,role });
-      const response = await fetchOtpValidate(url,{ otp, email,role })
-      // if(response.data.isValid) {
-      if(response.status == 201) {
-        console.log('F : OTP validated successfully!');
-        navigatePasswordChange(navigate,email,role);
+    try{      
+      if(role == 'userSign'){
+        const response = await fetchSignup('/signup',{...newUserDetails,userOtp:otp});
+        if(response.status == 201) {
+          if(response.data.token){
+            localStorage.setItem(`${response.data.role}_token`,response.data.token);
+            console.log('signup : OTP validated successfully!');
+            navigateHome(navigate,response.data.role);
+          }
+        }else{
+          setOtpError('Invalid OTP. Please try again.')
+        }
       }else{
-        setOtpError('Invalid OTP. Please try again.')
+        const url = role == 'user' ? '/otpvalidation' : `/${role}/otpvalidation`;
+        const response = await fetchOtpValidate(url,{ otp, email,role })
+        if(response.status == 201) {
+          console.log('F : OTP validated successfully!');
+          navigatePasswordChange(navigate,email,role);
+        }else{
+          setOtpError('Invalid OTP. Please try again.')
+        }
       }
     }catch(error){
       console.error('OTP validation failed:', error);
@@ -86,14 +91,10 @@ const OtpValidation:React.FC = () => {
       const err = error as AxiosError<ErrorResponse>;
           const errorMessage = err?.response?.data?.message || 'otp validation error';
           toast.error(errorMessage, {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
+            position: "bottom-right", autoClose: 3000,
+            hideProgressBar: false, closeOnClick: true,
+            pauseOnHover: true, draggable: true,
+            progress: undefined, theme: "dark",
             transition: Bounce,
             });
     }
@@ -120,16 +121,27 @@ const OtpValidation:React.FC = () => {
     }
   }
 
+  useEffect(() => {
+    if (timeLeft > 0) {
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => prev - 1);
+        }, 1000);
+        return () => clearInterval(timer); 
+      } else {
+        setShowResend(true); 
+      }
+    }, [timeLeft]);
+
   return (
     <div>
        <NavLogin />
 
-       <ToastContainer
+       {/* <ToastContainer
         limit={2}
         newestOnTop={false}
         rtl={false}
         pauseOnFocusLoss
-      />
+      /> */}
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">

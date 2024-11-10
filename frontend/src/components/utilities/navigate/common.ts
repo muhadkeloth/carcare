@@ -1,3 +1,5 @@
+import { clearUser } from "../../../features/userSlice";
+import store from "../../../store";
 
 export const handleSignUpClick = (navigate:any):void => {
     navigate('/signup')
@@ -9,7 +11,7 @@ export const handleForgotPass = (navigate:any,role:string):void => {
   }
 
 export const navigateLogin = (navigate:any,role:string) => {
-  if(role === 'user'){
+  if(role === 'user' ||  role == 'userSign'){
     navigate('/login')
   }else{
     navigate(`/${role}/login`)
@@ -17,7 +19,7 @@ export const navigateLogin = (navigate:any,role:string) => {
 }
 
 export const navigateOtpValidate = (navigate:any,email:string,role:string) => {
-  const url:string = role == 'user' ? '/Otpvalidation' : `/${role}/Otpvalidation` ;
+  const url:string = role == 'user' || role == 'userSign' ? '/Otpvalidation' : `/${role}/Otpvalidation` ;
   navigate(url,{state:{email,role}})
 }
 
@@ -36,5 +38,6 @@ export const navigateHome = (navigate:any,role:string):void => {
 
 export const navigateLogout = (navigate:any,role:string):void => {
   localStorage.removeItem(`${role}_token`);
+  store.dispatch(clearUser())
   navigateLogin(navigate, role)
 }

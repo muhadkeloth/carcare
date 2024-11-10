@@ -1,4 +1,6 @@
 import axios from "axios"
+import store from "../store";
+import { clearUser } from "../features/userSlice";
 
 
 const api = axios.create({
@@ -8,9 +10,10 @@ const api = axios.create({
     }
 });
 
+
 api.interceptors.request.use((config) => {
     const publicRoutes = [
-        '/user/login','/signup','/otpgenerate','/otpvalidation','/resetPassword','/getnearshops',
+        '/user/login','/signup','/signupOtpGenerate','/otpgenerate','/otpvalidation','/resetPassword','/getnearshops',
         '/admin/login','/admin/otpgenerate','/admin/otpvalidation','/admin/resetPassword',
         '/shop/login','/shop/otpgenerate','/shop/otpvalidation','/shop/resetPassword'
     ];
@@ -43,10 +46,17 @@ api.interceptors.request.use((config) => {
     }else{
         window.location.href = endpoint;        
     }
+
+    if(config.url && config.url == '/admin/addShop'){
+        config.headers['Content-Type'] = 'multipart/form-data'
+    }
+    
     return config;
 },(error) => {
     return Promise.reject(error);
 });
+
+
 
 api.interceptors.response.use(
     (response) => response,
@@ -59,9 +69,12 @@ api.interceptors.response.use(
                 logoutUrl = 'admin';
             }else if(currentRoute.startsWith('/shop')){
                 logoutUrl = 'shop';
+            }else{
+                store.dispatch(clearUser())
             }
+
             localStorage.removeItem(`${logoutUrl}_token`);
-            window.location.href = logoutUrl == 'user' ? '/logout':`/${logoutUrl}/logout`;
+            window.location.href = logoutUrl == 'user' ? '/login':`/${logoutUrl}/login`;
         }
         return Promise.reject(error);
     }

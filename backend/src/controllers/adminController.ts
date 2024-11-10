@@ -106,6 +106,7 @@ export const addShop = async (req:Request, res:Response, next:NextFunction) => {
         const otp = randomPassword(8);
         await sendOtpEmail(email,otp);
 
+        console.log('image',req?.file?.path)
         const newShop = new Shop({
             shopName,
             ownerName,
@@ -120,6 +121,8 @@ export const addShop = async (req:Request, res:Response, next:NextFunction) => {
             },
             image:req.file ? req.file.path :null,
         });
+        console.log('admin shop add');
+        
         const updatedShop = await newShop.save()
         console.log('updatedshop',updatedShop)
         res.status(201).json({message:"shop added successfully",shop:newShop})

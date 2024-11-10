@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import User, { IUser } from "../models/User";
+import User from "../models/User";
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendOtpEmail } from "../utils/emailService";
 import jwt from 'jsonwebtoken'
 import Shop from "../models/Shop";
-import { otpgenerateFn, otpvalidationFn, resetPasswordFn } from "./commonController";
+import { otpgenerateFn, otpgeneraterForSignup, otpvalidationFn, resetPasswordFn } from "./commonController";
 import { AppError } from "../middleware/errorHandler";
-
+import { AuthenticatedRequest } from "../utils/interface";
 
 
 
@@ -25,7 +25,7 @@ export const login = async (req:Request, res:Response, next:NextFunction)=>{
         const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
         const token = jwt.sign({id:user._id,role:'user'}, JWT_SALT , {expiresIn:"1D"})
 
-        res.status(201).json({token,role:'', message:"Login successful"})
+        res.status(201).json({token, message:"Login successful"})
     }catch(error){
         console.log(error)
         // res.status(500).json({message:});
@@ -33,22 +33,45 @@ export const login = async (req:Request, res:Response, next:NextFunction)=>{
     }
 }
 
+export const signupOtpGenerate = async(req:Request, res:Response, next:NextFunction) => {
+    const { phoneNumber, email } = req.body;
+    try{
+        let existingUser = await User.findOne({email});
+        if(existingUser) throw new AppError('email address already exists',400);
+        if(phoneNumber){
+            existingUser = await User.findOne({phoneNumber});
+            if(existingUser) throw new AppError('phoneNumber already exists',400);
+        }
+
+        const response = await otpgeneraterForSignup(email);
+        res.status(response.status).json({message:response.message,otp:response.hashedOtp})
+    }catch(error){
+        console.error('error in signup otp generate',error)
+        next(error)
+    }
+}
+
 export const signup = async (req:Request, res:Response, next:NextFunction) => {
-    const { username, phoneNumber, email, password } = req.body;
-    
+    console.log('signup controler')
+    const { username, phoneNumber, email, password, otp , userOtp } = req.body;
     try{
         let existingUser = await User.findOne({email});
         if(existingUser) throw new AppError('email address already exists',400);
         existingUser = await User.findOne({phoneNumber});
         if(existingUser) throw new AppError('phoneNumber already exists',400);
         
+        const isOtpValid = await bcrypt.compare(userOtp,otp);
+        if(!isOtpValid) throw new AppError("Invalid otp",400);
+        
         const hashedPassword = await bcrypt.hash(password, 10);
         
         const user = new User({username, phoneNumber, email, password: hashedPassword });
         await user.save();
+
+        const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
+        const token = jwt.sign({id:user._id,role:'user'}, JWT_SALT , {expiresIn:"1D"})
         console.log('signup page')
-        
-        res.status(201).json({message:'User registered successfully'});
+        res.status(201).json({token,role:'user',message:'User registered successfully'});
     }catch(error){
         console.log(error)
         // res.status(500).json({message:'Server error'});
@@ -111,9 +134,12 @@ export const getNearShops = async (req:Request,res:Response, next:NextFunction) 
             },
             {
                 $match:{isActive:true}
+            },
+            {
+                $limit:3
             }
         ]);
-        console.log('shop',shops)
+        // console.log('shop',shops)
 
         res.status(200).json({shops,message:'successfully fetch shops '});
     } catch (error) {
@@ -123,3 +149,24 @@ export const getNearShops = async (req:Request,res:Response, next:NextFunction) 
     }
 }
 
+export const userDetails = async(req:AuthenticatedRequest,res:Response, next:NextFunction) => {
+    if(!req.user) throw new AppError('error to find userdetails',404);
+
+    try {
+        const user = await User.findById(req.user)
+        if(!user) throw new AppError('finding user details failed ',404);
+            const userdet = {
+                _id:user?._id,
+                username:user?.username,
+                phoneNumber:user?.phoneNumber,
+                email:user?.email,
+                // image:user?.image,
+                isActive:user?.isActive,
+                role:user?.role,
+            }
+            res.status(201).json({userdet,message:'User details fetched successfully'})
+    } catch (error) {
+        console.error("error fetching nearby userdetails:",error);
+        next(error)
+    }
+}

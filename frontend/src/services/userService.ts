@@ -1,19 +1,6 @@
+import { Shop } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
-
-export interface Shop {
-    _id: string;
-    shopName: string;
-    image: string;
-    distance?: number;
-    address?: {
-        street?: string;
-        city?: string;
-        state?: string;
-        country?: string;
-        pincode?: string;
-    };
-}
 
 export const fetchNearbyShops = async (latitude:number,longitude:number):Promise<Shop[]> => {
     try{
@@ -24,5 +11,14 @@ export const fetchNearbyShops = async (latitude:number,longitude:number):Promise
     }catch(error){
         console.error("Error fetching nearby shops:", error);
         throw new Error("Unable to fetch nearby shops.");
+    }
+}
+
+export const fetchUserData = async (url:string):Promise<{status:number,data:any}> => {
+    try {
+       return await api.get(url)
+    } catch (error) {
+        console.error("Error fetching nearby user detail:", error);
+        throw new Error("Unable to fetch nearby user detail.");
     }
 }

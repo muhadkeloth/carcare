@@ -7,7 +7,7 @@ import { emailValidation } from '../utilities/validation';
 import axios, { AxiosError } from 'axios';
 import { ErrorResponse, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { fetchForgotPass } from '../../services/common';
+import { fetchForgotPass } from '../../services/apiCall';
 
 
 const ForgotPass:React.FC<RoleProps> = ({ role }) => {
@@ -23,9 +23,8 @@ const ForgotPass:React.FC<RoleProps> = ({ role }) => {
 
       try{
         const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate` ;
-        console.log("url",import.meta.env.VITE_ENDPORTFRONT+url)
         // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ email, role })
-        const response = await fetchForgotPass(url,email, role)
+        const response = await fetchForgotPass(url,{email, role})
         if(response.status == 201){
           navigateOtpValidate(navigate,email,role )
         }

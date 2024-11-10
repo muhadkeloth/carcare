@@ -7,7 +7,7 @@ import { emailValidation, passwordValidation } from '../utilities/validation';
 import { handleForgotPass, handleSignUpClick, navigateHome, navigatePasswordChange } from '../utilities/navigate/common';
 import { ErrorResponse, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { fetchLogin } from '../../services/common';
+import { fetchLogin } from '../../services/apiCall';
 
 
 
@@ -28,14 +28,12 @@ const Login: React.FC<RoleProps> = ({ role }) => {
       return
     }else{ setEmailError('') }
 
-
-
     try{
         // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/${role}/login`,{
         //   email,password,
         // });
 
-        const response = await fetchLogin(role,email,password);
+        const response = await fetchLogin(role,{email,password});
         if(response.status == 201){
           if(response.data.token){
             localStorage.setItem(`${role}_token`,response.data.token);
@@ -53,14 +51,10 @@ const Login: React.FC<RoleProps> = ({ role }) => {
         const errorMessage = err?.response?.data?.message || 'Login failed. Please try again.';
         errorMessage == "Invalid password" ? setPassError(errorMessage) : (
           toast.error(errorMessage, {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
+            position: "bottom-right", autoClose: 3000,
+            hideProgressBar: false, closeOnClick: true,
+            pauseOnHover: true, draggable: true,
+            progress: undefined, theme: "dark",
             transition: Bounce,
             })
         );
