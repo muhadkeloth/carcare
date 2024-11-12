@@ -288,7 +288,7 @@ const ShopManagement: React.FC = () => {
             </div>
             <div className="mb-3">
               <label className="block text-sm font-medium text-gray-700">
-                Image
+                Shop Image
               </label>
               <input
                 type="file"

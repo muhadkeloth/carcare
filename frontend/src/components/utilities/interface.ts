@@ -6,6 +6,7 @@ export interface ShopMainProps { activeSection: string; }
 
 export interface LocationPickerProps {
     onLocationChange:(location:{latitude:number;longitude:number}) => void;
+    initialPosition?:[number,number];
 }
   
   export interface NewShop {
@@ -33,9 +34,10 @@ export interface LocationPickerProps {
   }
 
   export interface SidebarProps {
-    showMenu: boolean;
+    activeSection: string;
     handleActiveSection: (section: string) => void;
-    handleLogout: () => void;
+    handleLogout?: () => void;
+    children?: React.ReactNode;
 }
 
 export interface Shop {

@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react';
-import { navigateLogin } from '../../utilities/navigate/common';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import Header from './Header';
 import MainSection from './MainSection';
 import Shops from './Shops';

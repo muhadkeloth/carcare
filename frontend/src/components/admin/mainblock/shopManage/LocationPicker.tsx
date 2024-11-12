@@ -4,12 +4,15 @@ import { LocationPickerProps } from "../../../utilities/interface";
 
 
 
-const LocationPicker: React.FC<LocationPickerProps> = ({onLocationChange}) => {
+const LocationPicker: React.FC<LocationPickerProps> = ({onLocationChange, initialPosition}) => {
     const map = useMap();
-    const [position,setPosition] = useState<[number,number] | null>(null);
+    const [position,setPosition] = useState<[number,number] | null>(initialPosition || null);
     
     useEffect(()=>{
-      if(navigator.geolocation){
+      if(initialPosition){
+        map.setView(initialPosition,15);
+        setPosition(initialPosition);
+      }else if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(
           (pos) => {
             const {latitude, longitude} = pos.coords;
@@ -23,7 +26,7 @@ const LocationPicker: React.FC<LocationPickerProps> = ({onLocationChange}) => {
           }
         )
       }
-    },[map,onLocationChange]);
+    },[map, onLocationChange, initialPosition ]);
 
     useMapEvents({
         click(e:L.LeafletMouseEvent){

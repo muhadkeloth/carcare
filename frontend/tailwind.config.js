@@ -9,6 +9,9 @@ export default {
       colors:{
         maincol:'#0098D3',
         maincoldark:'#007BB8'
+      },
+      classes:{
+        'btn-primary':''
       }
     },
   },

@@ -29,6 +29,7 @@ const ShopSchema:Schema = new Schema(
         },
         image:{type:String,required:true},
         vehicleIds:[{type:Schema.Types.ObjectId,ref:"Vehicle"}],
+        about:{type:String },
 
         createdAt: { type: Date, default: Date.now },
     },

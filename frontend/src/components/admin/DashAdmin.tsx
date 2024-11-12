@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 const AdminDash: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [activeSection, setActiveSection] = useState('Dashboard');
+    const [activeSection, setActiveSection] = useState('Dash');
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -20,6 +20,7 @@ const AdminDash: React.FC = () => {
   const handleActiveSection = (section: string) => {
       // Your logic to set the active section
       setActiveSection(section)
+      setShowMenu(!showMenu);
       console.log('Active section:', section);
   };
 
@@ -42,13 +43,17 @@ useEffect(() => {
         </button>
     </div>
 
-<div className="flex flex-col md:flex-row h-screen">
+<div className="flex flex-col md:flex-row min-h-screen">
 
-    <AdminSidebar
-    showMenu={showMenu}
-    handleActiveSection={handleActiveSection}
-    handleLogout={handleLogout}
-/> 
+    <div className='md:w-1/6'>
+        <div className="bg-maincol  flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
+        <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} /> 
+        </div>
+        <div className={`bg-maincol flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out ${showMenu ? 'translate-x-0' : '-translate-x-full'} md:hidden w-3/5`}>
+        <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} /> 
+        </div>
+    </div>
+
     <AdminMain activeSection={activeSection} />
 </div>
 

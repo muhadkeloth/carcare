@@ -1,22 +1,27 @@
 import express from 'express';
-import { addVehicleDetails, login, otpgenerate, otpvalidation, resetPassword, vehicleDetails } from '../controllers/shopController';
+import { addVehicleDetails, deleteVehicleDetails, EditVehicleDetails, 
+    login, otpgenerate, otpvalidation, resetPassword, shopDetails, updateShopProfileDetails, updateShopProfilepassword, uploadShopProfileImg, vehicleDetails 
+} from '../controllers/shopController';
 import { authenticateToken } from '../middleware/auth';
-// import { login } from '../controllers/loginController';
+import upload from '../middleware/upload';
 
 const router = express.Router();
 
-// router.post('/login', async (req:Request,res:Response,next:NextFunction)=> {await login(req,res,next) });
 router.post('/login', login);
 
-// router.post('/otpgenerate', async (req:Request,res:Response,next:NextFunction)=> {await otpgenerate(req,res,next)});
-// router.post('/otpvalidation', async (req:Request,res:Response,next:NextFunction)=> {await otpvalidation(req,res,next)});
-// router.post('/resetPassword', async (req:Request,res:Response,next:NextFunction)=> {await resetPassword(req,res,next)});
 router.post('/otpgenerate', otpgenerate);
 router.post('/otpvalidation', otpvalidation);
 router.post('/resetPassword', resetPassword);
 
-router.get('/vehicledetails', authenticateToken,  vehicleDetails);//auth
-router.post('/addvehicle', authenticateToken,  addVehicleDetails);//auth
+router.get('/vehicledetails', authenticateToken,  vehicleDetails);
+router.post('/addvehicle', authenticateToken,  addVehicleDetails);
+router.put('/editvehicle/:id', authenticateToken,  EditVehicleDetails);
+router.delete('/deletevehicle/:id', authenticateToken,  deleteVehicleDetails);
+
+router.get('/shopdetails', authenticateToken, shopDetails)
+router.put('/uploadprofileimage', authenticateToken, upload.single('image'),  uploadShopProfileImg)
+router.put('/updateprofiledetails', authenticateToken, updateShopProfileDetails)
+router.put('/changepassword', authenticateToken, updateShopProfilepassword)
 
 
 export default router;

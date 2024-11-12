@@ -38,7 +38,8 @@ export interface IShop extends Document {
     };
     image:string;
     createdAt?:Date;
-    vehicleIds: Types.ObjectId[];
+    vehicleIds?: Types.ObjectId[];
+    about?:string;
 }
 
 export interface IVehicle extends Document {

@@ -1,13 +1,14 @@
 import {configureStore} from '@reduxjs/toolkit';
 import userReducer from '../features/userSlice.ts';
 import otpReducer from '../features/otpSlice.ts';
+import shopReducer from '../features/shopSlice.ts';
 
 
 const store = configureStore({
     reducer:{
         otp:otpReducer,
         user: userReducer,
-        // booking:bookingReducer,
+        shop:shopReducer,
     }
 })
 

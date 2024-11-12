@@ -97,12 +97,6 @@ const Signup:React.FC = () => {
     <div>
         <NavLogin />
 
-        {/* <ToastContainer
-        limit={2}
-        newestOnTop={false}
-        rtl={false}
-        pauseOnFocusLoss
-      /> */}
         <ToastContainer />
 
         <div className="flex items-center justify-center mt-2 ">

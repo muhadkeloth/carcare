@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { Vehicle } from '../../../utilities/interface';
-import { addNewVehicle, fetchAllShopVehicle } from '../../../../services/shopService';
+import { addNewVehicle, deleteNewVehicle, editNewVehicle, fetchAllShopVehicle } from '../../../../services/shopService';
 
 
 
@@ -11,9 +11,13 @@ const VehicleManagement:React.FC = () => {
     const [vehicles,setVehicles] = useState<Vehicle[]>([])
     const [newVehicle, setNewVehicle] = useState<Vehicle>({ brand:'',vehicleModel:'', year:[] });
     const [newVehicleError, setNewVehicleError] = useState({ brand:'',vehicleModel:'', year:'' });
-    // const [years,setYears] = useState<number[]>([]);
     const [selectedYear,setSelectedYear]  = useState<number | ''>('')
     const [showAddModal, setShowAddModal] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [actionType, setActionType] = useState("");
+    const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+    const [showConfirmModal, setShowConfirmModal] =useState(false);
+    const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null)
     const [currentPage,setCurrentPage] = useState(1);
     const [totalPages,setTotalPages] = useState(1);
 
@@ -107,6 +111,86 @@ const VehicleManagement:React.FC = () => {
         setNewVehicle((prev) => ({...prev,year:prev.year.filter((year)=> year!==yearToRemove)}));
     }
 
+    const openEditModel = (vehicle:Vehicle) => {
+      setIsEditMode(true);
+      setSelectedVehicle(vehicle);
+      setNewVehicle({
+        brand:vehicle.brand,
+        vehicleModel: vehicle.vehicleModel,
+        year:vehicle.year
+      });
+      setShowAddModal(true);
+    }
+
+    const openDeleteConfirm = (vehicle:Vehicle) => {
+      setVehicleToDelete(vehicle);
+      setActionType("delete");
+      setShowConfirmModal(true);
+    };
+
+    const confirmDelete = async () => {
+      try {
+        if(!vehicleToDelete?._id) throw new Error('unable to find id to delete vehicle')
+          const response = await deleteNewVehicle(vehicleToDelete?._id)
+        if(response.status == 201){
+          setVehicles((prev)=>
+            prev.filter((v)=>(v._id !== vehicleToDelete._id )));
+  
+          toast.success('vehicle updated successfully');
+        }else{
+          toast.error('failed to delete vehicle.');
+        }
+      } catch (error) {
+        console.log('error in deleting vehicle',error)
+        toast.error('failed to delete vehicle.')        
+      }finally{
+        setShowConfirmModal(false);
+      }
+    }
+    
+    const confirmEdit = async () => {
+      if(newVehicle.brand.trim().length == 0){
+        setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
+        return;
+    }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
+    if(newVehicle.vehicleModel.trim().length == 0){
+        setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
+        return;
+    }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
+    if(newVehicle.year.length ==0){
+        setNewVehicleError((prev)=>({...prev,year:'enter atleast one model year'}))
+        return
+    }else{setNewVehicleError((prev)=>({...prev,year:''}))}
+
+      try {
+        if(!selectedVehicle?._id) throw new Error('unable to find id to edit vehicle')
+        const response = await editNewVehicle(selectedVehicle?._id, newVehicle);
+        if(response){
+          setVehicles((prev)=>
+          prev.map((v)=>(v._id === selectedVehicle._id ? response.data.vehicle : v)));
+
+          toast.success('vehicle updated successfully');
+        }else{
+          toast.error('failed to update vehicle.');
+        }
+      } catch (error) {
+        console.log('error in deleting vehicle',error)
+        toast.error('error updating vehicle');
+      }finally{
+        setShowConfirmModal(false);
+        setShowAddModal(false);
+      }
+    }
+
+    const handleSubmit = () => {
+      if(isEditMode){
+        setActionType("edit");
+        setShowConfirmModal(true);
+      }else{
+        addVehicle();
+      }
+    }
+
     useEffect(()=>{
         fetchShopVehicle(currentPage)
       },[currentPage]);
@@ -121,7 +205,8 @@ const VehicleManagement:React.FC = () => {
         </h2>
         <button
           className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
-          onClick={() => setShowAddModal(true) }
+          onClick={() => 
+            {setShowAddModal(true); setIsEditMode(false); setNewVehicle({brand:"",vehicleModel:"",year:[]}) }}
         >
           <FontAwesomeIcon icon={faPlus} /> Add
         </button>
@@ -146,10 +231,10 @@ const VehicleManagement:React.FC = () => {
             <td className="py-4 px-6">{vehicle.year.join(' ')}</td>
             <td 
             className='py-3 px-4  text-center'>
-                <button className='me-3'>
+                <button className='me-3' onClick={()=>openEditModel(vehicle)}>
                     <FontAwesomeIcon icon={faPencil} />
                 </button>
-                <button>
+                <button onClick={()=> openDeleteConfirm(vehicle)}>
                     <FontAwesomeIcon icon={faTrash} />
                 </button>
             </td>
@@ -188,7 +273,7 @@ const VehicleManagement:React.FC = () => {
     {showAddModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center overflow-y-scroll ">
           <div className="bg-white m-5 p-6 rounded shadow-md w-full  max-w-md">
-            <h3 className="text-lg font-bold  mb-4">Add New Vehicle</h3>
+            <h3 className="text-lg font-bold  mb-4">{isEditMode? "Edit Vehicle" :"Add New Vehicle"}</h3>
 
               <div className="w-full">
               <label className=" text-sm  font-medium text-gray-700">
@@ -281,10 +366,34 @@ const VehicleManagement:React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={addVehicle}
+                onClick={handleSubmit}
                 className="bg-maincol text-white px-4 py-2 rounded hover:bg-maincoldark"
               >
-                Add Vehicle
+                {isEditMode? "Update" : 'Add'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+{showConfirmModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">
+              Are you sure you want to {actionType} this vehicle?
+            </h3>
+            <div className="flex items-center justify-end">
+              <button
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-maincol text-white px-4 py-2 rounded-md hover:bg-maincoldark"
+                onClick={actionType === "delete" ? confirmDelete : confirmEdit}
+              >
+                Confirm
               </button>
             </div>
           </div>

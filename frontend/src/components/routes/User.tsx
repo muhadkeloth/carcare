@@ -6,6 +6,7 @@ import Signup from '../authenticate/Signup'
 import ForgotPass from '../authenticate/ForgotPass'
 import SetPassword from '../authenticate/SetPassword'
 import OtpValidation from '../authenticate/OtpValidation'
+import FindWS from '../user/findworkShop/FindWS'
 
 const User:React.FC = () => {
 
@@ -18,6 +19,8 @@ const User:React.FC = () => {
       <Route path='forgotpass' element={<ForgotPass role="user" />} />
       <Route path='Otpvalidation' element={<OtpValidation  />} />
       <Route path='setpassword' element={<SetPassword  />} />
+
+      <Route path='findworkshop' element={<FindWS  />} />
 
       <Route path='*' element={<div>404 user</div>} />
     </Routes>
