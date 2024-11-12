@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Home from '../user/home/Home'
 import Login from '../authenticate/Login'
@@ -7,6 +7,7 @@ import ForgotPass from '../authenticate/ForgotPass'
 import SetPassword from '../authenticate/SetPassword'
 import OtpValidation from '../authenticate/OtpValidation'
 import FindWS from '../user/findworkShop/FindWS'
+import ShopDetails from '../user/shopDetailsPage/ShopDetails'
 
 const User:React.FC = () => {
 
@@ -21,6 +22,7 @@ const User:React.FC = () => {
       <Route path='setpassword' element={<SetPassword  />} />
 
       <Route path='findworkshop' element={<FindWS  />} />
+      <Route path='shopdetails' element={<ShopDetails  />} />
 
       <Route path='*' element={<div>404 user</div>} />
     </Routes>

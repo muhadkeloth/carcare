@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fetchNearbyShops } from '../../../services/userService';
 import { Shop } from '../../utilities/interface';
+import { ThreeDots } from 'react-loader-spinner';
 
 
 
@@ -29,8 +30,8 @@ const Shops:React.FC = () => {
         fetchShops();
     },[]);
 
-    if(error) return <p>{error}</p>
-    if(!shops) return <p>Loading...</p>
+    if(error) return (<p>{error}</p>)
+    if(shops.length == 0) return (<p ><ThreeDots height={10} color='#0098d3' wrapperClass="m-10"  /></p>)
 
   return (
     <div className="flex flex-wrap gap-4 m-14 justify-center ">

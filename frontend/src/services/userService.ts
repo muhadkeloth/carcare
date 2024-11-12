@@ -14,11 +14,23 @@ export const fetchNearbyShops = async (latitude:number,longitude:number):Promise
     }
 }
 
-export const fetchUserData = async (url:string):Promise<{status:number,data:any}> => {
+export const fetchUserData = async ():Promise<{status:number,data:any}> => {
     try {
-       return await api.get(url)
+       const response =  await api.get('/userdetails')
+       return {status:response.status,data:response.data}
     } catch (error) {
         console.error("Error fetching nearby user detail:", error);
         throw new Error("Unable to fetch nearby user detail.");
     }
 }
+
+export const fetchShopData = async (id:string):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/shopdetails/${id}`)
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        console.error("Error fetching nearby user detail:", error);
+        throw new Error("Unable to fetch nearby user detail.");
+    }
+}
+

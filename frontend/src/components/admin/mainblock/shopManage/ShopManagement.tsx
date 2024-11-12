@@ -1,37 +1,10 @@
-// import React from 'react'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faPlus, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-
-// const ShopManagement:React.FC = () => {
-//   return (
-//     <>
-//     <div className="flex justify-between mt-1 mb-4 pe-2">
-//       <h2 className="text-2xl font-bold ms-1  text-gray-800">Shop Management</h2>
-//       <button className="font-medium rounded bg-maincol  text-white px-2 hover:bg-maincoldark">
-//         <FontAwesomeIcon icon={faPlus} /> Add
-//       </button>
-//     </div>
-
-
-//     </>
-//   )
-// }
-
-// export default ShopManagement
-
-
-
-
-
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
-import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import L from 'leaflet';
 import LocationPicker from './LocationPicker';
 import { getAddressFromCoordinates } from '../../../utilities/functions';
 import { NewShop, Shop } from '../../../utilities/interface';
@@ -46,10 +19,8 @@ const ShopManagement: React.FC = () => {
   const [newShop, setNewShop] = useState<NewShop>({ shopName: '', ownerName: '',email:'', image: null, phoneNumber: '', location:'' });
   const [previewUrl,setPreviewUrl] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number }>({ latitude: 0, longitude: 0 });
-  const [image,setImage] = useState<File|null>(null);
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
-  const itemsPerPage = 10;
 
 
   const fetchShops = async (page:number) => {
