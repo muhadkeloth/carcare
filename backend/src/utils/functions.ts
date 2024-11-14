@@ -13,7 +13,7 @@ export const randomPassword = (length:number):string => {
         passwordArray.push(lowercase.charAt(Math.floor(Math.random() * lowercase.length)))
     }
     passwordArray.push(
-        specialCharacters.charAt(Math.floor(Math.random() * specialCharacters.length)), // 1 special char
+        specialCharacters.charAt(Math.floor(Math.random() * specialCharacters.length)),
         numbers.charAt(Math.floor(Math.random() * numbers.length)), 
     )
     

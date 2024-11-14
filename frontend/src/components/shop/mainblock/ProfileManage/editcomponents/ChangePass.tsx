@@ -86,7 +86,8 @@ const ChangePass:React.FC = () => {
       </div>
       <button type='submit'
       disabled={isLoading}
-      className='w-full bg-maincol rounded-md p-2 text-white'>
+      className='w-full btn-primary'>
+      {/* className='w-full bg-maincol rounded-md p-2 text-white'> */}
       {isLoading ? (
         <div className="flex justify-center items-center  w-full">
         <ThreeDots height="" color='white' wrapperClass="w-10 h-6"  />
@@ -97,39 +98,6 @@ const ChangePass:React.FC = () => {
 
     </div>
 
-
-
-    // <div className="flex flex-col mt-4 space-y-4  justify-center items-center">
-    //   <h3 className="font-semibold text-2xl">Change Password</h3>
-    //   <div className='w-1/3'>
-    //     <label className="block text-sm font-medium">Current Password</label>
-    //     <input
-    //       type="password"
-    //       className="w-full border border-gray-300 rounded-md p-2"
-    //       placeholder="••••••"
-    //     />
-    //   </div>
-    //   <div className='w-1/3'>
-    //     <label className="block text-sm font-medium">New Password</label>
-    //     <input
-    //       type="password"
-    //       className="w-full border border-gray-300 rounded-md p-2"
-    //       placeholder="••••••"
-    //     />
-    //   </div>
-    //   <div className='w-1/3' >
-    //     <label className="block text-sm font-medium">Confirm Password</label>
-    //     <input
-    //       type="password"
-    //       className="w-full border border-gray-300 rounded-md p-2"
-    //       placeholder="••••••"
-    //     />
-    //   </div>
-    //   <button className='w-1/3 bg-maincol rounded-md p-2 text-white'>
-    //   Change Password
-    //   </button>
-
-    // </div>
   );
 }
 

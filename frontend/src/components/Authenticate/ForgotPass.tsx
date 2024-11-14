@@ -5,27 +5,29 @@ import { useNavigate } from 'react-router-dom';
 import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
 import { emailValidation } from '../utilities/validation';
 import axios, { AxiosError } from 'axios';
-import { ErrorResponse, RoleProps } from '../utilities/interface';
+import { ErrorResponse, HttpStatusCode, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { fetchForgotPass } from '../../services/apiCall';
+import { ThreeDots } from 'react-loader-spinner';
 
 
 const ForgotPass:React.FC<RoleProps> = ({ role }) => {
     const [email,setEmail] = useState('')
     const [emailError,setEmailError] = useState('')
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleForgotPass = async (event:React.FormEvent) => {
       event.preventDefault();
+      setIsLoading(true)
       const emailvalidation = emailValidation(email)
       if(emailvalidation){ setEmailError(emailvalidation);return; }
       else{ setEmailError('') }
 
       try{
         const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate` ;
-        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{ email, role })
         const response = await fetchForgotPass(url,{email, role})
-        if(response.status == 201){
+        if(response.status == HttpStatusCode.CREATED){
           navigateOtpValidate(navigate,email,role )
         }
       }catch(error){
@@ -45,6 +47,8 @@ const ForgotPass:React.FC<RoleProps> = ({ role }) => {
           transition: Bounce,
           });
         }
+      }finally{
+        setIsLoading(false);
       }
     }
 
@@ -82,12 +86,13 @@ const ForgotPass:React.FC<RoleProps> = ({ role }) => {
           </div>
           <button 
             type="submit" 
-            className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
+            // className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
+            className="w-full btn-primary flex justify-center"
           >
-            GET OTP
+            { isLoading ? <ThreeDots height={20} color='white' /> : "GET OTP"}
           </button>
         <p className='text-center mt-3'>Back to{' '}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
+          <span className='text-mainclr-500 font-medium hover:underline hover:text-mainclr-600 cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
           </p>
         </form>
       </div>

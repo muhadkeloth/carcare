@@ -6,11 +6,11 @@ import axios, { AxiosError } from 'axios';
 import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
 import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { ErrorResponse } from '../utilities/interface';
+import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
 import { fetchSignup } from '../../services/apiCall';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setSignupDetails } from '../../features/otpSlice';
-import { RootState } from '../../store';
+import { ThreeDots } from 'react-loader-spinner';
 
 
 const Signup:React.FC = () => {
@@ -26,12 +26,12 @@ const Signup:React.FC = () => {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    const newUserDetails = useSelector((state:RootState) => state.otp.signupDetails)
+    const [isLoading,setIsLoading] = useState(false);
+    // const newUserDetails = useSelector((state:RootState) => state.otp.signupDetails)
 
     const handleSignup = async (e:React.FormEvent) => {
       e.preventDefault();
-
+      setIsLoading(true);
       setName(name.trim())
       const namevalidation = nameValidation(name)
       if(namevalidation){
@@ -65,7 +65,7 @@ const Signup:React.FC = () => {
 
       try{
         const response = await fetchSignup('/signupOtpGenerate',{email,phoneNumber});
-        if(response.status == 201){
+        if(response.status == HttpStatusCode.CREATED){
           const userData = {
             username:name,
             email,
@@ -89,6 +89,8 @@ const Signup:React.FC = () => {
             transition: Bounce,
             });
         }
+      }finally{
+        setIsLoading(false);
       }
     }
 
@@ -189,12 +191,13 @@ const Signup:React.FC = () => {
           </div>
           <button 
             type="submit" 
-            className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
+            // className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
+            className=" w-full btn-primary flex justify-center mt-4"
           >
-            Sign Up
+           { isLoading ? <ThreeDots height={20} color='#fff' /> : " Sign Up"}
           </button>
         <p className='text-center mt-3'>Have Account?  {" "}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,'user')}>Log In</span>
+          <span className='text-mainclr-500 font-medium hover:text-mainclr-600 hover:underline cursor-pointer' onClick={()=>navigateLogin(navigate,'user')}>Log In</span>
           </p>
         </form>
       </div>

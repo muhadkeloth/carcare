@@ -1,6 +1,7 @@
 import axios from "axios"
 import store from "../store";
 import { clearUser } from "../features/userSlice";
+import { HttpStatusCode } from "../components/utilities/interface";
 
 
 const api = axios.create({
@@ -30,10 +31,10 @@ api.interceptors.request.use((config) => {
 
     // if(publicRoutes.includes(currentRoute)){return config};
 
-    if(config.url?.startsWith('/admin')){
+    if(config.url?.startsWith('/admin/')){
         token = localStorage.getItem('admin_token');
         endpoint = '/admin/login';
-    }else if(config.url?.startsWith('/shop')){
+    }else if(config.url?.startsWith('/shop/')){
         token = localStorage.getItem('shop_token');
         endpoint = '/shop/login';
     }else{
@@ -63,13 +64,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if(error.response?.status == 403){
+        if(error.response?.status == HttpStatusCode.FORBIDDEN){
             const currentRoute = window.location.pathname;
             let logoutUrl = 'user';
 
-            if(currentRoute.startsWith('/admin')){
+            if(currentRoute.startsWith('/admin/')){
                 logoutUrl = 'admin';
-            }else if(currentRoute.startsWith('/shop')){
+            }else if(currentRoute.startsWith('/shop/')){
                 logoutUrl = 'shop';
             }else{
                 store.dispatch(clearUser())

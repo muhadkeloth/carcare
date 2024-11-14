@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import NavLogin from './NavLogin';
 import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
-import { emailValidation, passwordValidation } from '../utilities/validation';
+import { AxiosError } from 'axios';
+import { emailValidation } from '../utilities/validation';
 import { handleForgotPass, handleSignUpClick, navigateHome, navigatePasswordChange } from '../utilities/navigate/common';
-import { ErrorResponse, RoleProps } from '../utilities/interface';
+import { ErrorResponse, HttpStatusCode, RoleProps } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { fetchLogin } from '../../services/apiCall';
+import { ThreeDots } from 'react-loader-spinner';
 
 
 
@@ -17,11 +18,12 @@ const Login: React.FC<RoleProps> = ({ role }) => {
   const [emailError, setEmailError] = useState('');
   const [passError, setPassError] = useState('');
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(false);
+  const { SUCCESS } = HttpStatusCode;
 
   const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const emailvalidation = emailValidation(email)
     if(emailvalidation){
       setEmailError(emailvalidation);
@@ -29,15 +31,10 @@ const Login: React.FC<RoleProps> = ({ role }) => {
     }else{ setEmailError('') }
 
     try{
-        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/${role}/login`,{
-        //   email,password,
-        // });
-
         const response = await fetchLogin(role,{email,password});
-        if(response.status == 201){
+        if(response.status == SUCCESS){
           if(response.data.token){
             localStorage.setItem(`${role}_token`,response.data.token);
-          // navigate(`/${response.data.role}`);
           navigateHome(navigate, role);
           }else if(response.data?.validotp) {
             navigatePasswordChange(navigate,email,role)
@@ -58,6 +55,8 @@ const Login: React.FC<RoleProps> = ({ role }) => {
             transition: Bounce,
             })
         );
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -73,12 +72,6 @@ const Login: React.FC<RoleProps> = ({ role }) => {
   return (
     <>
       <NavLogin />
-      {/* <ToastContainer
-        limit={2}
-        newestOnTop={false}
-        rtl={false}
-        pauseOnFocusLoss
-      /> */}
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">
@@ -119,7 +112,7 @@ const Login: React.FC<RoleProps> = ({ role }) => {
               Password
               <span
                 onClick={() => handleForgotPass(navigate,role)}
-                className="text-maincol opacity-80 hover:underline hover:cursor-pointer ml-2"
+                className="text-mainclr-400 hover:underline cursor-pointer ml-2"
               >
                 Forgot your password?
               </span>
@@ -143,15 +136,15 @@ const Login: React.FC<RoleProps> = ({ role }) => {
           </div>
           <button
             type="submit"
-            className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
+            className="btn-primary w-full flex justify-center"
           >
-            Login
+            { isLoading ? <ThreeDots height={20} color='#fff' /> : "Login"}
           </button>
           {role === "user" ? (
             <p className="text-center mt-3">
               Don't have an account?{" "}
               <span
-                className="text-maincol font-medium hover:underline hover:cursor-pointer"
+                className="text-mainclr-500 font-medium hover:underline hover:text-mainclr-600 cursor-pointer"
                 onClick={() => handleSignUpClick(navigate)}
               >
                 Sign Up

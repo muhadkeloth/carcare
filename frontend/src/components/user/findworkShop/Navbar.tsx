@@ -2,6 +2,7 @@ import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 
+
 const Navbar:React.FC = () => {
   return (
     <nav className='p-6 pb-0 bg-white-600 sticky top-0 border-b shadow-md '>

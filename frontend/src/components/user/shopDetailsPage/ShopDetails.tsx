@@ -1,17 +1,16 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom';
 import Header from '../reusableComponents/Header';
 import MainBlock from './MainBlock';
+import Footer from '../reusableComponents/Footer';
 
 
 const ShopDetails:React.FC = () => {
-    const location = useLocation();
-    const {id} = location.state || {};
 
   return (
     <div>
         <Header />
         <MainBlock />
+        <Footer />
     </div>
   )
 }

@@ -5,9 +5,10 @@ import { navigateHome, navigateLogin } from '../utilities/navigate/common';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { passwordConfirmValidation, passwordValidation } from '../utilities/validation';
 import axios, { AxiosError } from 'axios';
-import { ErrorResponse } from '../utilities/interface';
+import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { fetchSetPassword } from '../../services/apiCall';
+import { ThreeDots } from 'react-loader-spinner';
 
 
 
@@ -19,10 +20,12 @@ const SetPassword:React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation();
     const { email,role } = location.state || {};
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const handleSetPassword = async (event:React.FormEvent) => {
       event.preventDefault();
-
+      setIsLoading(true)
       const passwordvalidation = passwordValidation(password)
       if(passwordvalidation){
         setPasswordError(passwordvalidation)
@@ -38,9 +41,8 @@ const SetPassword:React.FC = () => {
       try{
         const url = role == 'user' ? '/resetPassword':`/${role}/resetPassword`
         console.log('setpass here',url)
-        // const response = await axios.post(`${import.meta.env.VITE_ENDPORTFRONT+url}`,{email,password,role});
         const response = await fetchSetPassword(url,{email,password,role});
-        if(response.status == 201){
+        if(response.status == HttpStatusCode.CREATED){
           if(role == 'shop'){
             localStorage.setItem(`${role}_token`,response.data.token);
             navigateHome(navigate,role);
@@ -62,6 +64,8 @@ const SetPassword:React.FC = () => {
             transition: Bounce,
             });
         }
+      }finally{
+        setIsLoading(false)
       }
     }
 
@@ -69,12 +73,6 @@ const SetPassword:React.FC = () => {
     <div>
         <NavLogin />
 
-        {/* <ToastContainer
-        limit={2}
-        newestOnTop={false}
-        rtl={false}
-        pauseOnFocusLoss
-      /> */}
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">
@@ -111,14 +109,11 @@ const SetPassword:React.FC = () => {
             style={confirmPasswordError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
           </div>
-          <button 
-            type="submit" 
-            className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
-          >
-            Reset Password
+          <button type="submit" className="w-full btn-primary flex justify-center">
+            { isLoading ? <ThreeDots height={20} color='#fff' /> : "Reset Password"}
           </button>
           <p className='text-center mt-3'>Back to  {" "}
-          <span className='text-maincol font-medium hover:underline hover:cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
+          <span className='text-mainclr-500 font-medium hover:underline hover:mainclr-600 cursor-pointer' onClick={()=>navigateLogin(navigate,role)}>Log In</span>
           </p>
         </form>
       </div>

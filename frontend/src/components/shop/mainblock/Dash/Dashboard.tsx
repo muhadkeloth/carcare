@@ -1,8 +1,8 @@
-import { faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import {  faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import ProfileImage from '../../../utilities/ProfileImage'
 import { fetchShopUserDetails } from '../../../../services/shopService'
+import { HttpStatusCode } from '../../../utilities/interface'
 
 
 const Dashboard:React.FC = () => {
@@ -12,7 +12,7 @@ const Dashboard:React.FC = () => {
   const handleshopDetails = async() => {
     try {
       const response = await fetchShopUserDetails()
-      if(response.status !== 201) throw new Error('something went wrong')
+      if(response.status !== HttpStatusCode.SUCCESS) throw new Error('something went wrong')
       const detail = {
         shopName:response.data.shopUser.shopName ,
         ownerName:response.data.shopUser.ownerName ,
@@ -29,6 +29,7 @@ useEffect(()=> {
   handleshopDetails()
 },[])
   return (
+    <>
     <div className='flex justify-center mt-10'>
         
 
@@ -40,9 +41,9 @@ useEffect(()=> {
         <div className="relative w-48 h-48">
           {shopdetails?.image ? (
             <img
-              src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails.image}`}
-              alt="Profile img"
-              className="w-full h-full rounded-full object-cover"
+            src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails.image}`}
+            alt="Profile img"
+            className="w-full h-full rounded-full object-cover"
             />
           ) : (
             <div className="flex justify-center items-center w-full h-full rounded-full bg-gray-300">
@@ -58,7 +59,10 @@ useEffect(()=> {
     </div>
 </div>
 
-    </div>
+</div>
+
+
+    </>
   )
 }
 

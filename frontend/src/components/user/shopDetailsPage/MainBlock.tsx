@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Shop } from '../../utilities/interface';
+import { HttpStatusCode, Shop } from '../../utilities/interface';
 import { fetchNearbyShops, fetchShopData } from '../../../services/userService';
 import { useLocation } from 'react-router-dom';
 
@@ -50,7 +50,7 @@ const MainBlock:React.FC = () => {
     try {
 
         const response = await fetchShopData(id);
-        if(response.status ==201){
+        if(response.status ==HttpStatusCode.SUCCESS){
             
             console.log('here shop',response.data);
             setShop(response.data.shopUser);
@@ -66,13 +66,16 @@ const MainBlock:React.FC = () => {
 
 
   useEffect(() => {
-    fetchShops();
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-
-  }, [shop]);
+    
+  }, []);
+  
+  useEffect(()=>{
+    fetchShops();
+  },[])
 
   return (
     <div className="container max-w-6xl mx-auto px-4">
@@ -85,21 +88,21 @@ const MainBlock:React.FC = () => {
     <ul className="flex gap-3 ">
         <li>
             <button
-            className={`cursor-pointer py-2 ${ activeSection === 'Overview' ? 'font-bold text-blue-500' : '' }`}
+            className={`cursor-pointer py-2 ${ activeSection === 'Overview' ? 'font-bold text-mainclr-500' : '' }`}
             onClick={() => handleScrollToSection('Overview')} >
             Overview
             </button>
         </li>
         <li>
     <button
-      className={`cursor-pointer py-2 ${ activeSection === 'About' ? 'font-bold text-blue-500' : '' }`} 
+      className={`cursor-pointer py-2 ${ activeSection === 'About' ? 'font-bold text-mainclr-500' : '' }`} 
         onClick={() => handleScrollToSection('About')} >
       About
     </button>
         </li>
         <li>
         <button
-        className={`cursor-pointer py-2 ${activeSection === 'Reviews' ? 'font-bold text-blue-500' : '' }`}
+        className={`cursor-pointer py-2 ${activeSection === 'Reviews' ? 'font-bold text-mainclr-500' : '' }`}
         onClick={() => handleScrollToSection('Reviews')} >
         Reviews
         </button>
@@ -150,8 +153,9 @@ const MainBlock:React.FC = () => {
         <div className="border rounded mt-5 px-2 py-5 space-y-3 text-center">
             <p>Soonest available time:</p>
             <h2 className="font-bold">Wed, Oct 13, 2024 at 8:00 am</h2>
-            <button className="bg-maincol w-full  rounded p-2">Book Appointment</button>
-            <h2 className="text-maincol">Check Availability</h2>
+            {/* <button className="bg-maincol w-full text-white font-semibold rounded p-2">Book Appointment</button> */}
+            <button className="btn-primary w-full">Book Appointment</button>
+            <h2 className="text-mainclr-500">Check Availability</h2>
         </div>
   </div>
 

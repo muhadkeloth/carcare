@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
 
@@ -6,7 +7,7 @@ export const fetchAllShop = async (page:number):Promise<{ workShop:any[]; totalP
     const itemsPerPage = 10;
     try{
         const response = await api.get(`/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
-        if(response.status !== 201) throw new Error(`unexpected status when shop details fetch code:${response.status}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error(`unexpected status when shop details fetch code:${response.status}`)
         
         const {data} = response;
         if(data && data.workShop){
@@ -33,7 +34,7 @@ export const fetchAllUsers = async (page:number):Promise<{users:any[]; totalPage
     const itemsPerPage = 10;
     try {
         const response = await api.get(`/admin/users?page=${page}&limit=${itemsPerPage}`);
-        if(response.status !== 201)throw new Error(`unexpected status code:${response.status}`);
+        if(response.status !== HttpStatusCode.SUCCESS)throw new Error(`unexpected status code:${response.status}`);
     
             const {data} = response;
             if(data && data.users ){
@@ -47,11 +48,20 @@ export const fetchAllUsers = async (page:number):Promise<{users:any[]; totalPage
     }
 }
 
-export const toggleuserStatus = async (url:string):Promise<{status:number,data:any}> => {
+export const toggleuserStatus = async (id:string):Promise<{status:number,data:any}> => {
     try {
-        return api.patch(url)
+        return api.patch(`/admin/user/${id}`)
     } catch (error) {
         console.error('unable to change user status',error)
         throw new Error(`unable to change user status${error}`)
+    }
+}
+
+export const toggleShopStatus = async (id:string):Promise<{status:number,data:any}> => {
+    try {
+        return api.patch(`/admin/shopstatus/${id}`)
+    } catch (error) {
+        console.error('unable to change shop status',error)
+        throw new Error(`unable to change shop status${error}`)
     }
 }

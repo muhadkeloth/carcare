@@ -11,7 +11,7 @@ export const handleForgotPass = (navigate:any,role:string):void => {
   }
 
 export const navigateLogin = (navigate:any,role:string) => {
-  if(role === 'user' ||  role == 'userSign'){
+  if(role === 'user' ||  role == 'userSign' || role == '' || !role){
     navigate('/login')
   }else{
     navigate(`/${role}/login`)

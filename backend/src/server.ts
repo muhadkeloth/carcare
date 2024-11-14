@@ -35,10 +35,6 @@ app.use('/',userRouter)
 app.use(errorHandler)
 
 
-// app.use('*', (req: Request, res: Response, next: NextFunction) => {
-//   next(new AppError(`Route ${req.originalUrl} not found`, 404));
-// });
-
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

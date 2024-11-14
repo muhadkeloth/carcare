@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs';
 import { otpgenerateFn, otpvalidationFn, resetPasswordFn } from "./commonController";
 import { AppError } from "../middleware/errorHandler";
+import { HttpStatusCode } from "../utils/interface";
 
 
 export const login = async (req:Request, res:Response, next:NextFunction) => {
@@ -14,17 +15,15 @@ export const login = async (req:Request, res:Response, next:NextFunction) => {
     const {email,password} = req.body;
     try{
         const admin = await User.findOne({email,role:'admin'});
-        // if(!admin) return res.status(400).json({message:"email not found"});
-        if(!admin) throw new AppError("email not found",400);
+        if(!admin) throw new AppError("email not found",HttpStatusCode.BAD_REQUEST);
         
         const isPasswordValid = await bcrypt.compare(password,admin.password);
-        // if(!isPasswordValid) return res.status(400).json({message:"Invalid password"});
-        if(!isPasswordValid) throw new AppError("Invalid password",400)
+        if(!isPasswordValid) throw new AppError("Invalid password",HttpStatusCode.BAD_REQUEST)
         
         const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
         const token = jwt.sign({id:admin._id,role:'admin'}, JWT_SALT , {expiresIn:"1D"})
 
-        res.status(201).json({token,role:'admin', message:"Login successful"})
+        res.status(HttpStatusCode.SUCCESS).json({token,role:'admin', message:"Login successful"})
     }catch(error){
         // res.status(500).json({message:"Server error"});
         next(error)
@@ -75,7 +74,7 @@ export const userDetails = async (req:Request, res:Response, next:NextFunction) 
         const users = await User.find({role:"user"}).sort({createdAt:-1}).skip(skip).limit(limit);
         const totalUsers = await User.countDocuments({role:'user'});
         console.log(users)
-        res.status(201).json({users,totalPages:Math.ceil(totalUsers/limit),currentPage:page});
+        res.status(HttpStatusCode.SUCCESS).json({users,totalPages:Math.ceil(totalUsers/limit),currentPage:page});
     }catch(error){
         // res.status(500).json({message:'failed to fetch users',error})
         next(error)
@@ -86,11 +85,11 @@ export const toggleStatus = async (req:Request, res:Response, next:NextFunction)
     const { id } = req.params;
     try{
         const user = await User.findById(id);
-        if(!user) throw new AppError('User not found',404);
+        if(!user) throw new AppError('User not found',HttpStatusCode.NOT_FOUND);
 
         user.isActive = user.isActive ? false : true ;
         await user.save();
-        res.status(200).json(user)
+        res.status(HttpStatusCode.CREATED).json(user)
     }catch(error){
         console.error(error);
         // return res.status(500).json({message:'Error updating status'})
@@ -125,7 +124,7 @@ export const addShop = async (req:Request, res:Response, next:NextFunction) => {
         
         const updatedShop = await newShop.save()
         console.log('updatedshop',updatedShop)
-        res.status(201).json({message:"shop added successfully",shop:newShop})
+        res.status(HttpStatusCode.CREATED).json({message:"shop added successfully",shop:newShop})
     } catch (error) {
         console.log(error)
         // res.status(404).json({message:'failed to add shop'})
@@ -142,9 +141,24 @@ export const shopdetails = async (req:Request, res:Response, next:NextFunction) 
         const workShop = await Shop.find().sort({createdAt:-1}).skip(skip).limit(limit);
         const totalWorkShop = await Shop.countDocuments();
         console.log('workshop',workShop)
-        res.status(201).json({workShop,totalPages:Math.ceil(totalWorkShop/limit),currentPage:page})
+        res.status(HttpStatusCode.SUCCESS).json({workShop,totalPages:Math.ceil(totalWorkShop/limit),currentPage:page})
     }catch(error){
         // res.status(500).json({message:'failed to fetch workShop details',error})
+        next(error)
+    }
+}
+
+export const toggleShopStatus = async (req:Request, res:Response, next:NextFunction):Promise<void> => {
+    const { id } = req.params;
+    try{
+        const shop = await Shop.findById(id);
+        if(!shop) throw new AppError('shop not found',HttpStatusCode.NOT_FOUND);
+
+        shop.isActive = shop.isActive ? false : true ;
+        await shop.save();
+        res.status(HttpStatusCode.CREATED).json(shop)
+    }catch(error){
+        console.error(error);
         next(error)
     }
 }

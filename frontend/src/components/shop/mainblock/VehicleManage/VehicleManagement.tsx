@@ -2,7 +2,7 @@ import { faAngleLeft, faAngleRight, faPencil, faPlus, faTrash, faX } from '@fort
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { Vehicle } from '../../../utilities/interface';
+import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
 import { addNewVehicle, deleteNewVehicle, editNewVehicle, fetchAllShopVehicle } from '../../../../services/shopService';
 
 
@@ -132,7 +132,7 @@ const VehicleManagement:React.FC = () => {
       try {
         if(!vehicleToDelete?._id) throw new Error('unable to find id to delete vehicle')
           const response = await deleteNewVehicle(vehicleToDelete?._id)
-        if(response.status == 201){
+        if(response.status == HttpStatusCode.SUCCESS){
           setVehicles((prev)=>
             prev.filter((v)=>(v._id !== vehicleToDelete._id )));
   
@@ -204,11 +204,12 @@ const VehicleManagement:React.FC = () => {
             Specialized Vehicles.
         </h2>
         <button
-          className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
+          // className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
+          className="btn-primary"
           onClick={() => 
             {setShowAddModal(true); setIsEditMode(false); setNewVehicle({brand:"",vehicleModel:"",year:[]}) }}
         >
-          <FontAwesomeIcon icon={faPlus} /> Add
+          <FontAwesomeIcon icon={faPlus} /> Add vehicle
         </button>
       </div>
 
@@ -255,7 +256,8 @@ const VehicleManagement:React.FC = () => {
       <button
       onClick={()=>setCurrentPage((prev)=> Math.max(prev-1,1))}
       disabled={currentPage ===1}
-      className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+      // className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+      className="btn-primary disabled:bg-gray-200">
         <FontAwesomeIcon icon={faAngleLeft} />
       </button>
       <span className='text-sm mx-2 text-gray-600'>
@@ -264,7 +266,8 @@ const VehicleManagement:React.FC = () => {
       <button
       onClick={()=>setCurrentPage((prev)=> Math.min(prev+1,totalPages))}
       disabled={currentPage === totalPages}
-       className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+      //  className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+       className="btn-primary disabled:bg-gray-200">
         <FontAwesomeIcon icon={faAngleRight} />
        </button>
     </div>
@@ -327,12 +330,13 @@ const VehicleManagement:React.FC = () => {
                 </select>
                 <button 
                 onClick={handleAddYear}
-                className="px-4 py-2 mt-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                // className="px-4 py-2 mt-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                className="px-4 py-2 mt-1 btn-primary">
                     Add
                 </button>
                 <button 
                 onClick={()=>setNewVehicle((prev)=>({...prev,year:[]}))}
-                className="px-4 py-2 mt-1 bg-gray-500 text-white rounded-md hover:bg-gray-600">
+                className="px-4 py-2 mt-1 btn-secondary">
                     Clear
                 </button>
                 </div>
@@ -361,13 +365,15 @@ const VehicleManagement:React.FC = () => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="bg-gray-200 text-gray-800 px-4 py-2 rounded mr-2 hover:bg-gray-300"
+                // className="bg-gray-200 text-gray-800 px-4 py-2 rounded mr-2 hover:bg-gray-300"
+                className="btn-secondary mr-2 "
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="bg-maincol text-white px-4 py-2 rounded hover:bg-maincoldark"
+                // className="bg-maincol text-white px-4 py-2 rounded hover:bg-maincoldark"
+                className="btn-primary"
               >
                 {isEditMode? "Update" : 'Add'}
               </button>
@@ -384,13 +390,15 @@ const VehicleManagement:React.FC = () => {
             </h3>
             <div className="flex items-center justify-end">
               <button
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
+                className="btn-secondary mr-2"
+                // className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
                 onClick={() => setShowConfirmModal(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-maincol text-white px-4 py-2 rounded-md hover:bg-maincoldark"
+                // className="bg-maincol text-white px-4 py-2 rounded-md hover:bg-maincoldark"
+                className="btn-primary"
                 onClick={actionType === "delete" ? confirmDelete : confirmEdit}
               >
                 Confirm

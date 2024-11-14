@@ -35,15 +35,14 @@ const Mainbody: React.FC = () => {
 
   useEffect(() => {
     fetchShops();
-  }, [shops]);
+  }, []);
 
 
   return (
     <div className="flex flex-row min-h-screen  ">
       <div className="w-full md:w-1/2 overflow-auto p-5  ">
         <h4 className="text-lg font-semibold">
-          {shops.length !== 0 ? shops.length : ""} CarCare Certified shops
-          nearby
+          {shops.length !== 0 ? shops.length : ""} CarCare Certified shops nearby
         </h4>
 
         {error && <p>{error}</p>}
@@ -68,13 +67,13 @@ const Mainbody: React.FC = () => {
                 </span>
 
                 <ul className="flex gap-2 text-sm ms-1 mt-3">
-                  <li className="bg-blue-200 p-1 px-2 rounded-full hover:cursor-pointer">
+                  <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
                     12K Warranty
                   </li>
-                  <li className="bg-blue-200 p-1 px-2 rounded-full hover:cursor-pointer">
+                  <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
                     Pickup{" "}
                   </li>
-                  <li className="bg-blue-200 p-1 px-2 rounded-full hover:cursor-pointer">
+                  <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
                     Rental Car
                   </li>
                 </ul>
@@ -95,7 +94,8 @@ const Mainbody: React.FC = () => {
 
                 <div className="mt-3 px-1 ">
                   <button onClick={()=>navigateShopDetailPage(navigate,shop._id)}
-                  className="bg-maincol rounded w-full p-2 ">
+                  // className="bg-maincol rounded w-full p-2 text-white">
+                  className=" w-full btn-primary">
                     Check Availability
                   </button>
                 </div>

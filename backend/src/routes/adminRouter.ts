@@ -1,7 +1,7 @@
 import express from 'express';
 import { 
     addShop, login, otpgenerate, otpvalidation, resetPassword, 
-    shopdetails, toggleStatus, userDetails 
+    shopdetails, toggleShopStatus, toggleStatus, userDetails 
 } from '../controllers/adminController';
 import upload from '../middleware/upload';
 import { authenticateToken } from '../middleware/auth';
@@ -21,6 +21,7 @@ router.patch('/user/:id',authenticateToken, toggleStatus);
 
 router.get('/shopdetails', authenticateToken, shopdetails);
 router.post('/addShop',authenticateToken, upload.single('image'), addShop);
+router.patch('/shopstatus/:id',authenticateToken, toggleShopStatus);
 
 
 export default router;

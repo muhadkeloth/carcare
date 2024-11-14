@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { HttpStatusCode } from "../utils/interface";
 
 
 export class AppError extends Error {
@@ -16,7 +17,7 @@ export class AppError extends Error {
 }
 
 export const errorHandler = (err:any, req:Request, res:Response, next:NextFunction) => {
-    err.statusCode = err.statusCode || 500;
+    err.statusCode = err.statusCode || HttpStatusCode.INTERNAL_SERVER_ERROR;
     err.status = err.status || 'error';
 
     res.status(err.statusCode).json({

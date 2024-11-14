@@ -7,8 +7,10 @@ import 'leaflet/dist/leaflet.css';
 
 import LocationPicker from './LocationPicker';
 import { getAddressFromCoordinates } from '../../../utilities/functions';
-import { NewShop, Shop } from '../../../utilities/interface';
-import { addNewShop, fetchAllShop } from '../../../../services/adminService';
+import { HttpStatusCode, NewShop, Shop } from '../../../utilities/interface';
+import { addNewShop, fetchAllShop, toggleShopStatus } from '../../../../services/adminService';
+import { toast } from 'react-toastify';
+import { ThreeDots } from 'react-loader-spinner';
 
 
 
@@ -21,13 +23,13 @@ const ShopManagement: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number }>({ latitude: 0, longitude: 0 });
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [toggleId, setToggleId] = useState('')
+  const [isLoading,setIsLoading] = useState(false)
 
 
   const fetchShops = async (page:number) => {
     try {
-      // const response = await axios.get(`${import.meta.env.VITE_ENDPORTFRONT}/admin/shopdetails?page=${page}&limit=${itemsPerPage}`);
-      // setShops(response.data.workShop); 
-      // setTotalPages(response.data.totalPages)
       const shopsData = await fetchAllShop(page);
       setShops(shopsData.workShop); 
       setTotalPages(shopsData.totalPages)
@@ -45,26 +47,61 @@ const ShopManagement: React.FC = () => {
     formData.append('phoneNumber',newShop.phoneNumber)
     formData.append('location',JSON.stringify(selectedLocation));
     if(newShop.image) formData.append('image',newShop.image);
-    
+
+    setIsLoading(true);
+
     try{
       const address = await getAddressFromCoordinates(selectedLocation.latitude,selectedLocation.longitude);
       formData.append('address',JSON.stringify(address) )       
     }catch(error){
       console.error('error fetching address from coordinates:',error);
+      toast.success('failed to add new shop')
+      setIsLoading(false);
+      setShowAddModal(false); 
       formData.append('address',JSON.stringify({street:'',city:'',state:'',country:'',pincode:''}));
     }
     console.log('newShop',newShop)
       try {
-        // await axios.post(`${import.meta.env.VITE_ENDPORTFRONT}/admin/addShop`, formData,{
-        //   headers:{ 'Content-Type':'multipart/form-data' }
-        // });
         await addNewShop(formData);
         setShowAddModal(false); 
         fetchShops(currentPage); 
+        toast.success('new shop added successfully')
       } catch (error) {
+        toast.success('failed to add new shop')
         console.error('Failed to add shop:', error);
+    }finally{
+      setIsLoading(false);
     }
   };
+
+
+  const toggleStatus = async(id:string) =>{
+    try{
+      const response = await toggleShopStatus(id);
+      if(response.status = HttpStatusCode.CREATED){
+        console.log('shop status updated successfully:', response.data);
+        const index = shops.findIndex(shop => shop._id == id);
+        if(index !== -1){
+          const updatedShops = [...shops];
+          updatedShops[index] = {
+            ...updatedShops[index],
+            isActive: !updatedShops[index].isActive
+          };
+          setShops(updatedShops)
+        }
+        toast.success('status changed successfully')
+      }else{
+        toast.error('status toggle failed')
+      }
+    }catch(error){
+      console.error('error on toggle status',error);
+      toast.error('status toggle failed')
+    }finally{
+      setToggleId('');
+      setShowConfirmModal(false);
+    }
+  }
+
 
   const handleImageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -90,7 +127,8 @@ const ShopManagement: React.FC = () => {
           Shop Management
         </h2>
         <button
-          className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
+          // className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
+          className="btn-primary"
           onClick={() => setShowAddModal(true)}
         >
           <FontAwesomeIcon icon={faPlus} /> Add
@@ -142,7 +180,8 @@ const ShopManagement: React.FC = () => {
                   <td className="py-3 px-4">{shop.email}</td>
                   <td className="py-3 px-4">{shop.phoneNumber}</td>
                   <td className="py-3 px-4">{Object.values(shop.address).join(' ')}</td>
-                  <td
+                  <td 
+                  onClick={()=> {setToggleId(shop._id);setShowConfirmModal(true)}}
                    className={`py-3 px-4 hover:cursor-pointer ${shop.isActive ? 'text-green-600 hover:text-green-400' : 'text-red-600 hover:text-red-400'}`}>
                     {shop.isActive ? 'Active':'Block'}</td>
                 </tr>
@@ -162,7 +201,8 @@ const ShopManagement: React.FC = () => {
         <button
         onClick={()=>setCurrentPage((prev)=> Math.max(prev-1,1))}
         disabled={currentPage === 1 }
-        className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+        // className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+        className="btn-primary disabled:bg-gray-200">
           <FontAwesomeIcon icon={faAngleLeft} />
         </button>
         <span className='text-sm mx-2 text-gray-600'>
@@ -171,7 +211,7 @@ const ShopManagement: React.FC = () => {
         <button
         onClick={()=>setCurrentPage((prev)=> Math.min(prev+1,totalPages))}
         disabled={currentPage === totalPages}
-         className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
+         className="btn-primary disabled:bg-gray-200">
           <FontAwesomeIcon icon={faAngleRight} />
          </button>
 
@@ -281,15 +321,39 @@ const ShopManagement: React.FC = () => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="bg-gray-200 text-gray-800 px-4 py-2 rounded mr-2 hover:bg-gray-300"
+                className="btn-secondary mr-2"
               >
                 Cancel
               </button>
               <button
                 onClick={addShop}
-                className="bg-maincol text-white px-4 py-2 rounded hover:bg-maincoldark"
+                className="btn-primary"
               >
-                Add Shop
+                {!isLoading ? 'Add Shop' : <ThreeDots color='white' height={10} />}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+{showConfirmModal && (
+        <div className="fixed inset-0  bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">
+              Are you sure you want to confirm change Shop Status?
+            </h3>
+            <div className="flex items-center justify-end">
+              <button
+                className="btn-secondary mr-2"
+                // className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
+                onClick={() =>{ setShowConfirmModal(false);setToggleId('')}}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={()=>toggleStatus(toggleId)} >
+                Confirm
               </button>
             </div>
           </div>

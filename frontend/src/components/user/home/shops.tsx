@@ -51,7 +51,8 @@ const Shops:React.FC = () => {
                 <p className="mb-3 font-normal flex-col text-gray-700 dark:text-gray-400">
                   {shop?.address && Object.values(shop?.address).join(" ")}
                 </p>
-                <button className="mb-3 bg-maincol rounded text-white p-2 w-full hover:bg-maincoldark hover:cursor-pointer">
+                {/* <button className="mb-3 bg-maincol rounded text-white p-2 w-full hover:bg-maincoldark hover:cursor-pointer"> */}
+                <button className="mb-3  w-full btn-primary">
                   {" "}
                   Check Availability
                 </button>

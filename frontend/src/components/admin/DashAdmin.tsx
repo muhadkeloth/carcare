@@ -7,6 +7,7 @@ import ProfileImage from '../utilities/ProfileImage'
 import AdminSidebar from './SidebarAdmin'
 import { navigateLogin, navigateLogout } from '../utilities/navigate/common'
 import { useNavigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 
 const AdminDash: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -33,12 +34,14 @@ useEffect(() => {
  <div className="flex flex-col ">
 
     <NavLogin />
+    <ToastContainer />
+
     <div className="flex justify-between items-center my-1 ">
-        <button onClick={() => console.log("Go back")} className="text-2xl text-maincol ps-2">
+        <button onClick={() => console.log("Go back")} className="text-2xl text-mainclr-800 ps-2">
             <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <ProfileImage />
-        <button onClick={() => setShowMenu(!showMenu)} className="text-2xl text-maincol pe-2 md:hidden">
+        <button onClick={() => setShowMenu(!showMenu)} className="text-2xl text-mainclr-800 pe-2 md:hidden">
             <FontAwesomeIcon icon={faBars} />
         </button>
     </div>
@@ -46,10 +49,10 @@ useEffect(() => {
 <div className="flex flex-col md:flex-row min-h-screen">
 
     <div className='md:w-1/6'>
-        <div className="bg-maincol  flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
+        <div className="bg-mainclr-500 rounded-e-md  flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
         <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} /> 
         </div>
-        <div className={`bg-maincol flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out ${showMenu ? 'translate-x-0' : '-translate-x-full'} md:hidden w-3/5`}>
+        <div className={`bg-mainclr-500 rounded-e-md flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out ${showMenu ? 'translate-x-0' : '-translate-x-full'} md:hidden w-3/5`}>
         <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} /> 
         </div>
     </div>

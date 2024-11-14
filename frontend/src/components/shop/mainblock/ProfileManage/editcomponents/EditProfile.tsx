@@ -101,7 +101,7 @@ const EditProfile:React.FC = () => {
           )}
           <label
             htmlFor="profileImage"
-            className="absolute bottom-2  right-2 bg-gray-200 px-3 py-2 rounded-full cursor-pointer"
+            className="absolute bottom-2  right-2 bg-gray-200 px-3 py-2 rounded-full cursor-pointer hover:bg-gray-300"
           >
           <FontAwesomeIcon icon={faPencilAlt}/>
             <input
@@ -195,8 +195,9 @@ const EditProfile:React.FC = () => {
          
           <div className="flex justify-end">
             <button
-              type="button" onClick={()=>setShowConfirmModal(true)}
-              className="bg-maincol hover:bg-maincoldark text-white px-4 py-2 rounded-md"
+              type="button" onClick={()=>(validateForm()) ?setShowConfirmModal(true): false}
+              // className="bg-maincol hover:bg-maincoldark text-white px-4 py-2 rounded-md"
+              className="btn-primary"
             >
               Save Changes
             </button>
@@ -212,13 +213,15 @@ const EditProfile:React.FC = () => {
             </h3>
             <div className="flex items-center justify-end">
               <button
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
+                className="btn-secondary mr-2"
+                // className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
                 onClick={() => setShowConfirmModal(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-maincol text-white px-4 py-2 rounded-md hover:bg-maincoldark"
+                // className="bg-maincol text-white px-4 py-2 rounded-md hover:bg-maincoldark"
+                className="btn-primary"
                 onClick={handleSaveChanges} >
                 Confirm
               </button>

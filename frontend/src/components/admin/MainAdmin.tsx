@@ -1,6 +1,4 @@
-import { faArrowRightFromBracket, faBars, faChartBar, faStore, faUserCog } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react'
+import React from 'react'
 import Dashboard from './mainblock/Dash/Dashboard';
 import UserManagement from './mainblock/UserManage/UserManagement';
 import ShopManagement from './mainblock/shopManage/ShopManagement';
