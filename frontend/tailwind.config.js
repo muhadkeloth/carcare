@@ -42,7 +42,7 @@ export default {
     function({ addComponents }){
       addComponents({
         '.btn-primary':{
-          position: 'relative', 
+          // position: 'relative', 
           display: 'inline-block', 
           borderRadius: '0.375rem', 
           backgroundColor: '#0098D3', //500

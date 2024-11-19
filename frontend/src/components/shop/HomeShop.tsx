@@ -34,12 +34,7 @@ const ShopHome:React.FC = () => {
       <NavLogin />
 
       <div className="flex justify-between items-center my-1 ">
-        <button
-          onClick={() => console.log("Go back")}
-          className="text-2xl text-mainclr-800 ps-2"
-        >
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
+       
         <ProfileImage />
         <button
           onClick={() => setShowMenu(!showMenu)}
@@ -59,7 +54,7 @@ const ShopHome:React.FC = () => {
             className={`bg-mainclr-500 rounded-e-md flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out ${
               showMenu ? "translate-x-0" : "-translate-x-full"
             } md:hidden w-3/5`} >
-            <SidebarShop  activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} />
+            <SidebarShop  activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} showMenu={showMenu} />
             </div>
         </div>
 

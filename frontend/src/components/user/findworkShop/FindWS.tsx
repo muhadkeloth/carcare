@@ -8,8 +8,10 @@ const FindWS:React.FC = () => {
   return (
     <>
         <Header />
-        <Navbar />
+        {/* <Navbar /> */}
         <Mainbody />
+
+        
         <Footer />
     </>
   )

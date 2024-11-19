@@ -50,6 +50,7 @@ export interface LocationPickerProps {
     handleActiveSection: (section: string) => void;
     handleLogout?: () => void;
     children?: React.ReactNode;
+    showMenu?:boolean;
 }
 
 export interface Shop {

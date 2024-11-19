@@ -1,14 +1,17 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faUserCog, faStore, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faUserCog, faStore, faArrowRightFromBracket, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { SidebarProps } from '../utilities/interface';
 
 
 
-const SidebarAdmin:React.FC<SidebarProps> = ({ activeSection, handleActiveSection, handleLogout }) => {
+const SidebarAdmin:React.FC<SidebarProps> = ({ activeSection, handleActiveSection, handleLogout, showMenu }) => {
   return (
     <>
-      <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
+      <div className="flex w-full mb-6 pe-3 items-center justify-between">
+         <h2 className="text-xl font-bold ">Admin Panel</h2>
+        {showMenu && <FontAwesomeIcon icon={faArrowLeft} onClick={()=> handleActiveSection(activeSection)}  />}
+    </div>
       <nav className="flex flex-col w-full space-y-4">
         <button
           className={`flex items-center space-x-2 hover:text-mainclr-200 ${activeSection == 'Dash' ? 'text-mainclr-700 border-r-4 border-mainclr-900':''} `}

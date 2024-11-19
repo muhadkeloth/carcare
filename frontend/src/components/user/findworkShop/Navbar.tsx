@@ -5,9 +5,10 @@ import React from 'react'
 
 const Navbar:React.FC = () => {
   return (
-    <nav className='p-6 pb-0 bg-white-600 sticky top-0 border-b shadow-md '>
+    <nav className=' p-6 pb-0 bg-white  border-b shadow-md sticky top-0 z-0 '>
         <h5 className="font-semibold text-4xl">Auto Repair Shops Near Me</h5>
-            <ul className='flex gap-2 px-1 py-4 mt-4'>
+
+            <ul className='flex flex-wrap gap-2 px-1 py-4 mt-4'>
                 <li>
                     <button className="py-1 px-3 border border-slate-500 rounded-full text-sm "><FontAwesomeIcon icon={faLocationDot} className='text-slate-600' /> pincode</button>
                 </li>

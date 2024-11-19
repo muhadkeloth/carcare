@@ -85,7 +85,6 @@ const EditProfile:React.FC = () => {
     <div className="flex flex-col sm:flex-row my-6 sm:mx-4">
       <div className="flex flex-col flex-grow sm:ms-4">
 
-
       <div className="flex flex-col items-center  mb-6 ">
         <div className="relative w-48 h-48">
           {editedShopUser?.image ? (
@@ -113,8 +112,7 @@ const EditProfile:React.FC = () => {
           </label>
         </div>
       </div>
-
-      
+   
         <form className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -195,7 +193,7 @@ const EditProfile:React.FC = () => {
          
           <div className="flex justify-end">
             <button
-              type="button" onClick={()=>(validateForm()) ?setShowConfirmModal(true): false}
+              type="button" onClick={()=>(validateForm() ? setShowConfirmModal(true): false )}
               // className="bg-maincol hover:bg-maincoldark text-white px-4 py-2 rounded-md"
               className="btn-primary"
             >

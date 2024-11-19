@@ -50,7 +50,7 @@ const MainBlock:React.FC = () => {
     try {
 
         const response = await fetchShopData(id);
-        if(response.status ==HttpStatusCode.SUCCESS){
+        if(response.status == HttpStatusCode.SUCCESS){
             
             console.log('here shop',response.data);
             setShop(response.data.shopUser);
@@ -84,7 +84,8 @@ const MainBlock:React.FC = () => {
     <h1 className="text-2xl font-bold">Shop Details</h1>
   </nav>
 
-  <div className=" sticky top-16 z-40 p-4 pb-0 flex space-x-6 border-b">
+  {/* <div className=" sticky top-16 z-40 p-4 pb-0 flex space-x-6 border-b"> */}
+  <div className="bg-white sticky top-16 z-50 p-4 pb-0 flex space-x-6 border-b">
     <ul className="flex gap-3 ">
         <li>
             <button

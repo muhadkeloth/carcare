@@ -8,6 +8,8 @@ import SetPassword from '../authenticate/SetPassword'
 import OtpValidation from '../authenticate/OtpValidation'
 import FindWS from '../user/findworkShop/FindWS'
 import ShopDetails from '../user/shopDetailsPage/ShopDetails'
+import BookingSlot from '../user/booking/BookingSlot'
+import Estimate from '../user/estimate/Estimate'
 
 const User:React.FC = () => {
 
@@ -22,7 +24,11 @@ const User:React.FC = () => {
       <Route path='setpassword' element={<SetPassword  />} />
 
       <Route path='findworkshop' element={<FindWS  />} />
-      <Route path='shopdetails' element={<ShopDetails  />} />
+      <Route path='workshopdetails' element={<ShopDetails  />} />
+
+      <Route path='bookingSlot' element={<BookingSlot  />} />
+
+      <Route path='getEstimate' element={<Estimate  />} />
 
       <Route path='*' element={<div>404 user</div>} />
     </Routes>

@@ -12,11 +12,11 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
     const { UNAUTHORIZED, FORBIDDEN } = HttpStatusCode;
     const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
     const token = req.header('Authorization')?.split(' ')[1];
-
     if(!token) return next(new AppError("Access Denied",UNAUTHORIZED))
-
-    try{
-        const verified = jwt.verify(token, JWT_SALT );
+        
+        try{
+            const verified = jwt.verify(token, JWT_SALT );
+            console.log('token',token)
         if(!verified || typeof verified !== 'object'){
             return next(new AppError("Invalid token payload",FORBIDDEN));
         }
@@ -34,6 +34,8 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
         console.log('req.user:',req.user)
         next();
     }catch(error){
+        console.log('error in auth',error);
+        
         next(new AppError(`Invalid token ${error}`,FORBIDDEN));
         // if (error instanceof jwt.TokenExpiredError) {
         //     return next(new AppError("Token has expired", UNAUTHORIZED)); 

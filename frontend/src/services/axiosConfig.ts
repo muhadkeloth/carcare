@@ -64,20 +64,22 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        console.log('currentroute ',window.location.pathname);
+        
         if(error.response?.status == HttpStatusCode.FORBIDDEN){
             const currentRoute = window.location.pathname;
             let logoutUrl = 'user';
 
-            if(currentRoute.startsWith('/admin/')){
+            if(currentRoute.startsWith('/admin')){
                 logoutUrl = 'admin';
-            }else if(currentRoute.startsWith('/shop/')){
+            }else if(currentRoute.startsWith('/shop')){
                 logoutUrl = 'shop';
             }else{
                 store.dispatch(clearUser())
             }
 
             localStorage.removeItem(`${logoutUrl}_token`);
-            window.location.href = logoutUrl == 'user' ? '/login':`/${logoutUrl}/login`;
+            // window.location.href = logoutUrl == 'user' ? '/login':`/${logoutUrl}/login`;
         }
         return Promise.reject(error);
     }
