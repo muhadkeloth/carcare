@@ -2,7 +2,7 @@ import { faAngleRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import carcare_logo from '../../../assets/images/Car_Care_logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import { HttpStatusCode, Shop } from '../../utilities/interface'
 import { fetchShopData } from '../../../services/userService'
 import DropOff from './dropOff/DropOff'
@@ -10,7 +10,7 @@ import Vehicle from './Vehicle'
 import Summary from './Summary'
 import ContactInfo from './ContactInfo'
 import Footer from '../reusableComponents/Footer'
-import { useDispatch, useSelector } from 'react-redux'
+import {  useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { navigateHome } from '../../utilities/navigate/common'
 
@@ -18,7 +18,6 @@ import { navigateHome } from '../../utilities/navigate/common'
 const BookingSlot:React.FC = () => {
   const [shop,setShop] = useState<Shop | null>(null);
   const [activeSection, setActiveSection] = useState('DropOff')
-  const location = useLocation()
   const navigate = useNavigate()
   const { shopId } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
