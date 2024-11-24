@@ -1,27 +1,33 @@
-import express from 'express';
-import { addVehicleDetails, deleteVehicleDetails, EditVehicleDetails, 
-    login, otpgenerate, otpvalidation, resetPassword, shopDetails, updateShopProfileDetails, updateShopProfilepassword, uploadShopProfileImg, vehicleDetails 
-} from '../controllers/shopController';
+import { Router } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import upload from '../middleware/upload';
+import { ShopController } from '../controllers/shopController';
+import ShopService from '../services/ShopService';
+import ShopRepository from '../repositories/ShopRepository';
+import Shop from '../models/Shop';
 
-const router = express.Router();
 
-router.post('/login', login);
+const router = Router();
 
-router.post('/otpgenerate', otpgenerate);
-router.post('/otpvalidation', otpvalidation);
-router.post('/resetPassword', resetPassword);
+const shopService = new ShopService(new ShopRepository(Shop));
+const shopController = new ShopController(shopService);
 
-router.get('/vehicledetails', authenticateToken,  vehicleDetails);
-router.post('/addvehicle', authenticateToken,  addVehicleDetails);
-router.put('/editvehicle/:id', authenticateToken,  EditVehicleDetails);
-router.delete('/deletevehicle/:id', authenticateToken,  deleteVehicleDetails);
 
-router.get('/shopdetails', authenticateToken, shopDetails)
-router.put('/uploadprofileimage', authenticateToken, upload.single('image'),  uploadShopProfileImg)
-router.put('/updateprofiledetails', authenticateToken, updateShopProfileDetails)
-router.put('/changepassword', authenticateToken, updateShopProfilepassword)
+router.post('/login', shopController.login);
+
+router.post('/otpgenerate', shopController.otpgenerate);
+router.post('/otpvalidation', shopController.otpvalidation);
+router.post('/resetPassword', shopController.resetPassword);
+
+router.get('/vehicledetails', authenticateToken, shopController.vehicleDetails);
+router.post('/addvehicle', authenticateToken, shopController.addVehicleDetails);
+router.put('/editvehicle/:id', authenticateToken, shopController.EditVehicleDetails);
+router.delete('/deletevehicle/:id', authenticateToken, shopController.deleteVehicleDetails);
+
+router.get('/shopdetails', authenticateToken, shopController.shopDetails);
+router.put('/uploadprofileimage', authenticateToken, upload.single('image'), shopController.uploadShopProfileImg);
+router.put('/updateprofiledetails', authenticateToken, shopController.updateShopProfileDetails);
+router.put('/changepassword', authenticateToken, shopController.updateShopProfilepassword);
 
 
 export default router;

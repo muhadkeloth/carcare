@@ -1,19 +1,27 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { otpgenerate, otpvalidation, resetPassword, signup, login, getNearShops, signupOtpGenerate, userDetails, shopDetails } from '../controllers/userController';
+import  { Router } from 'express';
 import { authenticateToken } from '../middleware/auth';
+import User from '../models/User';
+import UserRepository from '../repositories/UserRepository';
+import UserService from '../services/UserService';
+import  UserController  from '../controllers/userController';
 
-const router = express.Router();
 
-router.post('/user/login', login);
-router.post('/signupOtpGenerate', signupOtpGenerate);
-router.post('/signup', signup);
-router.post('/otpgenerate', otpgenerate);
-router.post('/otpvalidation', otpvalidation);
-router.post('/resetPassword', resetPassword);
+const router = Router();
 
-router.get('/getnearshops', getNearShops);
-router.get('/userdetails', authenticateToken, userDetails);
-router.get('/shopdetails/:id', authenticateToken, shopDetails);
+const userService = new UserService(new UserRepository(User));
+const userController = new UserController(userService);
+
+
+router.post('/user/login', userController.login);
+router.post('/signupOtpGenerate', userController.signupOtpGenerate);
+router.post('/signup', userController.signup);
+router.post('/otpgenerate', userController.otpgenerate);
+router.post('/otpvalidation', userController.otpvalidation);
+router.post('/resetPassword', userController.resetPassword);
+
+router.get('/getnearshops', userController.getNearShops);
+router.get('/userdetails', authenticateToken, userController.userDetails);
+router.get('/shopdetails/:id', authenticateToken, userController.shopDetails);
 
 
 

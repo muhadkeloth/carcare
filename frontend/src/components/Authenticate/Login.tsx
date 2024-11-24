@@ -31,7 +31,8 @@ const Login: React.FC<RoleProps> = ({ role }) => {
     }else{ setEmailError('') }
 
     try{
-        const response = await fetchLogin(role,{email,password});
+        const response = await fetchLogin(role,{email,password,role});
+        console.log('email',email,'role',role)
         if(response.status == SUCCESS){
           if(response.data.token){
             localStorage.setItem(`${role}_token`,response.data.token);

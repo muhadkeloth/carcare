@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { HttpStatusCode, User } from '../../../utilities/interface';
 import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminService';
-import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { Bounce, toast } from 'react-toastify';
 
 
 
@@ -73,10 +73,8 @@ const UserManagement:React.FC = () => {
 
       <div className="relative overflow-x-auto shadow-md rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">
-          <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
-            {/* <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal"> */}
+          <thead className='text-sm text-gray-700 uppercase leading-normal bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
             <tr>
-              {/* <th className="py-3 px-4 text-left  border-b border-gray-2000">Username</th> */}
               <th className="py-3 px-6" scope='col'>Username</th>
               <th className="py-3 px-6" scope='col'>Email</th>
               <th className="py-3 px-6" scope='col'>Phone Number</th>
@@ -86,7 +84,6 @@ const UserManagement:React.FC = () => {
           <tbody>
             {users && users.length > 0 ? (
               users.map((user)=>(
-            // <tr key={user._id} className="border-b border-gray-200 hover:hg-gray-50 text-gray-700 text-sm">
             <tr key={user._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95">
               <th scope='row' className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.username}</th>
               <td className="py-4 px-6">{user.email}</td>

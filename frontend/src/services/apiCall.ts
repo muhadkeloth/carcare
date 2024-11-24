@@ -11,7 +11,7 @@ export const fetchForgotPass = async (url:string,body:bodyEmailvsRole):Promise<r
     }
 }
 
-export const fetchLogin = async (url:string,body:{email:string,password:string}):Promise<returnApiPromise> => {
+export const fetchLogin = async (url:string,body:{email:string,role:string,password:string}):Promise<returnApiPromise> => {
     try {
         return await api.post(`/${url}/login`,body);
     } catch (error) {

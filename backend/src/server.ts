@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -7,11 +7,14 @@ import shopRouter from './routes/shopRouter';
 import adminRouter from './routes/adminRouter';
 import path from 'path';
 import { errorHandler } from './middleware/errorHandler';
+import { loggerhttp } from './middleware/logger';
+import { pinoHttp } from 'pino-http';
+
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
-
 const app = express();
+
 app.use(cors({
     origin:[process.env.ENDPORT_FRONTEND || '', process.env.ENDPORT_FRONTEND_LOCAL || ''],
     methods:['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
@@ -20,6 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(pinoHttp({logger:loggerhttp}))
 
 app.use('/public',express.static(path.join(__dirname,'../public')))
 
