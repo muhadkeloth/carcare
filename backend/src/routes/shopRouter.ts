@@ -19,10 +19,11 @@ router.post('/otpgenerate', shopController.otpgenerate);
 router.post('/otpvalidation', shopController.otpvalidation);
 router.post('/resetPassword', shopController.resetPassword);
 
-router.get('/vehicledetails', authenticateToken, shopController.vehicleDetails);
+router.get('/allvehicledetails', authenticateToken, shopController.getAllvehicleDetails);
+router.get('/vehicledetails', authenticateToken, shopController.getvehicleDetails);
 router.post('/addvehicle', authenticateToken, shopController.addVehicleDetails);
-router.put('/editvehicle/:id', authenticateToken, shopController.EditVehicleDetails);
-router.delete('/deletevehicle/:id', authenticateToken, shopController.deleteVehicleDetails);
+router.put('/editvehicle', authenticateToken, shopController.editVehicleDetails);
+router.delete('/deletevehicle/:brand', authenticateToken, shopController.deleteVehicleDetails);
 
 router.get('/shopdetails', authenticateToken, shopController.shopDetails);
 router.put('/uploadprofileimage', authenticateToken, upload.single('image'), shopController.uploadShopProfileImg);

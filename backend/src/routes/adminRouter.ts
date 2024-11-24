@@ -26,5 +26,10 @@ router.get('/shopdetails', authenticateToken, adminController.shopdetails);
 router.post('/addShop',authenticateToken, upload.single('image'), adminController.addShop);
 router.patch('/shopstatus/:id',authenticateToken, adminController.toggleShopStatus);
 
+router.get('/vehicledetails', authenticateToken, adminController.getvehicleDetails);
+router.post('/addvehicle', authenticateToken, adminController.addVehicleDetails);
+router.put('/editvehicle', authenticateToken, adminController.editVehicleDetails);
+router.delete('/deletevehicle/:brand', authenticateToken, adminController.deleteVehicleDetails);
+
 
 export default router;

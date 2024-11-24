@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faUserCog, faStore, faArrowRightFromBracket, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faUserCog, faStore, faArrowRightFromBracket, faArrowLeft, faCar } from '@fortawesome/free-solid-svg-icons';
 import { SidebarProps } from '../utilities/interface';
 
 
@@ -26,6 +26,13 @@ const SidebarAdmin:React.FC<SidebarProps> = ({ activeSection, handleActiveSectio
         >
           <FontAwesomeIcon icon={faUserCog} />
           <span>User Management</span>
+        </button>
+        <button
+          className={`flex items-center space-x-2 hover:text-mainclr-200 ${activeSection == 'VehicleManage' ? 'text-mainclr-700 border-r-4 border-mainclr-900':''}`}
+          onClick={() => handleActiveSection("VehicleManage")}
+        >
+          <FontAwesomeIcon icon={faCar} />
+          <span>Vehicle Management</span>
         </button>
         <button
           className={`flex items-center space-x-2 hover:text-mainclr-200 ${activeSection == 'ShopManage' ? 'text-mainclr-700 border-r-4 border-mainclr-900':''}`}

@@ -54,7 +54,15 @@ export interface IShop extends Document {
 export interface IVehicle extends Document {
     brand:string;
     vehicleModel:string;
-    year:[number];
+    createdAt?:Date;
+}
+
+export interface IEstimate extends Document {
+    work:string;
+    details:[{
+        price:number;
+        vehicles: Types.ObjectId[];
+    }],
     createdAt?:Date;
 }
 

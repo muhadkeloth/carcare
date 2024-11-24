@@ -41,8 +41,7 @@ export interface LocationPickerProps {
   export interface Vehicle {
     _id?:string;
     brand:string;
-    vehicleModel:string;
-    year:number[];
+    vehicleModel:string[];
   }
 
   export interface SidebarProps {

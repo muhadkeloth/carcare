@@ -24,7 +24,7 @@ const SidebarShop:React.FC<SidebarProps> = ({ activeSection, handleActiveSection
                         onClick={() => handleActiveSection('VehicleManage')}
                     >
                         <FontAwesomeIcon icon={faCar} />
-                        <span>Add Vehicle</span>
+                        <span>Vehicles</span>
                     </button>
                     <button
                         className={`flex items-center space-x-2 hover:text-mainclr-200 ${activeSection == 'ProfileEdit' ? 'text-mainclr-700 border-r-4 border-mainclr-900' : ''}`}

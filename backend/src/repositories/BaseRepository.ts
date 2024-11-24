@@ -9,6 +9,10 @@ export default abstract class BaseRepository<T extends Document> {
         return await this.model.create(data)
     }
 
+    async createMany(data: Partial<T>[]): Promise<void> {
+         await this.model.create(data)
+    }
+
     async findOne(data:any): Promise<T | null> {
         return await this.model.findOne(data)
     }

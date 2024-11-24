@@ -3,6 +3,7 @@ import Dashboard from './mainblock/Dash/Dashboard';
 import UserManagement from './mainblock/UserManage/UserManagement';
 import ShopManagement from './mainblock/shopManage/ShopManagement';
 import { AdminMainProps } from '../utilities/interface';
+import VehicleManagement from './mainblock/vehicleManage/VehicleManagement';
 
 
 
@@ -12,6 +13,7 @@ const AdminMain: React.FC<AdminMainProps> = ({ activeSection }) => {
         {activeSection === 'Dash' && <Dashboard />}
         {activeSection === 'UserManage' && <UserManagement />}
         {activeSection === 'ShopManage' && <ShopManagement />}
+        {activeSection === 'VehicleManage' && <VehicleManagement />}
     </div>
   )
 }

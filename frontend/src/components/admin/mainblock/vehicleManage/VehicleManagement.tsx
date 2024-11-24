@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
-import { addNewVehicle, deleteShopVehicle, editVehicle, fetchAllShopVehicle, fetchAllVehicle } from '../../../../services/shopService';
+import { addNewVehicle, deleteVehicle, editVehicle, fetchAllVehicle } from '../../../../services/adminService';
 
 
 
 const VehicleManagement:React.FC = () => { 
-    const [shopvehicles,setShopVehicles] = useState<Vehicle[]>([])
+    const [vehicles,setVehicles] = useState<Vehicle[]>([])
     const [newVehicle, setNewVehicle] = useState<Vehicle>({ brand:'',vehicleModel:[] });
     const [newVehicleError, setNewVehicleError] = useState({ brand:'',vehicleModel:'' });
     const [inputModel,setInputModel]  = useState<string>('')
@@ -19,20 +19,18 @@ const VehicleManagement:React.FC = () => {
     const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null)
     const [currentPage,setCurrentPage] = useState(1);
     const [totalPages,setTotalPages] = useState(1);
-    const [vehicles,setVehicles] = useState<Vehicle[]>([])
-    const [brands,setBrands] = useState<string[]>([])
-    const [models,setModels] = useState<string[]>([])
-    
 
-    const fetchShopVehicle = async (page:number) => {
+    const fetchVehicle = async (page:number) => {
         try {
-            const vehicleDetails = await fetchAllShopVehicle(page);
-            if(!vehicleDetails || !vehicleDetails.Vehicle ) throw new Error('shop vehicle fetching error')
-                setShopVehicles(vehicleDetails.Vehicle);
+            const vehicleDetails = await fetchAllVehicle(page);
+            console.log('in fetchvehicle',vehicleDetails);
+            
+            if(!vehicleDetails || !vehicleDetails.Vehicle ) throw new Error('vehicle fetching error')
+                setVehicles(vehicleDetails.Vehicle);
                 setTotalPages(vehicleDetails.totalPages);
         } catch (error) {
             console.log('failed to fetch user:',error);
-        const errorMessage = error instanceof Error?error.message:'error on fetching shop vehicle';
+        const errorMessage = error instanceof Error?error.message:'error on fetching vehicle';
           toast.error(errorMessage, {
             position: "bottom-right", autoClose: 3000,
             hideProgressBar: false, closeOnClick: true,
@@ -43,32 +41,27 @@ const VehicleManagement:React.FC = () => {
         }
     };
 
-    const fetchVehicle = async () => {
-      try {
-        const vehicleDetails = await fetchAllVehicle();
-        if(!vehicleDetails || !vehicleDetails.Vehicle ) throw new Error('vehicle fetching error')
-        
-        setVehicles(vehicleDetails.Vehicle);
-        } catch (error) {
-          console.log('failed to fetch user:',error);
-      }
-    }
-
     const addVehicle = async () => {
         if(newVehicle.brand.trim().length == 0){
             setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
             return;
-        }else{setNewVehicleError((prev)=>({...prev,brand:''}))}
+        }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
 
         if(newVehicle.vehicleModel.length == 0){
             setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
             return;
         }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
 
+        const iscreated = vehicles.some(vehicle => vehicle.brand == newVehicle.brand);
+        if(iscreated){
+            setNewVehicleError((prev)=>({...prev,brand:'brand name already created'}))
+            return
+        }else{setNewVehicleError((prev)=>({...prev,brand:''}))}
+
         try {
             await addNewVehicle(newVehicle);
             setShowAddModal(false);
-            fetchShopVehicle(currentPage);
+            fetchVehicle(currentPage);
             toast.success('vehicle added successfully', {
                 position: "bottom-right", autoClose: 3000,
                 hideProgressBar: false, closeOnClick: true,
@@ -90,16 +83,16 @@ const VehicleManagement:React.FC = () => {
     }
 
     const handleAddModel = () => {
-        // if(inputModel.trim() === ''){
-        //     toast.error('select year', {
-        //         position: "bottom-right", autoClose: 3000,
-        //         hideProgressBar: false, closeOnClick: true,
-        //         pauseOnHover: true, draggable: true,
-        //         progress: undefined, theme: "dark",
-        //         transition: Bounce,
-        //         })
-        //         return 
-        // };
+        if(inputModel.trim() === ''){
+            toast.error('Enter model', {
+                position: "bottom-right", autoClose: 3000,
+                hideProgressBar: false, closeOnClick: true,
+                pauseOnHover: true, draggable: true,
+                progress: undefined, theme: "dark",
+                transition: Bounce,
+                })
+                return 
+        };
 
         if(newVehicle.vehicleModel.includes(inputModel)){
             toast.error('already added', {
@@ -116,16 +109,7 @@ const VehicleManagement:React.FC = () => {
     }
 
     const handleRemoveModel = (modelToRemove:string) => {
-        setNewVehicle((prev) => ({...prev,vehicleModel:prev.vehicleModel.filter((model)=> model !== modelToRemove)}));
-    }
-
-    const handleAddVehicle = () => {
-      {setShowAddModal(true); 
-        setIsEditMode(false); 
-        setNewVehicle({brand:"",vehicleModel:[]}) }
-        if(vehicles){
-          setBrands(vehicles.map(v=>v.brand))
-        }
+        setNewVehicle((prev) => ({...prev,vehicleModel:prev.vehicleModel.filter((model)=> model!== modelToRemove)}));
     }
 
     const openEditModel = (vehicle:Vehicle) => {
@@ -145,13 +129,13 @@ const VehicleManagement:React.FC = () => {
 
     const confirmDelete = async () => {
       try {
-        if(!vehicleToDelete?.brand) throw new Error('unable to find id to delete vehicle')
-          const response = await deleteShopVehicle(vehicleToDelete?.brand)
+        if(!vehicleToDelete?.brand) throw new Error('unable to find id to delete vehicle');
+          const response = await deleteVehicle(vehicleToDelete?.brand)
         if(response.status == HttpStatusCode.SUCCESS){
-          setShopVehicles((prev)=>
+          setVehicles((prev)=>
             prev.filter((v)=>(v.brand !== vehicleToDelete.brand )));
   
-          toast.success('vehicle updated successfully');
+          toast.success('vehicle deleted successfully');
         }else{
           toast.error('failed to delete vehicle.');
         }
@@ -168,17 +152,18 @@ const VehicleManagement:React.FC = () => {
         setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
         return;
     }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
+
     if(newVehicle.vehicleModel.length == 0){
         setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
         return;
     }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
 
       try {
-        const response = await editVehicle( newVehicle);
+        const response = await editVehicle(newVehicle);
         if(response){
-          const { vehicle } = response.data;
-          setShopVehicles((prev)=>
-          prev.map((v)=> v.brand === vehicle.brand ?  {...v, vehicleModel:vehicle.vehicleModel } : v ));
+          const { vehicle } = response.data; 
+          setVehicles((prev)=>
+          prev.map((v)=> v.brand == vehicle.brand ? {...v, vehicleModel:vehicle.vehicleModel } : v ));
 
           toast.success('vehicle updated successfully');
         }else{
@@ -203,9 +188,9 @@ const VehicleManagement:React.FC = () => {
     }
 
     useEffect(()=>{
-        fetchShopVehicle(currentPage)
-        fetchVehicle()
+        fetchVehicle(currentPage)
       },[currentPage]);
+
 
   return (
     <div className='p-4'>
@@ -213,11 +198,13 @@ const VehicleManagement:React.FC = () => {
 
     <div className="flex justify-between mt-1 mb-4 pe-1">
         <h2 className="text-2xl font-bold ms-1 text-gray-800">
-            Specialized Vehicles.
+            Vehicle Management
         </h2>
         <button
           className="btn-primary"
-          onClick={() => handleAddVehicle()} >
+          onClick={() => 
+            {setShowAddModal(true); setIsEditMode(false); setNewVehicle({brand:"",vehicleModel:[]}) }}
+        >
           <FontAwesomeIcon icon={faPlus} /> Add vehicle
         </button>
       </div>
@@ -232,16 +219,16 @@ const VehicleManagement:React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {shopvehicles && shopvehicles.length > 0 ? (
-            shopvehicles.map((vehicle)=>(
+          {vehicles && vehicles.length > 0 ? (
+            vehicles.map((vehicle)=>(
           <tr key={vehicle._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95">
             <th scope='row' className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">{vehicle.brand}</th>
             <td className="py-4 px-6">{vehicle.vehicleModel?.join(', ')}</td>
-            <td className='flex gap-4 py-3 px-4  text-center'>
-            <button className='text-white' onClick={()=> openEditModel(vehicle)}>
+            <td className='flex py-3 px-4 gap-4 text-center'>
+                <button onClick={()=> openEditModel(vehicle)}>
                     <FontAwesomeIcon icon={faPencil} />
                 </button>
-                <button className='text-red-600' onClick={()=> openDeleteConfirm(vehicle)}>
+                <button onClick={()=> openDeleteConfirm(vehicle)}>
                     <FontAwesomeIcon icon={faTrash} />
                 </button>
             </td>
@@ -286,60 +273,32 @@ const VehicleManagement:React.FC = () => {
               <label className=" text-sm  font-medium text-gray-700">
                 Brand Name
               </label>
-               <select
-          value={newVehicle.brand}
-          onChange={(e) =>{
-            const selectedBrand = e.target.value;
-            setNewVehicle({ ...newVehicle, vehicleModel:[], brand: selectedBrand })
-            const filteredModels = vehicles.find((v) => v.brand === selectedBrand)?.vehicleModel || [];
-            setModels(filteredModels)
-          }
-          }
-          className={`mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none ${
-            newVehicleError.brand.length !== 0 ? "border-red-500" : ""
-          }`}
-        >
-          <option value="" disabled>
-            Select Brand
-          </option>
-          {brands.map((brand, index) => (
-            <option key={index} value={brand}>
-              {brand}
-            </option>
-          ))}
-        </select>
+              <input
+                type="text"
+                value={newVehicle.brand}
+                onChange={(e) =>
+                    setNewVehicle({ ...newVehicle, brand: e.target.value })
+                }
+                placeholder='Eg: Tata'
+                style={newVehicleError.brand.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
               <p className='text-red-300'>{newVehicleError.brand}</p>
               </div>
-
+             
               <div className='w-full mt-4'>
-              <label className=" text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700">
                 Model Name
               </label>
               <div className="flex items-center gap-2">
-                <select
-            onChange={(e) =>{
-              if(!newVehicle.vehicleModel.includes(e.target.value)){
-                setNewVehicle((prev) => ({
-                  ...prev,
-                  vehicleModel: [...prev.vehicleModel, e.target.value],
-                }))
-              }
-            }
-            }
-            value=""
-            className={`mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none ${
-              newVehicleError.vehicleModel.length !== 0 ? "border-red-500" : ""
-            }`}
-          >
-            <option value="" disabled>
-              Select Model
-            </option>
-            {models.map((model, index) => (
-              <option key={index} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
+                <input
+                type="text"
+                value={inputModel}
+                onChange={(e) =>setInputModel(e.target.value)}
+                placeholder='Eg: Punch'
+                className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none "
+                style={newVehicleError.vehicleModel.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                />
                 <p className='text-red-300'>{newVehicleError.vehicleModel}</p>
 
                 <button 
