@@ -60,10 +60,20 @@ export default class ShopRepository extends BaseRepository<IShop> {
     }
 
     async findVehicles(_id:string):Promise<IShop | null>{
-        return this.model.findOne({_id},{vehicleIds:1}).populate('vehicleIds.vehicleModelIds')
+        return await this.model.findOne({_id},{vehicleIds:1}).populate('vehicleIds.vehicleModelIds')
     }
-
-  
+    
+    async findShopPincodeByFilter(pincode:string):Promise<{ address: { pincode: string } }[] | null>{
+        return await this.model.find(
+            { "address.pincode": {$regex:`^${pincode}`, $options: "i" }, isActive:true },
+            { "address.pincode": 1,_id:0}
+        )
+    }
+    
+    async findByPincode(pincode:string):Promise<IShop[] | null>{
+        return await this.model.find({ "address.pincode": pincode,isActive:true})
+    }
+    
 
   
 

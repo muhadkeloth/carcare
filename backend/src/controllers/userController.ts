@@ -11,14 +11,21 @@ import ShopService from "../services/ShopService";
 import BaseController from "./BaseController";
 import ShopRepository from "../repositories/ShopRepository";
 import logger from "../middleware/logger";
+import VehicleService from "../services/VehicleService";
+import VehicleRepository from "../repositories/VehicleRepository";
+import Vehicle from "../models/Vehicle";
 
 export default class UserController extends BaseController<IUser> {
   protected shopService: ShopService;
+  protected vehicleService: VehicleService;
 
   constructor(protected service: UserService) {
     super(service);
     const shopRepository = new ShopRepository(Shop);
     this.shopService = new ShopService(shopRepository);
+    const vehicleRepository = new VehicleRepository(Vehicle)
+    this.vehicleService = new VehicleService(vehicleRepository);
+
   }
 
   signupOtpGenerate = async (req: Request,res: Response,next: NextFunction) => {
@@ -156,4 +163,72 @@ export default class UserController extends BaseController<IUser> {
         next(err);
     }
   };
+
+
+  getShopByPincode = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const pincode = req.params.pincode;
+      if(!pincode){
+        logger.warn('shop pincode not found in backend')
+        throw new AppError("shop pincode not found in backend",HttpStatusCode.NOT_FOUND);
+      }
+      
+      const suggestions = await this.shopService.findShopPincodeByFilter(pincode);
+      
+      res.status(HttpStatusCode.SUCCESS).json({ suggestions, message: "shop pincode find successfully" });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error finding shop by pincode: ${err.message}`);
+      next(err);
+    }
+  }
+
+  getShopsFilterByPincode = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const {pincode} = req.params;
+      const shops = await this.shopService.findFilterShopByPincode(pincode);
+      if(!shops || shops.length == 0){
+        throw new AppError("shop filter by pincode not found in backend",HttpStatusCode.NOT_FOUND);
+      };
+
+      res.status(HttpStatusCode.SUCCESS).json({ shops , message: "shop filtered by pincode find successfully" });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error finding shop by pincode: ${err.message}`);
+      next(err);
+    }
+  }
+
+  getModelByMakeVehicle = async(req:Request, res:Response,next:NextFunction) => {
+    try {
+      const { _id, make } = req.query;
+      
+      const shop = await this.shopService.findOne({ _id });
+      if(!shop) throw new AppError("shop details not found ",HttpStatusCode.NOT_FOUND);
+      const vehicledetails = shop?.vehicleIds?.find(v=> v.brand == make);
+      
+      if(!vehicledetails) throw new AppError("shop vehicle details not found ",HttpStatusCode.NOT_FOUND);
+
+      const modeldetails = await Promise.all(
+        vehicledetails.vehicleModelIds.map(async (modelId) => {
+          const modelDetails = await this.vehicleService.findOne({ _id:modelId });
+          if(!modelDetails)return null;
+          return modelDetails.vehicleModel;
+        })
+      );
+      
+      res.status(HttpStatusCode.SUCCESS).json({ models:modeldetails , message: "shop filtered by pincode find successfully" });
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error finding model in vehicle collection: ${err.message}`);
+      next(err);
+    }
+  }
+
+
+
+
+
+
+
 }

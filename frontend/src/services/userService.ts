@@ -34,3 +34,31 @@ export const fetchShopData = async (id:string):Promise<{status:number,data:any}>
     }
 }
 
+export const fetchPincode = async (pincode:string):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/shopPincode/${pincode}`)
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        console.error("Error fetching pincode:", error);
+        throw new Error("Unable to fetch pincode.");
+    }
+}
+
+export const fetchShopByPincode = async (pincode:string):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/shopsFilterByPincode/${pincode}`)
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        console.error("Error fetching shop by pincode:", error);
+        throw new Error("Unable to fetch shop by pincode.");
+    }
+}
+
+export const fetchModeldetail = async (_id:string,make:string):Promise<{status:number,data:any}> => {
+    try {
+        return await api.get(`/getModelByMake`, {params:{ _id,make} })
+    } catch (error) {
+        console.error("Error fetching model of make:", error);
+        throw new Error("Unable to fetch model of make.");
+    }
+}

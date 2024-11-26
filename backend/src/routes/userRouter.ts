@@ -23,6 +23,9 @@ router.get('/getnearshops', userController.getNearShops);
 router.get('/userdetails', authenticateToken, userController.userDetails);
 router.get('/shopdetails/:id', authenticateToken, userController.shopDetails);
 
+router.get('/shopPincode/:pincode', userController.getShopByPincode);
+router.get('/shopsFilterByPincode/:pincode', userController.getShopsFilterByPincode);
+router.get('/getModelByMake', userController.getModelByMakeVehicle);
 
 
 export default router;

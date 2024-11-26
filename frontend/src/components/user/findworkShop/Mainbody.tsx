@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { navigateBookingSlot, navigateShopDetailPage } from "../../utilities/navigate/userNavigator";
 import Navbar from "./Navbar";
 import { useDispatch } from "react-redux";
-import { setShopId } from "../../../features/bookingSlice";
+import { clearbookingdetails, setShopdetails } from "../../../features/bookingSlice";
+import { clearestimateDetails } from "../../../features/estimateSlice";
 
 const Mainbody: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -37,16 +38,16 @@ const Mainbody: React.FC = () => {
     }
   };
 
-  const handleAvailability = (event:React.MouseEvent<HTMLButtonElement>,id:string) => {
-    event.stopPropagation();
-    console.log('some');
-    
-    dispatch(setShopId(id))
+  const handleAvailability = (event:React.MouseEvent<HTMLButtonElement>,shop:Shop) => {
+    event.stopPropagation(); 
+    dispatch(setShopdetails(shop))
     navigateBookingSlot(navigate);
   }
 
   useEffect(() => {
     fetchShops();
+    dispatch(clearbookingdetails())
+    dispatch(clearestimateDetails())
   }, []);
 
 
@@ -113,7 +114,7 @@ const Mainbody: React.FC = () => {
                    </div>
    
                    <div className="mt-3 px-1 ">
-                     <button onClick={(event)=>handleAvailability(event,shop._id)}
+                     <button onClick={(event)=>handleAvailability(event,shop)}
                      className=" w-full btn-primary">
                        Check Availability
                      </button>

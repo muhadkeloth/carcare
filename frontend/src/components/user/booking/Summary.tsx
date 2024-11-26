@@ -1,16 +1,20 @@
 import React from 'react'
 import { DropOffProps } from './dropOff/DropOff'
-import { faArrowRight, faCar, faClock, faFile, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faCar, faClock, faFile, faIndianRupee, faStar, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 
 
 
-const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
-  const dropoffTime = useSelector((state:RootState) => state.bookingdetails.bookingDetails?.shedule)
-  const vehicledetail = useSelector((state:RootState)=> state.bookingdetails.bookingDetails?.vehicleDetails)
-  const userDetails = useSelector((state:RootState)=> state.bookingdetails.bookingDetails?.userDetails)
+const Summary:React.FC<DropOffProps> = ({setActiveSection}) => {
+  const shopdetails = useSelector((state:RootState)=>{
+    return state.estimate.estimateDetails 
+    ? state.estimate.estimateDetails.shopdetails
+    : state.bookingdetails.bookingDetails?.shopdetails;
+  } );
+  const { shedule, vehicleDetails ,userDetails } = useSelector((state: RootState) => state.bookingdetails.bookingDetails) || {};
+  const { repairWork } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
 
 
 
@@ -18,8 +22,8 @@ const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
     if (!isoDate) return '';
     const dateObj = new Date(isoDate);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Month is zero-based
-    const year = String(dateObj.getFullYear()).slice(-2); // Get last two digits of year
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
+    const year = String(dateObj.getFullYear()).slice(-2); 
     return `${day}/${month}/${year}`;
   };
 
@@ -27,22 +31,20 @@ const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
     setActiveSection(path)
   }
 
+  const handleBookAppointment = () => {
+        
+  }
+
 
 
   return (
     <div className="flex flex-col justify-center items-center pt-2  ">
-
-    {/* <div className="border rounded-lg  h-fit p-3">
-      <div className="p-4 mt-4">
-      </div>
-    </div> */}
-
     <div className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3  mb-4 ">
       <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p>
     <div className="flex pb-4 pt-2 mt-3 " >
                <div className="w-32  rounded overflow-hidden">
                  <img
-                   src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop?.image}`}
+                   src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
                    alt="shop img"
                    className="w-full h-full object-cover rounded"
                    />
@@ -51,15 +53,15 @@ const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
                <div className="flex flex-col  ms-3 w-full">
                <div className="flex  justify-between">
                  <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
-                   {shop?.shopName && shop?.shopName[0].toUpperCase() + shop?.shopName.slice(1)}
+                   {shopdetails?.shopName && shopdetails?.shopName[0].toUpperCase() + shopdetails?.shopName.slice(1)}
                  </h2>
                  <p className='text-gray-500 text-sm'> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
                </div>
                  <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
-                   {shop?.address && Object.values(shop?.address).join(" ")}
+                   {shopdetails?.address && Object.values(shopdetails?.address).join(" ")}
                  </span>
                  <span className="mt-3 text-sm  text-gray-600">
-                   {shop?.phoneNumber}
+                   {shopdetails?.phoneNumber}
                  </span>
          
                    <h6 className='mt-3 text-sm  text-gray-600'>
@@ -71,14 +73,12 @@ const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
                <div className='w-full mt-2 ms-1  p-4  pb-3'>
                <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p>
                <div className="flex justify-between">
-               <p className='text-gray-600  '><FontAwesomeIcon icon={faClock} /> {  formatDate(dropoffTime?.date)} at {dropoffTime?.time} </p>
+               <p className='text-gray-600  '><FontAwesomeIcon icon={faClock} /> {  formatDate(shedule?.date)} at {shedule?.time} </p>
                <p onClick={()=>handleEdit('DropOff')} className='text-mainclr-500 cursor-pointer hover:text-mainclr-600'>Edit</p>
                </div>
                <p className="my-3  font-bold"><FontAwesomeIcon icon={faFile} />  Instructions from the shop</p>
-               <p className="">Thank you for contacting {shop?.shopName}. Someone will contact you to confirm appointment details.</p>
-               </div>
-
-               
+               <p className="">Thank you for contacting {shopdetails?.shopName}. Someone will contact you to confirm appointment details.</p>
+               </div>         
     </div>
 
     <div className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3 mb-4 ">   
@@ -87,9 +87,21 @@ const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
                <p className="text-gray-500 text-sm font-semibold uppercase">repair summary</p>
                <p onClick={()=>handleEdit('Vehicle')} className='text-mainclr-500 cursor-pointer hover:text-mainclr-600'>Edit</p>
                 </div>
-               <p className='text-gray-600 mt-2'><FontAwesomeIcon icon={faCar} /> {`${vehicledetail?.make}, ${vehicledetail?.model} ${vehicledetail?.year}`} </p>
-               <p className="my-3 "><FontAwesomeIcon icon={faFile} />  Let the shop know what’s wrong</p>
-               <p className="my-3 text-sm"> {vehicledetail?.description}</p>
+               <p className='text-gray-600 mt-2'><FontAwesomeIcon icon={faCar} /> {`${vehicleDetails?.make}, ${vehicleDetails?.model} ${vehicleDetails?.year}`} </p>
+               <p className="my-3 text-sm"> {vehicleDetails?.description}</p>
+                { repairWork ? (
+                  <>
+                    <p className="text-gray-500 text-sm font-semibold uppercase">Work Details</p>
+                  <div className="flex justify-between">
+               <p className='text-gray-600 mt-2'><FontAwesomeIcon icon={faWrench} /> {`${repairWork?.work}`} </p>
+               <p className="text-gray-800 text-lg font-bold">
+                <FontAwesomeIcon icon={faIndianRupee} /> {repairWork?.priceStart} - <FontAwesomeIcon icon={faIndianRupee} /> {repairWork?.priceEnd} </p>
+                </div>
+                  </>
+              ) : (
+                <p className="my-3 "><FontAwesomeIcon icon={faFile} />  Let the shop know what’s wrong</p>
+              )}
+
                </div>  
     </div>
 
@@ -107,13 +119,11 @@ const Summary:React.FC<DropOffProps> = ({ shop, setActiveSection}) => {
     </div>
   <div className="mt-3 px-1 flex justify-center ">
                    <button 
-                  //  onClick={()=>handleSaveChanges()}
+                   onClick={()=>handleBookAppointment()}
                    className= 'btn-primary'>
                      Request Appointment <FontAwesomeIcon icon={faArrowRight} />
                    </button>
                  </div>
-
-
   </div>
   )
 }

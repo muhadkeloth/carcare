@@ -212,6 +212,17 @@ export default class ShopService extends BaseService<IShop> {
             
             logger.info(`estimate details deleted for shop: ${shopId}`);
          }
+
+         async findShopPincodeByFilter(pincode:string):Promise<string[] | null>{
+            const filteredPincode = await this.repository.findShopPincodeByFilter(pincode);
+            if(!filteredPincode ) return null;
+
+            return [...new Set(filteredPincode.map(doc => doc.address.pincode))]
+        }
+
+         async findFilterShopByPincode(pincode:string):Promise<IShop[] | null>{
+            return await this.repository.findByPincode(pincode);
+        }
     
         // async findCountVehicles():Promise<number | null>{
         //     const vehicledetails =  await this.repository.findVehicles();

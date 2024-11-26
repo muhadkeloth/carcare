@@ -119,3 +119,4 @@ export const deleteVehicle = async (brand:string):Promise<{status:number}> => {
         throw new Error('error in deleting vehicle');
     }
 }
+

@@ -48,6 +48,12 @@ export default class VehicleRepository extends BaseRepository<IVehicle> {
         await this.model.deleteMany({brand})
     }
 
+    async findModelByMakeVehicle(brand:string):Promise<void> {
+        await this.model.find({brand})
+    }
+
+    
+
     
 
 

@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Shop } from "../components/utilities/interface";
 
 type bookingDetailsType = {
-    shopId?:string;
+    shopdetails?:Shop;
     shedule?:{date:Date;time:string;};
     vehicleDetails?:{make:string;model:string;year:string;description?:string;};
     userDetails?:{firstName:string;lastName:string;email:string;phoneNumber:string;};
@@ -17,11 +18,11 @@ const bookingSlice = createSlice({
     name:'bookingdetails',
     initialState,
     reducers:{
-        setShopId(state,action:PayloadAction<string>){
+        setShopdetails(state,action:PayloadAction<Shop>){
             if(state.bookingDetails){
-                state.bookingDetails.shopId = action.payload;
+                state.bookingDetails.shopdetails = action.payload;
             }else{
-                state.bookingDetails = {shopId:action.payload};
+                state.bookingDetails = {shopdetails:action.payload};
             }
         },
         setDateAndTime(state,action:PayloadAction<{selectedDate:Date;selectedTime:string;}>){
@@ -51,5 +52,5 @@ const bookingSlice = createSlice({
     },
 });
 
-export const { setShopId, clearbookingdetails ,setDateAndTime , setVehicleDetails, setuserdetails } = bookingSlice.actions;
+export const { setShopdetails, clearbookingdetails ,setDateAndTime , setVehicleDetails, setuserdetails } = bookingSlice.actions;
 export default bookingSlice.reducer;

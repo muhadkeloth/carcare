@@ -72,7 +72,16 @@ export interface Shop {
     state:string;
     country:string;
     pincode:string;
-  }
+  };
+  vehicleIds?: {
+    brand:string;
+    vehicleModelIds:string;
+}[];
+estimate?:{
+  work:string;
+  priceStart:number;
+  priceEnd:number;
+}[];
   image: string;
   // location: {latitude:number,longitude:number}; 
 }

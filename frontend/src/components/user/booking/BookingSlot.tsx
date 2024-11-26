@@ -16,32 +16,14 @@ import { navigateHome } from '../../utilities/navigate/common'
 
 
 const BookingSlot:React.FC = () => {
-  const [shop,setShop] = useState<Shop | null>(null);
   const [activeSection, setActiveSection] = useState('DropOff')
   const navigate = useNavigate()
-  const { shopId } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
-
-  const fetchShops = async () => {
-    try {
-      const response = await fetchShopData(shopId || '');
-      if(response.status == HttpStatusCode.SUCCESS){
-        setShop(response.data.shopUser);
-      }
-    } catch (error) {
-      setShop(null);
-      // setError("unable to fetch nearby shops.");
-    }
-  }
-
-  useEffect(()=>{
-    if(!shopId){
-      console.log('shopId is not herer')
-    }
-  } ,[shopId])
-  
-  useEffect(()=> {
-    fetchShops();
-  },[])
+  const shopdetails = useSelector((state:RootState)=>{
+    return state.estimate.estimateDetails 
+    ? state.estimate.estimateDetails.shopdetails
+    : state.bookingdetails.bookingDetails?.shopdetails;
+  } );
+  // const { shopdetails } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
   return (
     <div>
@@ -50,7 +32,7 @@ const BookingSlot:React.FC = () => {
           <span onClick={()=>navigateHome(navigate, 'user')}
            className='font-semibold text-gray-700 cursor-pointer'><FontAwesomeIcon icon={faChevronLeft} /> Exit</span> 
         </button>
-        <h1 className='font-semibold text-3xl text-gray-700'>{shop?.shopName}</h1>
+        <h1 className='font-semibold text-3xl text-gray-700'>{shopdetails?.shopName}</h1>
         <img src={carcare_logo} className="h-8" alt="carCare" />
       </nav>
 
@@ -64,10 +46,10 @@ const BookingSlot:React.FC = () => {
           </ul>
         </div>
 
-        {activeSection === 'DropOff' && shop && <DropOff shop={shop} setActiveSection={setActiveSection} />}
-        {activeSection === 'Vehicle' && shop && <Vehicle shop={shop} setActiveSection={setActiveSection} />}
-        {activeSection === 'ContactInfo' && shop && <ContactInfo shop={shop} setActiveSection={setActiveSection} />}
-        {activeSection === 'Summary' && shop && <Summary shop={shop} setActiveSection={setActiveSection} />}          
+        {activeSection === 'DropOff' && <DropOff  setActiveSection={setActiveSection} />}
+        {activeSection === 'Vehicle' && <Vehicle  setActiveSection={setActiveSection} />}
+        {activeSection === 'ContactInfo' && <ContactInfo  setActiveSection={setActiveSection} />}
+        {activeSection === 'Summary' && <Summary  setActiveSection={setActiveSection} />}          
 
       </div>
 

@@ -5,31 +5,52 @@ import { DropOffProps } from './dropOff/DropOff'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setVehicleDetails } from '../../../features/bookingSlice';
+import { fetchModeldetail } from '../../../services/userService';
+import { HttpStatusCode } from '../../utilities/interface';
 
 
-const Vehicle:React.FC<DropOffProps> = ({shop, setActiveSection}) => {
+const Vehicle:React.FC<DropOffProps> = ({setActiveSection}) => {
   const [make,setMake] = useState('')
   const [year,setYear] = useState('')
   const [model,setModel] = useState('')
   const [description, setDescription] = useState('');
+  const [modelDetails, setModelDetails] = useState([]);
   const dispatch = useDispatch();
-  const dropoffTime = useSelector((state:RootState) => state.bookingdetails.bookingDetails?.shedule)
+  const shopdetails = useSelector((state:RootState)=>{
+    return state.estimate.estimateDetails 
+    ? state.estimate.estimateDetails.shopdetails
+    : state.bookingdetails.bookingDetails?.shopdetails;
+  } );
+  const { shedule } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
 
   const formatDate = (isoDate: Date | undefined) => {
     if (!isoDate) return '';
     const dateObj = new Date(isoDate);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Month is zero-based
-    const year = String(dateObj.getFullYear()).slice(-2); // Get last two digits of year
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = String(dateObj.getFullYear()).slice(-2); 
     return `${day}/${month}/${year}`;
   };
 
   const handlevehicledetails = () => {
     if(make && model && year){
       dispatch(setVehicleDetails({make,model,year,description}))
+      setActiveSection('ContactInfo')     
     }
-    setActiveSection('ContactInfo')     
+  }
+
+  const handleMakeChange = async (e:React.ChangeEvent<HTMLSelectElement>) => {
+    setMake(e.target.value)
+    try {
+      const response = await fetchModeldetail(shopdetails?._id as string,e.target.value);
+      if(response.status !== HttpStatusCode.SUCCESS){
+        throw new Error('models not find by brand')
+      }      
+      setModelDetails(response.data.models)
+    } catch (error) {
+      console.log('error in find model details',error);
+    }
   }
 
 
@@ -40,36 +61,22 @@ const Vehicle:React.FC<DropOffProps> = ({shop, setActiveSection}) => {
         <h1 className="text-2xl border-b py-6 px-14 font-semibold">
           Tell us about your vehicle
         </h1>
-
-        {/* <div className="p-4 mt-4   ">
-          <div className=" mb-4 justify-start items-start"> */}
         <div className="p-6  ">
           <div className=" mb-6">
-          
-            {/* <h2 className="text-lg font-bold">Make</h2> */}
             <h2 className="text-lg font-bold mb-2">Make</h2>
             <select name="make"className="w-full border rounded px-3 py-2 text-gray-700"
             value={make}
-            onChange={(e)=>setMake(e.target.value)}>
+            onChange={(e)=>handleMakeChange(e)}>
               <option value="" disabled>Select Make</option>
-              <option value="Toyota">Toyota</option>
-              <option value="Maruti Suzuki">Maruti Suzuki</option>
-              <option value="Honda">Honda</option>
-              <option value="Hyundai">Hyundai</option>
+              {shopdetails?.vehicleIds && shopdetails.vehicleIds.length > 0  && (
+                shopdetails?.vehicleIds.map(vehicle => (
+                  <option key={vehicle.brand} value={vehicle.brand}>{vehicle.brand}</option>
+                ))
+              )}              
             </select>
-          </div>
-          <div className="mb-6">
-            <h2 className="mb-2 text-lg font-bold">Year</h2>
-            <select name="year" className='w-full border rounded px-3 py-2 text-gray-700'
-            value={year}
-            onChange={(e)=> setYear(e.target.value)}>
-              <option value="" disabled>Select Year</option>
-              <option value="2020">2020</option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-            </select>
+            {!shopdetails?.vehicleIds || shopdetails.vehicleIds.length == 0 &&
+            <p className='text-red-500 text-sm font-light'>shop not registered any vehicle</p>
+            }
           </div>
           <div className="mb-6">
             <h2 className="mt-3 text-lg font-bold">Modle</h2>
@@ -77,10 +84,27 @@ const Vehicle:React.FC<DropOffProps> = ({shop, setActiveSection}) => {
             value={model}
             onChange={(e)=> setModel(e.target.value)}>
             <option value="" disabled>Select Model</option>
-              <option value="LXi">LXi</option>
-              <option value="VXi">VXi</option>
-              <option value="Zxi">Zxi</option>
-              <option value="Zxi+">Zxi+</option>
+              {modelDetails.length > 0  && (
+                modelDetails.map(model => (
+                  <option key={model} value={model}>{model}</option>
+                ))
+              )}  
+            </select>
+            {make.length > 0 && modelDetails.length == 0 &&
+            <p className='text-red-500 text-sm font-light'>brand not have any models.</p>
+            }
+          </div>
+          <div className="mb-6">
+            <h2 className="mb-2 text-lg font-bold">Year</h2>
+            <select name="year" className='w-full border rounded px-3 py-2 text-gray-700'
+            value={year}
+            onChange={(e)=> setYear(e.target.value)}>
+              <option value="" disabled>Select Year</option>
+              {Array.from({ length: 2024 - 2010 + 1 }, (_, i) => 2010 + i).map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                  </option>
+                ))}
             </select>
           </div>
             
@@ -107,7 +131,7 @@ const Vehicle:React.FC<DropOffProps> = ({shop, setActiveSection}) => {
 
                  <div className="w-28  rounded overflow-hidden">
                    <img
-                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop?.image}`}
+                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
                      alt="shop img"
                      className="w-full h-full object-cover rounded"
                      />
@@ -116,15 +140,15 @@ const Vehicle:React.FC<DropOffProps> = ({shop, setActiveSection}) => {
                  <div className="flex flex-col  ms-3 w-full">
                  <div className="flex  justify-between">
                    <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
-                     {shop?.shopName && shop?.shopName[0].toUpperCase() + shop?.shopName.slice(1)}
+                     {shopdetails?.shopName && shopdetails?.shopName[0].toUpperCase() + shopdetails?.shopName.slice(1)}
                    </h2>
                    <p className='text-gray-500 text-sm'> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
                  </div>
                    <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
-                     {shop?.address && Object.values(shop?.address).join(" ")}
+                     {shopdetails?.address && Object.values(shopdetails?.address).join(" ")}
                    </span>
                    <span className="mt-3 text-sm  text-gray-600">
-                     {shop?.phoneNumber}
+                     {shopdetails?.phoneNumber}
                    </span>
            
                      <h6 className='mt-3 text-sm  text-gray-600'>
@@ -138,7 +162,7 @@ const Vehicle:React.FC<DropOffProps> = ({shop, setActiveSection}) => {
 
                  <div className='w-full mt-2 ms-1  p-4  border-b pb-3'>
                  <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p>
-                 <p className='text-gray-600'><FontAwesomeIcon icon={faClock} /> {formatDate(dropoffTime?.date)} at {dropoffTime?.time} </p>
+                 <p className='text-gray-600'><FontAwesomeIcon icon={faClock} /> {formatDate(shedule?.date)} at {shedule?.time} </p>
                  </div>
 
                    <div className="mt-3 px-1 flex justify-center ">

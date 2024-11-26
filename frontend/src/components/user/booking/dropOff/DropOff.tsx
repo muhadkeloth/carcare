@@ -4,8 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faArrowRight, faStar } from '@fortawesome/free-solid-svg-icons';
 import TimeSlot from './TimeSlot';
 import { Shop } from '../../../utilities/interface';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setDateAndTime } from '../../../../features/bookingSlice';
+import { RootState } from '../../../../store';
 
 type Day = {
     date:Date;
@@ -15,15 +16,20 @@ type Day = {
 };
 
 export interface DropOffProps {
-  shop: Shop | null;
   setActiveSection:React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DropOff:React.FC<DropOffProps> = ({shop , setActiveSection}) => {
+const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const dispatch = useDispatch()
+    const shopdetails = useSelector((state:RootState)=>{
+      return state.estimate.estimateDetails 
+      ? state.estimate.estimateDetails.shopdetails
+      : state.bookingdetails.bookingDetails?.shopdetails;
+    } );
+    // const { shopdetails } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
     
     const generateDaysInMonth = (month:Date): Day[] => {
@@ -134,7 +140,7 @@ const DropOff:React.FC<DropOffProps> = ({shop , setActiveSection}) => {
       <div className="flex pb-4 pt-2   border-b" >
                  <div className="w-28  rounded overflow-hidden">
                    <img
-                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop?.image}`}
+                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
                      alt="shop img"
                      className="w-full h-full object-cover rounded"
                      />
@@ -143,15 +149,15 @@ const DropOff:React.FC<DropOffProps> = ({shop , setActiveSection}) => {
                  <div className="flex flex-col  ms-3 w-full">
                  <div className="flex  justify-between">
                    <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
-                     {shop?.shopName && shop?.shopName[0].toUpperCase() + shop?.shopName.slice(1)}
+                     {shopdetails?.shopName && shopdetails?.shopName[0].toUpperCase() + shopdetails?.shopName.slice(1)}
                    </h2>
                    <p className='text-gray-500 text-sm'> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
                  </div>
                    <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
-                     {shop?.address && Object.values(shop?.address).join(" ")}
+                     {shopdetails?.address && Object.values(shopdetails?.address).join(" ")}
                    </span>
                    <span className="mt-3 text-sm  text-gray-600">
-                     {shop?.phoneNumber}
+                     {shopdetails?.phoneNumber}
                    </span>
            
                      <h6 className='mt-3 text-sm  text-gray-600'>

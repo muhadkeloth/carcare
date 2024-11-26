@@ -51,7 +51,7 @@ export interface IShop extends Document {
         brand:string;
         vehicleModelIds:Types.ObjectId[];
     }[];
-    estimate:{
+    estimate?:{
         work:string;
         priceStart:number;
         priceEnd:number;

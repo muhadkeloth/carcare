@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { HttpStatusCode, Shop } from '../../utilities/interface';
 import { fetchNearbyShops, fetchShopData } from '../../../services/userService';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { navigateBookingSlot } from '../../utilities/navigate/userNavigator';
+import { useDispatch } from 'react-redux';
+import { clearbookingdetails, setShopdetails } from '../../../features/bookingSlice';
+import { clearestimateDetails } from '../../../features/estimateSlice';
 
 
 const MainBlock:React.FC = () => {
@@ -9,6 +13,8 @@ const MainBlock:React.FC = () => {
     const [shop, setShop] = useState<Shop | null>(null);
     const [error, setError] = useState<string | null>(null);
     const location = useLocation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
     const {id} = location.state
 
   const overviewRef = useRef<HTMLDivElement>(null);
@@ -64,17 +70,25 @@ const MainBlock:React.FC = () => {
     }
   };
 
+  const handleAvailability = () => {
+    console.log('shop',shop)
+    if(!shop)return;   
+    dispatch(setShopdetails(shop))
+    navigateBookingSlot(navigate);
+  }
+
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-    };
-    
+    };    
   }, []);
   
   useEffect(()=>{
     fetchShops();
+    dispatch(clearbookingdetails())
+    dispatch(clearestimateDetails())
   },[])
 
   return (
@@ -155,7 +169,7 @@ const MainBlock:React.FC = () => {
             <p>Soonest available time:</p>
             <h2 className="font-bold">Wed, Oct 13, 2024 at 8:00 am</h2>
             {/* <button className="bg-maincol w-full text-white font-semibold rounded p-2">Book Appointment</button> */}
-            <button className="btn-primary w-full">Book Appointment</button>
+            <button onClick={handleAvailability} className="btn-primary w-full">Book Appointment</button>
             <h2 className="text-mainclr-500">Check Availability</h2>
         </div>
   </div>

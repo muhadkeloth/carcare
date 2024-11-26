@@ -73,6 +73,9 @@ export default class VehicleService extends BaseService<IVehicle> {
         return await this.repository.findVehiclesByBrand(brand);
     }
 
+
+    
+
     // async findVehicles(skip:number,limit:number):Promise<any[]>{
     //     const skip = (page -1) * limit;
     //     const vehicles = await VehicleRepository.findVehiclesByIds(vehicleIds,skip,limit);
