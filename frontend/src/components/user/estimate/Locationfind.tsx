@@ -19,7 +19,7 @@ const Locationfind:React.FC<estimateProps> = ({setActiveSection}) => {
 
     const handlelocation = () => {
         // dispatch(setpincode(input))
-        setActiveSection('Vehicle')
+        setActiveSection('Workshop')
     }
 
   return (

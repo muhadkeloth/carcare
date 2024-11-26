@@ -47,11 +47,20 @@ export interface IShop extends Document {
     };
     image:string;
     createdAt?:Date;
-    vehicleIds?: Types.ObjectId[];
+    vehicleIds?: {
+        brand:string;
+        vehicleModelIds:Types.ObjectId[];
+    }[];
+    estimate:{
+        work:string;
+        priceStart:number;
+        priceEnd:number;
+    }[];
     about?:string;
 }
 
 export interface IVehicle extends Document {
+    _id: string | Types.ObjectId;
     brand:string;
     vehicleModel:string;
     createdAt?:Date;

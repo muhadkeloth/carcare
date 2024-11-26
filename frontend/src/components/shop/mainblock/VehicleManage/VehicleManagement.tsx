@@ -89,43 +89,45 @@ const VehicleManagement:React.FC = () => {
         }
     }
 
-    const handleAddModel = () => {
-        // if(inputModel.trim() === ''){
-        //     toast.error('select year', {
-        //         position: "bottom-right", autoClose: 3000,
-        //         hideProgressBar: false, closeOnClick: true,
-        //         pauseOnHover: true, draggable: true,
-        //         progress: undefined, theme: "dark",
-        //         transition: Bounce,
-        //         })
-        //         return 
-        // };
+    // const handleAddModel = () => {
+    //     if(inputModel.trim() === ''){
+    //         toast.error('select year', {
+    //             position: "bottom-right", autoClose: 3000,
+    //             hideProgressBar: false, closeOnClick: true,
+    //             pauseOnHover: true, draggable: true,
+    //             progress: undefined, theme: "dark",
+    //             transition: Bounce,
+    //             })
+    //             return 
+    //     };
 
-        if(newVehicle.vehicleModel.includes(inputModel)){
-            toast.error('already added', {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
-            return;
-        }
-        setNewVehicle((prevVehicle)=> ({...prevVehicle,vehicleModel:[...prevVehicle.vehicleModel,inputModel]}));
-        setInputModel('');
-    }
+    //     if(newVehicle.vehicleModel.includes(inputModel)){
+    //         toast.error('already added', {
+    //             position: "bottom-right", autoClose: 3000,
+    //             hideProgressBar: false, closeOnClick: true,
+    //             pauseOnHover: true, draggable: true,
+    //             progress: undefined, theme: "dark",
+    //             transition: Bounce,
+    //             })
+    //         return;
+    //     }
+    //     setNewVehicle((prevVehicle)=> ({...prevVehicle,vehicleModel:[...prevVehicle.vehicleModel,inputModel]}));
+    //     setInputModel('');
+    // }
 
     const handleRemoveModel = (modelToRemove:string) => {
         setNewVehicle((prev) => ({...prev,vehicleModel:prev.vehicleModel.filter((model)=> model !== modelToRemove)}));
     }
 
     const handleAddVehicle = () => {
-      {setShowAddModal(true); 
+        setShowAddModal(true); 
         setIsEditMode(false); 
-        setNewVehicle({brand:"",vehicleModel:[]}) }
-        if(vehicles){
-          setBrands(vehicles.map(v=>v.brand))
-        }
+        setNewVehicle({brand:"",vehicleModel:[]}) 
+
+        const existingBrands  = shopvehicles.map(v => v.brand);
+        const availableBrands = vehicles.filter((v) => !existingBrands.includes(v.brand)).map(v => v.brand);
+        
+        setBrands(availableBrands)        
     }
 
     const openEditModel = (vehicle:Vehicle) => {
@@ -134,6 +136,10 @@ const VehicleManagement:React.FC = () => {
         brand:vehicle.brand,
         vehicleModel: vehicle.vehicleModel,
       });
+      const filteredModels = vehicles.find((v) => v.brand === vehicle.brand)?.vehicleModel || [];
+      setModels(filteredModels)
+      setBrands([vehicle.brand])  
+      console.log('newVehicle',newVehicle)
       setShowAddModal(true);
     }
 
@@ -166,16 +172,18 @@ const VehicleManagement:React.FC = () => {
     const confirmEdit = async () => {
       if(newVehicle.brand.trim().length == 0){
         setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
+        setShowConfirmModal(false);
         return;
     }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
     if(newVehicle.vehicleModel.length == 0){
         setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
+        setShowConfirmModal(false);
         return;
     }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
 
       try {
         const response = await editVehicle( newVehicle);
-        if(response){
+        if(response.status == HttpStatusCode.CREATED){
           const { vehicle } = response.data;
           setShopVehicles((prev)=>
           prev.map((v)=> v.brand === vehicle.brand ?  {...v, vehicleModel:vehicle.vehicleModel } : v ));
@@ -340,19 +348,19 @@ const VehicleManagement:React.FC = () => {
               </option>
             ))}
           </select>
-                <p className='text-red-300'>{newVehicleError.vehicleModel}</p>
 
-                <button 
+                {/* <button 
                 onClick={handleAddModel}
                 className="px-4 py-2 mt-1 btn-primary">
-                    Add
-                </button>
+                Add
+                </button> */}
                 <button 
                 onClick={()=>setNewVehicle((prev)=>({...prev,vehicleModel:[]}))}
                 className="px-4 py-2 mt-1 btn-secondary">
                     Clear
                 </button>
                 </div>
+                <p className=' text-red-300'>{newVehicleError.vehicleModel}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
                     {newVehicle.vehicleModel.map((model) => (
@@ -375,7 +383,10 @@ const VehicleManagement:React.FC = () => {
 
             <div className="flex justify-end mt-4">
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={() =>{
+                  setShowAddModal(false)
+                  setNewVehicleError({brand:'',vehicleModel:''})
+                } }
                 className="btn-secondary mr-2 "
               >
                 Cancel

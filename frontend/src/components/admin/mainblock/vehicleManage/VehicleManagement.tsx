@@ -150,11 +150,13 @@ const VehicleManagement:React.FC = () => {
     const confirmEdit = async () => {
       if(newVehicle.brand.trim().length == 0){
         setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
+        setShowConfirmModal(false);
         return;
     }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
 
     if(newVehicle.vehicleModel.length == 0){
         setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
+        setShowConfirmModal(false);
         return;
     }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
 
@@ -301,7 +303,7 @@ const VehicleManagement:React.FC = () => {
                 />
                 <p className='text-red-300'>{newVehicleError.vehicleModel}</p>
 
-                <button 
+                <button  
                 onClick={handleAddModel}
                 className="px-4 py-2 mt-1 btn-primary">
                     Add

@@ -3,6 +3,7 @@ import Dashboard from './mainblock/Dash/Dashboard';
 import ShopProfile from './mainblock/ProfileManage/ShopProfile';
 import {  ShopMainProps } from '../utilities/interface';
 import VehicleManagement from './mainblock/VehicleManage/VehicleManagement';
+import EstimateMangement from './mainblock/EstimateManage/EstimateMangement';
 
 
 
@@ -13,6 +14,7 @@ const ShopMain: React.FC<ShopMainProps> = ({ activeSection }) => {
         {activeSection === 'Dash' && <Dashboard />}
         {activeSection === 'VehicleManage' && <VehicleManagement />}
         {activeSection === 'ProfileEdit' && <ShopProfile />}
+        {activeSection === 'EstimateManage' && <EstimateMangement />}
     </div>
   )
 }

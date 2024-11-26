@@ -28,7 +28,15 @@ const ShopSchema:Schema = new Schema(
             },
         },
         image:{type:String,required:true},
-        vehicleIds:[{type:Schema.Types.ObjectId,ref:"Vehicle"}],
+        vehicleIds: [{
+            brand: {type:String,required:true},
+            vehicleModelIds:[{type:Schema.Types.ObjectId,ref:"Vehicle"}],
+        }] ,
+        estimate:[{
+            work:{type:String,unique:true},
+            priceStart:{type:Number,required:true},
+            priceEnd:{type:Number,required:true}
+        }],
         about:{type:String },
 
         createdAt: { type: Date, default: Date.now },
@@ -40,4 +48,3 @@ ShopSchema.index({ location:"2dsphere"});
 
 const Shop = mongoose.model<IShop>("Shop",ShopSchema);
 export default Shop;
-

@@ -1,4 +1,4 @@
-import { faArrowLeft, faArrowRightFromBracket, faCar, faChartBar, faUserCog } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faArrowRightFromBracket, faCalculator, faCar, faChartBar, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { SidebarProps } from '../utilities/interface'
@@ -25,6 +25,13 @@ const SidebarShop:React.FC<SidebarProps> = ({ activeSection, handleActiveSection
                     >
                         <FontAwesomeIcon icon={faCar} />
                         <span>Vehicles</span>
+                    </button>
+                    <button
+                         className={`flex items-center space-x-2 hover:text-mainclr-200 ${activeSection == 'EstimateManage' ? 'text-mainclr-700 border-r-4 border-mainclr-900':''}`}
+                         onClick={() => handleActiveSection("EstimateManage")}
+                        >
+                        <FontAwesomeIcon icon={faCalculator} />
+                        <span>Estimate</span>
                     </button>
                     <button
                         className={`flex items-center space-x-2 hover:text-mainclr-200 ${activeSection == 'ProfileEdit' ? 'text-mainclr-700 border-r-4 border-mainclr-900' : ''}`}

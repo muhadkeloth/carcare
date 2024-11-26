@@ -44,6 +44,7 @@ export default class VehicleService extends BaseService<IVehicle> {
             throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
         }
         const existingVehicles = await this.repository.findVehiclesByBrand(brand);
+        if(!existingVehicles) return null;
 
         const existingModels = existingVehicles.map((v) => v.vehicleModel );
         const modelsToAdd = vehicleModel.filter((v)=> !existingModels.includes(v) );
@@ -66,6 +67,10 @@ export default class VehicleService extends BaseService<IVehicle> {
 
     async deleteByBrand(brand:string):Promise<void> {
         await this.repository.deleteVehicleByBrand(brand)
+    }
+
+    async findVehiclesByBrand(brand:string):Promise<IVehicle[] | null>{
+        return await this.repository.findVehiclesByBrand(brand);
     }
 
     // async findVehicles(skip:number,limit:number):Promise<any[]>{

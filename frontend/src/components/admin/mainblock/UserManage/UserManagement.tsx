@@ -17,7 +17,6 @@ const UserManagement:React.FC = () => {
 
 
   const fetchUsers = async(page:number)=>{
-    console.log('usermanage')
     try{
       const usersData = await fetchAllUsers(page);
       if(!usersData || !usersData.users) throw new Error('user data not found')

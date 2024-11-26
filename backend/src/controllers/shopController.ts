@@ -31,46 +31,19 @@ export class ShopController extends BaseController<any> {
     }
   }
 
-  // vehicleDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  //   if (!req.user){
-  //       logger.warn(`error to find shop id`);
-  //       throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
-  //   }
-
-  //   const page = parseInt(req.query.page as string) || 1;
-  //   const limit = parseInt(req.query.limit as string) || 10;
-  //   try {
-  //     const shopdetails = await this.service.findOne({_id: req.user as string,});
-  //     if (!shopdetails){
-  //       logger.warn(`finding shop vehicle details error`);
-  //       throw new AppError("finding shop vehicle details error",HttpStatusCode.NOT_FOUND);
-  //     }
-
-  //     const vehicleIds = shopdetails?.vehicleIds;
-  //     if (!vehicleIds || vehicleIds.length == 0) {
-  //       res.status(HttpStatusCode.SUCCESS).json({ shopVehicle: [], totalPages: 1, currentPage: page });
-  //     } else {
-  //       const { vehicles, totalPages } = await VehicleService.getVehicles(vehicleIds,page,limit); //need edit
-  //       logger.info("fetch vehicle details successfully");
-
-  //       res.status(HttpStatusCode.SUCCESS).json({ shopVehicle: vehicles, totalPages, currentPage: page });}
-  //   } catch (error) {
-  //       const err = error as Error;
-  //       logger.error(`error fetching vehicle details in shop: ${err.message}`);
-  //       next(err);
-  //   }
-  // };
-
-  getvehicleDetails = async (req: Request, res: Response, next: NextFunction) => {
-   
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const skip = (page - 1) * limit;
+  getvehicleDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const Vehicle = await this.vehicleService.findVehicles(skip, limit);
-      const totaVehicles = (await this.vehicleService.findCountVehicles()) ?? 0;
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const skip = (page - 1) * limit;
 
-      res.status(HttpStatusCode.SUCCESS).json({ Vehicle, totalPages: Math.ceil(totaVehicles/limit), currentPage: page });
+      const {Vehicle, totalVehicles} = await this.service.findVehicles(req.user as string,skip,limit);
+
+      res.status(HttpStatusCode.SUCCESS).json({ Vehicle, totalPages: Math.ceil(totalVehicles/limit), currentPage: page });
     } catch (error) {
         const err = error as Error;
         logger.error(`error fetching vehicle details in shop: ${err.message}`);
@@ -78,59 +51,24 @@ export class ShopController extends BaseController<any> {
     }
   };
 
-  // addVehicleDetails = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
-  //   try {
-  //     if (!req.user){
-  //       logger.warn(`error to find shop id`);
-  //       throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
-  //     }
-  //     const { brand, vehicleModel, year } = req.body;
-
-  //     if (!brand || !vehicleModel || !year || !Array.isArray(year)) {
-  //       logger.warn('Invalid vehicle details')
-  //       throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
-  //     }
-  //     let vehicle = await Vehicle.findOne({ brand, vehicleModel }); //edit vehilc
-  //     if (!vehicle) {
-  //       vehicle = await Vehicle.create({ brand, vehicleModel, year }); //edit vehilc
-  //     } else {
-  //       const newYears = year.filter((y) => !vehicle?.year.includes(y));
-  //       if (newYears.length > 0) {
-  //         vehicle.year.push(...newYears);
-  //         await vehicle.save(); //edit vehilc
-  //       }
-  //     }
-  //     if (!vehicle){
-  //       logger.warn('failed to create or find vehicle');
-  //       throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
-  //     }
-
-  //     const shopUser = await this.service.findOne({ _id: req.user as string });
-  //     if (!shopUser){
-  //       logger.warn('shop user not found');
-  //       throw new AppError("shop user not found", HttpStatusCode.SUCCESS);
-  //     }
-
-  //     let vehicleId = vehicle._id as mongoose.Types.ObjectId;
-  //     if (shopUser.vehicleIds && !shopUser.vehicleIds.some((id) => id.toString() === vehicleId.toString())) {
-  //       shopUser.vehicleIds.push(vehicleId);
-  //       await shopUser.save(); //need edit here
-  //     }
-
-  //     res.status(HttpStatusCode.CREATED).json({ message: "Vehicle added successfully" });
-  //   } catch (error) {
-  //       const err = error as Error;
-  //       logger.error(`Error adding vehicle details: ${err.message}`);
-  //       next(err);
-  //   }
-  // };
-  addVehicleDetails = async (req: Request, res: Response,next: NextFunction) => {
+  addVehicleDetails = async (req: AuthenticatedRequest, res: Response,next: NextFunction) => {
     try {
+      if (!req.user){
+              logger.warn(`error to find shop id`);
+              throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+            }
       const { brand, vehicleModel } = req.body;
 
-      await this.vehicleService.createVehicle(brand, vehicleModel); 
+      const vehicledetails = await this.vehicleService.findVehiclesByBrand(brand);
+      if (!vehicledetails){
+        logger.warn('failed to create or find vehicle');
+        throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
 
-      res.status(HttpStatusCode.CREATED).json({ message: "Vehicle added successfully" });
+      await this.service.createVehicle(req.user as string, vehicledetails, vehicleModel); 
+    
+      res.status(HttpStatusCode.CREATED).json({ message: "Vehicle shop added successfully" });
+
     } catch (error) {
         const err = error as Error;
         logger.error(`Error adding vehicle details: ${err.message}`);
@@ -138,55 +76,20 @@ export class ShopController extends BaseController<any> {
     }
   };
 
-  // EditVehicleDetails = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
-  //   try {
-  //     if (!req.user){
-  //       logger.warn("Error: User not found or authenticated");
-  //       throw new AppError("Error: User not found or authenticated",HttpStatusCode.BAD_REQUEST);
-  //     }
-  //     const vehicleId = req.params.id;
-  //     if (!vehicleId){
-  //       logger.warn("vehicle id is required");
-  //       throw new AppError("vehicle id is required",HttpStatusCode.BAD_REQUEST);
-  //     }
-
-  //     const { brand, vehicleModel, year } = req.body;
-  //     if (!brand || !vehicleModel || !year || !Array.isArray(year) || !year.every((item) => typeof item === "number")) {
-  //       logger.warn("Invalid vehicle details");
-  //       throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
-  //     }
-
-  //     const vehicleupload = await Vehicle.findById(vehicleId); //edit vehicle
-  //     if (!vehicleupload){
-  //       logger.warn("vehicle not found");
-  //       throw new AppError("vehicle not found", HttpStatusCode.NOT_FOUND);
-  //     }
-
-  //     vehicleupload.brand = brand;
-  //     vehicleupload.vehicleModel = vehicleModel;
-  //     vehicleupload.year = [1];
-  //     vehicleupload.year.push(...year);
-  //     vehicleupload.year.shift();
-
-  //     const vehicle = await vehicleupload.save(); //edit vehicle
-
-  //     res.status(HttpStatusCode.CREATED).json({ vehicle, message: "update vehicle details successfully" });
-  //   } catch (error) {
-  //       const err = error as Error;
-  //       logger.error(`Error updating vehicle details: ${err.message}`);
-  //       next(err);
-  //   }
-  // };
-  editVehicleDetails = async (req: Request,res: Response,next: NextFunction) => {
+  editVehicleDetails = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
     try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
       const { brand, vehicleModel } = req.body;
-
-      const vehicleupload = await this.vehicleService.editVehicle(brand, vehicleModel); 
-      if (!vehicleupload){
-        logger.warn("vehicle not found");
-        throw new AppError("vehicle not found", HttpStatusCode.NOT_FOUND);
+      const vehicledetails = await this.vehicleService.findVehiclesByBrand(brand);
+      if (!vehicledetails){
+        logger.warn('failed to create or find vehicle');
+        throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
 
+      const vehicleupload = await this.service.updateVehilce(req.user as string,vehicledetails, vehicleModel); 
       res.status(HttpStatusCode.CREATED).json({ vehicle:vehicleupload, message: "update vehicle details successfully" });
     } catch (error) {
         const err = error as Error;
@@ -196,54 +99,19 @@ export class ShopController extends BaseController<any> {
   };
 
 
-  // deleteVehicleDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  //   try {
-  //     if (!req.user){
-  //       logger.warn("User not found or authenticateds");
-  //       throw new AppError("Error: User not found or authenticated",HttpStatusCode.BAD_REQUEST);
-  //     }
-  //     const vehicleId = req.params.id;
-  //     if (!vehicleId){
-  //       logger.warn("vehicle id is required for deletion ");
-  //       throw new AppError("vehicle id is required for deletion ",HttpStatusCode.BAD_REQUEST);
-  //     }
-
-  //     const vehicle = await Vehicle.findByIdAndDelete(vehicleId); //edit vehicle
-  //     if (!vehicle){
-  //       logger.warn("vehicle not found");
-  //       throw new AppError("vehicle not found", HttpStatusCode.NOT_FOUND);
-  //     }
-
-  //     const shop = await this.service.findOne({ _id: req.user as string });
-  //     if (!shop){
-  //       logger.warn("shopid not found to delete vehicle");
-  //       throw new AppError("shopid not found to delete vehicle",HttpStatusCode.NOT_FOUND);
-  //     }
-
-  //     const vehicleIndex = shop?.vehicleIds
-  //       ? shop?.vehicleIds.indexOf(new mongoose.Types.ObjectId(vehicleId))
-  //       : -1;
-  //     if (vehicleIndex !== -1 && shop?.vehicleIds) {
-  //       shop?.vehicleIds.splice(vehicleIndex, 1);
-  //       await shop.save(); //edit shop
-  //     }
-
-  //     res.status(HttpStatusCode.SUCCESS).json({message: "Vehicle deleted and updated successfully in the shop",});
-  //   } catch (error) {
-  //       const err = error as Error;
-  //       logger.error(`Error delete vehicle details: ${err.message}`);
-  //       next(err);
-  //   }
-  // };
-  deleteVehicleDetails = async (req: Request, res: Response, next: NextFunction) => {
+  deleteVehicleDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
       const brand = req.params.brand;
       if (!brand){
         logger.warn("vehicle brand is required for deletion ");
         throw new AppError("vehicle brand is required for deletion ",HttpStatusCode.BAD_REQUEST);
       }
 
-      await this.vehicleService.deleteByBrand(brand);
+      await this.service.deleteVehicleByBrand(req.user as string,brand);
 
       res.status(HttpStatusCode.SUCCESS).json({message: "Vehicle deleted and updated successfully"});
     } catch (error) {
@@ -344,4 +212,94 @@ export class ShopController extends BaseController<any> {
         next(err);
     }
   };
+
+  getEstimateDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const skip = (page - 1) * limit;
+
+      const {Estimate, totalEstimate} = await this.service.findEstimate(req.user as string,skip,limit);
+
+      res.status(HttpStatusCode.SUCCESS).json({ Estimate, totalPages: Math.ceil(totalEstimate/limit), currentPage: page });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`error fetching vehicle details in shop: ${err.message}`);
+        next(err);
+    }
+  };
+
+  createEstimate = async(req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('shop id not found')
+        throw new AppError("shop id not found",HttpStatusCode.BAD_REQUEST);
+      }
+      const { work, priceStart, priceEnd } = req.body;
+
+      await this.service.createEstimate(req.user as string, work, priceStart, priceEnd); 
+    
+      res.status(HttpStatusCode.CREATED).json({ message: "estmate shop added successfully" });
+
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error create shop estimate: ${err.message}`);
+        next(err);
+    }
+  }
+
+  editEstimateDetails = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const { work, priceStart, priceEnd } = req.body;
+
+      const estimateupload = await this.service.updateEstimate(req.user as string,work, priceStart, priceEnd); 
+ 
+      res.status(HttpStatusCode.CREATED).json({ Estimate:estimateupload, message: "update estimate details successfully" });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error updating vehicle details: ${err.message}`);
+        next(err);
+    }
+  };
+
+
+  deleteEstimateDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const work = req.params.work;
+      if (!work){
+        logger.warn("estimate work is required for deletion ");
+        throw new AppError("estimate work is required for deletion ",HttpStatusCode.BAD_REQUEST);
+      }
+
+      await this.service.deleteEstimateByWork(req.user as string,work);
+
+      res.status(HttpStatusCode.SUCCESS).json({message: "Vehicle deleted and updated successfully"});
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error delete vehicle details: ${err.message}`);
+        next(err);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
 }

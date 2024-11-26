@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "../components/utilities/interface";
+import { Estimate, HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
 
@@ -113,6 +113,55 @@ export const editVehicle = async (newVehicle:any):Promise<{status:number;data:an
 export const deleteShopVehicle = async (brand:string):Promise<{status:number}> => {
     try {
         const response = await api.delete(`/shop/deletevehicle/${brand}`);
+
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
+        return {status:response.status}
+    } catch (error) {
+        console.error('Error deleting:', error);
+        throw new Error('error in deleting vehicle');
+    }
+}
+
+// 
+
+export const createShopEstimate = async(newEstimate:Estimate):Promise<{status:number;message:string}> => {
+    const response = await api.post('/shop/addestimate', newEstimate);
+    return {status:response.status,message:response.data.message}
+}
+
+export const fetchAllestimates = async(page:number):Promise<{Estimate:any[];totalPages:number}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/allEstimatedetails?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error(`unexpected status code when fetching estimate details: ${response.status}`)
+        
+        const {data} = response;
+        if(data && data.Estimate){
+            return {Estimate:data.Estimate,totalPages:data.totalPages}
+        }else{
+            throw new Error('invalid Estimate response structure.')
+        }
+    } catch (error) {
+        console.error('error in fetching Estimate details',error);
+        throw new Error('unable to fetch Estimate details');  
+    }
+}
+
+export const editEstimate = async (newEstimate:any):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.put(`/shop/editestimate`, newEstimate);
+
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
+        return {status:response.status,data:response.data}
+    } catch (error) {
+        console.error('Error adding new vehicle:', error);
+        throw new Error('error in update  vehicle');
+    }
+}
+
+export const deleteShopEstimate = async (work:string):Promise<{status:number}> => {
+    try {
+        const response = await api.delete(`/shop/deleteestimate/${work}`);
 
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
         return {status:response.status}

@@ -59,6 +59,14 @@ export default class ShopRepository extends BaseRepository<IShop> {
         return await shop.save();
     }
 
+    async findVehicles(_id:string):Promise<IShop | null>{
+        return this.model.findOne({_id},{vehicleIds:1}).populate('vehicleIds.vehicleModelIds')
+    }
+
+  
+
+  
+
 
   
 

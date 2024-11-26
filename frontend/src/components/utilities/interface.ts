@@ -44,6 +44,13 @@ export interface LocationPickerProps {
     vehicleModel:string[];
   }
 
+  export interface Estimate {
+    _id?:string;
+    work:string;
+    priceStart:number |null ;
+    priceEnd:number |null;
+  }
+
   export interface SidebarProps {
     activeSection: string;
     handleActiveSection: (section: string) => void;

@@ -25,6 +25,11 @@ router.post('/addvehicle', authenticateToken, shopController.addVehicleDetails);
 router.put('/editvehicle', authenticateToken, shopController.editVehicleDetails);
 router.delete('/deletevehicle/:brand', authenticateToken, shopController.deleteVehicleDetails);
 
+router.get('/allEstimatedetails', authenticateToken, shopController.getEstimateDetails);
+router.post('/addestimate', authenticateToken, shopController.createEstimate);
+router.put('/editestimate', authenticateToken, shopController.editEstimateDetails);
+router.delete('/deleteestimate/:work', authenticateToken, shopController.deleteEstimateDetails);
+
 router.get('/shopdetails', authenticateToken, shopController.shopDetails);
 router.put('/uploadprofileimage', authenticateToken, upload.single('image'), shopController.uploadShopProfileImg);
 router.put('/updateprofiledetails', authenticateToken, shopController.updateShopProfileDetails);

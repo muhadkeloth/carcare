@@ -22,18 +22,18 @@ const Estimate:React.FC = () => {
           <span onClick={()=>navigateHome(navigate, 'user')}
            className='font-semibold text-gray-700 cursor-pointer'><FontAwesomeIcon icon={faChevronLeft} /> Exit</span> 
         </button>
-        <ul className="sm:flex gap-5 justify-center hidden items-center">
-          <li className="">
-            <h1 className='font-semibold text-1xl text-gray-600'>Location</h1>
+        <ul className="sm:flex gap-5 justify-center hidden items-center ">
+          <li >
+            <h1 className={`font-semibold text-1xl ${activeSection === 'Location' ? 'text-mainclr-500' : 'text-gray-600' }  `}>Location</h1>
           </li>
-          <li className="">
-          <h1 className='font-semibold text-1xl text-gray-600'>Vehicle</h1>
+          <li >
+          <h1 className={`font-semibold text-1xl ${activeSection === 'Workshop' ? 'text-mainclr-500' : 'text-gray-600' } `}>Work Shop</h1>
           </li>
-          <li className="">
-          <h1 className='font-semibold text-1xl text-gray-600'>Repair Service</h1>
+          <li >
+          <h1 className={`font-semibold text-1xl ${activeSection === 'RepairService' ? 'text-mainclr-500' : 'text-gray-600' } `}>Repair Service</h1>
           </li>
-          <li className="">
-          <h1 className='font-semibold text-1xl text-gray-600'>Estimate</h1>
+          <li >
+          <h1 className={`font-semibold text-1xl ${activeSection === 'Estimate' ? 'text-mainclr-500' : 'text-gray-600' } `}>Estimate</h1>
           </li>
         </ul>
         
@@ -45,7 +45,7 @@ const Estimate:React.FC = () => {
          
         </div> */}
         {activeSection === 'Location'  && < Locationfind setActiveSection={setActiveSection} />}
-        {activeSection === 'Vehicle'  && <VehicleDetails setActiveSection={setActiveSection} />}
+        {activeSection === 'Workshop'  && <VehicleDetails setActiveSection={setActiveSection} />}
         {activeSection === 'RepairService'  && <RepairService setActiveSection={setActiveSection} />}
         {activeSection === 'Estimate'  && <FindEstimate setActiveSection={setActiveSection} />}   
       </div>
