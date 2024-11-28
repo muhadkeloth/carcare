@@ -4,6 +4,7 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { HttpStatusCode, User } from '../../../utilities/interface';
 import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminService';
 import { Bounce, toast } from 'react-toastify';
+import { ToastActive } from '../../../utilities/functions';
 
 
 
@@ -23,15 +24,17 @@ const UserManagement:React.FC = () => {
       setUsers(usersData.users);
       setTotalPages(usersData.totalPages);
     }catch(error){
-      console.error('failed to fetch users:',error)
-      const errorMessage = error instanceof Error?error.message:'error on fetching shop vehicle';
-      toast.error(errorMessage, {
-        position: "bottom-right", autoClose: 3000,
-        hideProgressBar: false, closeOnClick: true,
-        pauseOnHover: true, draggable: true,
-        progress: undefined, theme: "dark",
-        transition: Bounce,
-        })
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
+      // console.error('failed to fetch users:',error)
+      // const errorMessage = error instanceof Error?error.message:'error on fetching shop vehicle';
+      // toast.error(errorMessage, {
+      //   position: "bottom-right", autoClose: 3000,
+      //   hideProgressBar: false, closeOnClick: true,
+      //   pauseOnHover: true, draggable: true,
+      //   progress: undefined, theme: "dark",
+      //   transition: Bounce,
+      //   })
     }
   }
 
@@ -39,7 +42,7 @@ const UserManagement:React.FC = () => {
     try{
       const response = await toggleuserStatus(id);
       if(response.status = HttpStatusCode.CREATED){
-        console.log('User status updated successfully:', response.data);
+        // console.log('User status updated successfully:', response.data);
         const index = users.findIndex(user => user._id == id);
         if(index !== -1){
           const updatedUsers = [...users];
@@ -49,13 +52,15 @@ const UserManagement:React.FC = () => {
           };
           setUsers(updatedUsers)
         }
-        toast.success('status changed successfully')
+        ToastActive('success','status changed successfully')
       }else{
-        toast.error('status toggle failed')
+        ToastActive('error','status toggle failed')
       }
     }catch(error){
-      console.error('error on toggle status',error);
-      toast.error('status toggle failed')
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
+      // console.error('error on toggle status',error);
+      // ToastActive('error','status toggle failed')
     }finally{
       setToggleId('');
       setShowConfirmModal(false);

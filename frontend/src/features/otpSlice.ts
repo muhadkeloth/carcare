@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type userdetail = {username:string;phoneNumber:string;email:string; password:string;otp?:string}
+type userdetail = {username:string;phoneNumber:string;email:string; password?:string;confirmPassword?:string;otp?:string}
 interface OtpState {
     signupDetails:userdetail | null;
 };

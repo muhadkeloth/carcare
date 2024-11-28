@@ -20,7 +20,6 @@ const MainSection:React.FC = () => {
             placeholder='Select vehicle make' />
 
             <button 
-            // className="bg-maincol rounded w-full md:w-auto p-4 hover:bg-maincoldark text-white flex items-center justify-center">
             className="btn-primary w-full md:w-auto p-4 ">
                 Find Near WorkShop {/* need to add arrow in big sceen */}
                 </button>

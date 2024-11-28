@@ -1,4 +1,5 @@
-import { HttpStatusCode } from "../components/utilities/interface";
+import { AxiosError } from "axios";
+import { ErrorResponse, HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
 
@@ -16,8 +17,9 @@ export const fetchAllShop = async (page:number):Promise<{ workShop:any[]; totalP
             throw new Error('Invalid shop details response structure.')
         }
     }catch(error){
-        console.error("Error fetching nearby shops:", error);
-        throw new Error("Unable to fetch nearby shops.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // throw new Error("Unable to fetch nearby shops.");
     }
 }
 
@@ -25,8 +27,10 @@ export const addNewShop = async (formData:any) => {
     try {
         await api.post('/admin/addShop', formData);
     } catch (error) {
-        console.error('Error adding new shop:', error);
-        throw error;
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error adding new shop:', error);
+        // throw error;
     }
 }
 
@@ -43,8 +47,10 @@ export const fetchAllUsers = async (page:number):Promise<{users:any[]; totalPage
                 throw new Error('Invalid userdetails response structure.')
             }
     } catch (error) {
-        console.error('error fetching users',error);
-        throw new Error('unable to fetch users')
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('error fetching users',error);
+        // throw new Error('unable to fetch users')
     }
 }
 
@@ -52,8 +58,10 @@ export const toggleuserStatus = async (id:string):Promise<{status:number,data:an
     try {
         return api.patch(`/admin/user/${id}`)
     } catch (error) {
-        console.error('unable to change user status',error)
-        throw new Error(`unable to change user status${error}`)
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('unable to change user status',error)
+        // throw new Error(`unable to change user status${error}`)
     }
 }
 
@@ -61,8 +69,10 @@ export const toggleShopStatus = async (id:string):Promise<{status:number,data:an
     try {
         return api.patch(`/admin/shopstatus/${id}`)
     } catch (error) {
-        console.error('unable to change shop status',error)
-        throw new Error(`unable to change shop status${error}`)
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('unable to change shop status',error)
+        // throw new Error(`unable to change shop status${error}`)
     }
 }
 
@@ -80,8 +90,10 @@ export const fetchAllVehicle = async (page:number):Promise<{Vehicle:any[];totalP
             throw new Error('invalid vehicle response structure.')
         }
     } catch (error) {
-        console.error('error in fetching vehicle details',error);
-        throw new Error('unable to fetch vehicle details'); 
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('error in fetching vehicle details',error);
+        // throw new Error('unable to fetch vehicle details'); 
     }
 }
 
@@ -91,8 +103,10 @@ export const addNewVehicle = async (newVehicle:any):Promise<{status:number;messa
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error in adding new vehicle');
         return {status:response.status,message:response.data.message}
     } catch (error) {
-        console.error('Error adding new vehicle:', error);
-        throw new Error('error in adding new vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error adding new vehicle:', error);
+        // throw new Error('error in adding new vehicle');
     }
 }
 
@@ -103,8 +117,10 @@ export const editVehicle = async (newVehicle:any):Promise<{status:number;data:an
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
         return {status:response.status,data:response.data}
     } catch (error) {
-        console.error('Error adding new vehicle:', error);
-        throw new Error('error in update  vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error adding new vehicle:', error);
+        // throw new Error('error in update  vehicle');
     }
 }
 
@@ -115,8 +131,10 @@ export const deleteVehicle = async (brand:string):Promise<{status:number}> => {
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
         return {status:response.status}
     } catch (error) {
-        console.error('Error deleting:', error);
-        throw new Error('error in deleting vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error deleting:', error);
+        // throw new Error('error in deleting vehicle');
     }
 }
 

@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setpincode } from '../../../features/estimateSlice';
 import { fetchPincode } from '../../../services/userService';
 import { HttpStatusCode } from '../../utilities/interface';
+import { handleInputValue } from '../../utilities/validation';
 
 export interface estimateProps {
     setActiveSection:React.Dispatch<React.SetStateAction<string>>;
@@ -17,10 +18,10 @@ const Locationfind:React.FC<estimateProps> = ({setActiveSection}) => {
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false); 
     const dispatch = useDispatch();
 
-    const handleInputVal = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      if (/^\d{0,6}$/.test(value)) { setInput(value); }
-  };
+  //   const handleInputVal = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     const value = e.target.value;
+  //     if (/^\d{0,6}$/.test(value)) { setInput(value); }
+  // };
 
     const fetchPincodeSuggestions = async (pincode: string) => {
     if (pincode.length >= 1) {
@@ -78,7 +79,7 @@ const Locationfind:React.FC<estimateProps> = ({setActiveSection}) => {
           <input
             type="text"
             value={input}
-            onChange={handleInputVal}
+            onChange={(e) => handleInputValue(e) && setInput(e.target.value)}
             className="block w-96 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
             placeholder="Enter Pincode..."
             required

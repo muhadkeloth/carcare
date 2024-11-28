@@ -12,6 +12,7 @@ import { fetchShopUserDetails } from '../../../../services/shopService';
 import { useDispatch } from 'react-redux';
 import { clearShopUser, setShopUser } from '../../../../features/shopSlice';
 import { ThreeDots } from 'react-loader-spinner';
+import { ToastActive } from '../../../utilities/functions';
 
 
 
@@ -32,8 +33,10 @@ const ShopProfile: React.FC = () => {
       if(!response || !response.data) throw new Error('canot find shop user details');
       dispatch(setShopUser(response.data.shopUser))
     } catch (error) {
-      console.log('error to find shop user details',error)
-      toast.error('error on finding shop user details')
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
+      // console.log('error to find shop user details',error)
+      // toast.error('error on finding shop user details')
     }finally{
       setIsLoading(false)
     }

@@ -56,22 +56,19 @@ const MainBlock:React.FC = () => {
     try {
 
         const response = await fetchShopData(id);
-        if(response.status == HttpStatusCode.SUCCESS){
-            
-            console.log('here shop',response.data);
-            setShop(response.data.shopUser);
-            console.log('here shop',shop);
-            
+        if(response.status == HttpStatusCode.SUCCESS){            
+            setShop(response.data.shopUser);            
         }
     } catch (error) {
+      const errorMessage = (error as Error).message;
       console.error("error fetching nearby shops:", error);
       setShop(null);
+      setError(errorMessage);
       setError("unable to fetch nearby shops.");
     }
   };
 
   const handleAvailability = () => {
-    console.log('shop',shop)
     if(!shop)return;   
     dispatch(setShopdetails(shop))
     navigateBookingSlot(navigate);

@@ -22,7 +22,6 @@ const AdminDash: React.FC = () => {
       // Your logic to set the active section
       setActiveSection(section)
       setShowMenu(!showMenu);
-      console.log('Active section:', section);
   };
 
 useEffect(() => {

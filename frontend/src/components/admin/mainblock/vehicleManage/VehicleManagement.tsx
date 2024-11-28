@@ -4,13 +4,17 @@ import React, { useEffect, useState } from 'react'
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
 import { addNewVehicle, deleteVehicle, editVehicle, fetchAllVehicle } from '../../../../services/adminService';
+import Table from '../../../reuseComponents/Table';
+import { ToastActive } from '../../../utilities/functions';
+import { nameValidation } from '../../../utilities/validation';
 
 
 
 const VehicleManagement:React.FC = () => { 
     const [vehicles,setVehicles] = useState<Vehicle[]>([])
     const [newVehicle, setNewVehicle] = useState<Vehicle>({ brand:'',vehicleModel:[] });
-    const [newVehicleError, setNewVehicleError] = useState({ brand:'',vehicleModel:'' });
+    const [error,setError] = useState<Record<string,string> | null>(null)
+    // const [newVehicleError, setNewVehicleError] = useState({ brand:'',vehicleModel:'' });
     const [inputModel,setInputModel]  = useState<string>('')
     const [showAddModal, setShowAddModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -23,85 +27,113 @@ const VehicleManagement:React.FC = () => {
     const fetchVehicle = async (page:number) => {
         try {
             const vehicleDetails = await fetchAllVehicle(page);
-            console.log('in fetchvehicle',vehicleDetails);
-            
+            // console.log('in fetchvehicle',vehicleDetails);
             if(!vehicleDetails || !vehicleDetails.Vehicle ) throw new Error('vehicle fetching error')
-                setVehicles(vehicleDetails.Vehicle);
-                setTotalPages(vehicleDetails.totalPages);
+              setVehicles(vehicleDetails.Vehicle);
+            setTotalPages(vehicleDetails.totalPages);
         } catch (error) {
-            console.log('failed to fetch user:',error);
-        const errorMessage = error instanceof Error?error.message:'error on fetching vehicle';
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            })
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+            // console.log('failed to fetch user:',error);
+        // const errorMessage = error instanceof Error?error.message:'error on fetching vehicle';
+          // toast.error(errorMessage, {
+          //   position: "bottom-right", autoClose: 3000,
+          //   hideProgressBar: false, closeOnClick: true,
+          //   pauseOnHover: true, draggable: true,
+          //   progress: undefined, theme: "dark",
+          //   transition: Bounce,
+          //   })
         }
     };
 
     const addVehicle = async () => {
-        if(newVehicle.brand.trim().length == 0){
-            setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
-            return;
-        }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
+      let flag = false;
+      setError(null);
+      // setIsLoading(true);
 
+      setNewVehicle((prev) => ({ ...prev,brand:prev.brand.trim() })); 
+      if(nameValidation(newVehicle.brand)){
+        setError((prev) => ({...prev,brand:"brand must be at least 4 characters."}));
+        flag = true;
+      }
+      // if(newVehicle.brand.trim().length == 0){
+        //   setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
+        //   return;
+        // }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
+        
         if(newVehicle.vehicleModel.length == 0){
-            setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
-            return;
-        }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
+          setError((prev) => ({...prev,vehicleModel:"enter model name"}));
+          flag = true;
+          // setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
+        }
+        // else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
 
         const iscreated = vehicles.some(vehicle => vehicle.brand == newVehicle.brand);
         if(iscreated){
-            setNewVehicleError((prev)=>({...prev,brand:'brand name already created'}))
-            return
-        }else{setNewVehicleError((prev)=>({...prev,brand:''}))}
+          setError((prev) => ({...prev,brand:"brand name already created"}));
+          flag = true;
+        }
+        if(flag){
+          // setIsLoading(false); 
+          return;
+        }
+        // if(iscreated){
+        //     setNewVehicleError((prev)=>({...prev,brand:'brand name already created'}))
+        //     return
+        // }else{setNewVehicleError((prev)=>({...prev,brand:''}))}
 
         try {
             await addNewVehicle(newVehicle);
             setShowAddModal(false);
             fetchVehicle(currentPage);
-            toast.success('vehicle added successfully', {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+            ToastActive('success','vehicle added successfully')
+            // toast.success('vehicle added successfully', {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
         } catch (error) {
-            console.log('eror to add vehicle')
-            const errorMessage = error instanceof Error?error.message:'error on adding vehicle';
-            toast.error(errorMessage, {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+            // console.log('eror to add vehicle')
+            // const errorMessage = error instanceof Error?error.message:'error on adding vehicle';
+            // toast.error(errorMessage, {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
         }
+        // finally{
+        //   setIsLoading(false); 
+        // }
     }
 
     const handleAddModel = () => {
         if(inputModel.trim() === ''){
-            toast.error('Enter model', {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+          ToastActive('error','Enter model')
+            // toast.error('Enter model', {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
                 return 
         };
 
         if(newVehicle.vehicleModel.includes(inputModel)){
-            toast.error('already added', {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+          ToastActive('error','already added')
+            // toast.error('already added', {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
             return;
         }
         setNewVehicle((prevVehicle)=> ({...prevVehicle,vehicleModel:[...prevVehicle.vehicleModel,inputModel]}));
@@ -135,30 +167,37 @@ const VehicleManagement:React.FC = () => {
           setVehicles((prev)=>
             prev.filter((v)=>(v.brand !== vehicleToDelete.brand )));
   
-          toast.success('vehicle deleted successfully');
+          ToastActive('success','vehicle deleted successfully');
         }else{
-          toast.error('failed to delete vehicle.');
+          ToastActive('error','failed to delete vehicle.');
         }
       } catch (error) {
-        console.log('error in deleting vehicle',error)
-        toast.error('failed to delete vehicle.')        
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // console.log('error in deleting vehicle',error)
+        // toast('error','failed to delete vehicle.')        
       }finally{
         setShowConfirmModal(false);
       }
     }
     
     const confirmEdit = async () => {
+      let flag = false;
+      setError(null);
       if(newVehicle.brand.trim().length == 0){
-        setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
+        setError((prev)=>({...prev,brand:'enter brand name'}))
+        // setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
         setShowConfirmModal(false);
-        return;
-    }else{setNewVehicleError((prev)=>({...prev,brand:''}))} 
-
-    if(newVehicle.vehicleModel.length == 0){
-        setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
+        flag = true;
+      }
+      
+      if(newVehicle.vehicleModel.length == 0){
+        setError((prev)=>({...prev,vehicleModel:'enter model name'}))
+        // setNewVehicleError((prev)=>({...prev,vehicleModel:'enter model name'}))
         setShowConfirmModal(false);
-        return;
-    }else {setNewVehicleError((prev)=>({...prev,vehicleModel:''}))}
+        flag = true;
+    };
+    if(flag) return;
 
       try {
         const response = await editVehicle(newVehicle);
@@ -167,13 +206,15 @@ const VehicleManagement:React.FC = () => {
           setVehicles((prev)=>
           prev.map((v)=> v.brand == vehicle.brand ? {...v, vehicleModel:vehicle.vehicleModel } : v ));
 
-          toast.success('vehicle updated successfully');
+          ToastActive('success','vehicle updated successfully');
         }else{
-          toast.error('failed to update vehicle.');
+          ToastActive('error','failed to update vehicle.');
         }
       } catch (error) {
-        console.log('error in deleting vehicle',error)
-        toast.error('error updating vehicle');
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // console.log('error in deleting vehicle',error)
+        // toast.error('error updating vehicle');
       }finally{
         setShowConfirmModal(false);
         setShowAddModal(false);
@@ -188,6 +229,23 @@ const VehicleManagement:React.FC = () => {
         addVehicle();
       }
     }
+
+    const tableHeaders = [
+      { label: 'brand', key: 'brand' },
+      { label: 'Model', key: 'vehicleModel' },
+    ];
+
+    const renderActions = (vehicle: any) => (
+      <div className='flex py-1 px-4 gap-4 text-center' >
+        <button onClick={() => openEditModel(vehicle)}>
+          <FontAwesomeIcon icon={faPencil} />
+        </button>
+        <button onClick={() => openDeleteConfirm(vehicle)}>
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
+      </div>
+    );
+    
 
     useEffect(()=>{
         fetchVehicle(currentPage)
@@ -211,7 +269,7 @@ const VehicleManagement:React.FC = () => {
         </button>
       </div>
 
-    <div className="relative overflow-x-auto shadow-md rounded-lg">
+    {/* <div className="relative overflow-x-auto shadow-md rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">
         <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
           <tr>
@@ -245,7 +303,9 @@ const VehicleManagement:React.FC = () => {
           )} 
         </tbody>
       </table>
-    </div>
+    </div> */}
+    <Table headers={tableHeaders} data={vehicles} renderActions={renderActions}  />
+
 
     <div className="flex justify-center items-center mt-4">
       <button
@@ -282,10 +342,10 @@ const VehicleManagement:React.FC = () => {
                     setNewVehicle({ ...newVehicle, brand: e.target.value })
                 }
                 placeholder='Eg: Tata'
-                style={newVehicleError.brand.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                style={error?.brand ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
                 className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
               />
-              <p className='text-red-300'>{newVehicleError.brand}</p>
+              <p className='text-red-300'>{error?.brand}</p>
               </div>
              
               <div className='w-full mt-4'>
@@ -299,9 +359,9 @@ const VehicleManagement:React.FC = () => {
                 onChange={(e) =>setInputModel(e.target.value)}
                 placeholder='Eg: Punch'
                 className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none "
-                style={newVehicleError.vehicleModel.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                style={error?.vehicleModel ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
                 />
-                <p className='text-red-300'>{newVehicleError.vehicleModel}</p>
+                <p className='text-red-300'>{error?.vehicleModel}</p>
 
                 <button  
                 onClick={handleAddModel}

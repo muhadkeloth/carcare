@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setResetOtp } from '../../features/otpSlice';
 import { RootState } from '../../store';
 import { ThreeDots } from 'react-loader-spinner';
+import { ToastActive } from '../utilities/functions';
 
 
 const OtpValidation:React.FC = () => {
@@ -47,18 +48,20 @@ const OtpValidation:React.FC = () => {
           if (status === HttpStatusCode.CREATED) {
               setTimeLeft(120); 
               setShowResend(false); 
+              ToastActive('success','OTP Resend Successfully')
           }
       } catch (error) {
-          console.error('Error resending OTP:', error);
-          const err = error as AxiosError<ErrorResponse>;
-          const errorMessage = err?.response?.data?.message || 'oops please go back to login';
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            });
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+          // const err = error as AxiosError<ErrorResponse>;
+          // const errorMessage = err?.response?.data?.message || 'oops please go back to login';
+          // toast.error(errorMessage, {
+          //   position: "bottom-right", autoClose: 3000,
+          //   hideProgressBar: false, closeOnClick: true,
+          //   pauseOnHover: true, draggable: true,
+          //   progress: undefined, theme: "dark",
+          //   transition: Bounce,
+          //   });
       }
   };
 
@@ -71,7 +74,6 @@ const OtpValidation:React.FC = () => {
         if(response.status == HttpStatusCode.SUCCESS) {
           if(response.data.token){
             localStorage.setItem(`${response.data.role}_token`,response.data.token);
-            console.log('signup : OTP validated successfully!');
             navigateHome(navigate,response.data.role);
           }
         }else{
@@ -81,24 +83,24 @@ const OtpValidation:React.FC = () => {
         const url = role == 'user' ? '/otpvalidation' : `/${role}/otpvalidation`;
         const response = await fetchOtpValidate(url,{ otp, email,role })
         if(response.status == HttpStatusCode.SUCCESS) {
-          console.log('F : OTP validated successfully!');
           navigatePasswordChange(navigate,email,role);
         }else{
           setOtpError('Invalid OTP. Please try again.')
         }
       }
     }catch(error){
-      console.error('OTP validation failed:', error);
-      setOtpError('Validation error. Please try again.')
-      const err = error as AxiosError<ErrorResponse>;
-          const errorMessage = err?.response?.data?.message || 'otp validation error';
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            });
+      // console.error('OTP validation failed:', error);
+      const errorMessage = (error as Error).message;
+      setOtpError(errorMessage)
+      // const err = error as AxiosError<ErrorResponse>;
+      //     const errorMessage = err?.response?.data?.message || 'otp validation error';
+      //     toast.error(errorMessage, {
+      //       position: "bottom-right", autoClose: 3000,
+      //       hideProgressBar: false, closeOnClick: true,
+      //       pauseOnHover: true, draggable: true,
+      //       progress: undefined, theme: "dark",
+      //       transition: Bounce,
+      //       });
     }finally{
       setIsLoading(false);
     }
@@ -174,7 +176,6 @@ const OtpValidation:React.FC = () => {
           <button 
             type="button" 
             onClick={()=> validateOtp(otp.join(''))}
-            // className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
             className="w-full btn-primary flex justify-center"
           >
             { isLoading ? <ThreeDots height="20" color='#fff' /> : 'VERIFY OTP' } 
@@ -186,7 +187,6 @@ const OtpValidation:React.FC = () => {
           ) : (
             ` ${formatTime(timeLeft)}`
           ) }
-          {/* <span className='text-maincol font-medium hover:underline hover:cursor-pointer' >Resend OTP **time*</span> */}
           </p>
           <p className='text-center mt-3'>Back to  {" "}
           <span className='text-mainclr-500 font-medium hover:underline hover:text-mainclr-600 cursor-pointer' 

@@ -9,53 +9,46 @@ import { ErrorResponse, HttpStatusCode, RoleProps } from '../utilities/interface
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { fetchLogin } from '../../services/apiCall';
 import { ThreeDots } from 'react-loader-spinner';
+import { ToastActive } from '../utilities/functions';
 
 
 
 const Login: React.FC<RoleProps> = ({ role }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passError, setPassError] = useState('');
+  const [error,setError] = useState<Record<string,string> | null>(null)
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { SUCCESS } = HttpStatusCode;
 
   const handleLogin = async(e: React.FormEvent) => {
+    let flag = false;
     e.preventDefault();
     setIsLoading(true);
-    const emailvalidation = emailValidation(email)
-    if(emailvalidation){
-      setEmailError(emailvalidation);
-      return
-    }else{ setEmailError('') }
+    setError(null);
+    setEmail(email.trim())
+    if(email.length === 0 || !emailValidation(email)){
+      flag = true;
+      setError((prev) => ({...prev,emailError:'Entered Invalid Email Address'}))
+    }
+    if(flag){
+      setIsLoading(false); 
+      return;
+    }
 
     try{
         const response = await fetchLogin(role,{email,password,role});
-        console.log('email',email,'role',role)
         if(response.status == SUCCESS){
           if(response.data.token){
             localStorage.setItem(`${role}_token`,response.data.token);
-          navigateHome(navigate, role);
+            navigateHome(navigate, role);
           }else if(response.data?.validotp) {
             navigatePasswordChange(navigate,email,role)
           }
         }        
       }catch(error){
-        console.log('login failed:',error)
-        setPassError('  ')
-        setEmailError('  ')
-        const err = error as AxiosError<ErrorResponse>;
-        const errorMessage = err?.response?.data?.message || 'Login failed. Please try again.';
-        errorMessage == "Invalid password" ? setPassError(errorMessage) : (
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            })
-        );
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
     }finally{
       setIsLoading(false);
     }
@@ -96,13 +89,13 @@ const Login: React.FC<RoleProps> = ({ role }) => {
               onChange={(e) => setEmail(e.target.value)}
               className="border border-gray-300 rounded w-full p-2 "
               style={
-                emailError.length !== 0
+                error?.emailError
                   ? { outline: "none", boxShadow: "0 0 0 1px red" }
                   : {}
               }
             />
             <span className="block text-red-600 font-light opacity-80 text-end pe-2">
-              {emailError}
+              {error?.emailError}
             </span>
           </div>
           <div className="mb-4">
@@ -126,14 +119,14 @@ const Login: React.FC<RoleProps> = ({ role }) => {
               onChange={(e) => setPassword(e.target.value)}
               className="border border-gray-300 rounded w-full p-2"
               style={
-                passError.length !== 0
+                error?.passError
                   ? { outline: "none", boxShadow: "0 0 0 1px red" }
                   : {}
               }
             />
-            <span className="block text-red-600 opacity-80 font-light text-end pe-2">
-              {passError}
-            </span>
+            {/* <span className="block text-red-600 opacity-80 font-light text-end pe-2">
+              {error?.passError}
+            </span> */}
           </div>
           <button
             type="submit"

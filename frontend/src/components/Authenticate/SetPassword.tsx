@@ -9,12 +9,14 @@ import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { fetchSetPassword } from '../../services/apiCall';
 import { ThreeDots } from 'react-loader-spinner';
+import { ToastActive } from '../utilities/functions';
 
 
 
 const SetPassword:React.FC = () => {
     const [password,setPassword] = useState('')
     const [confirmPassword,setConfirmPassword] = useState('')
+    const [error,setError] = useState<Record<string,string> | null>(null)
     const [passwordError,setPasswordError] = useState('')
     const [confirmPasswordError,setConfirmPasswordError] = useState('')
     const navigate = useNavigate()
@@ -26,21 +28,26 @@ const SetPassword:React.FC = () => {
     const handleSetPassword = async (event:React.FormEvent) => {
       event.preventDefault();
       setIsLoading(true)
+      setError(null);
+      let flag = false;
+
       const passwordvalidation = passwordValidation(password)
-      if(passwordvalidation){
+      if(typeof passwordvalidation == 'string'){
         setPasswordError(passwordvalidation)
-        return
-      }else{ setPasswordError('') } 
-      
-      const passConfirmvalidation = passwordConfirmValidation(password,confirmPassword)
-      if(passConfirmvalidation){
-        setConfirmPasswordError(passConfirmvalidation)
-        return
-      }else{ setConfirmPasswordError('') } 
+        setError((prev) => ({...prev, passError:passwordvalidation}))
+        flag = true;
+      }      
+      if(confirmPassword.length === 0 || passwordConfirmValidation(password,confirmPassword)){
+        setError((prev) => ({...prev, confirmPasswordError:'password mismatch or required'}))
+        flag = true;
+      }
+      if(flag){
+        setIsLoading(false); 
+        return;
+      }
 
       try{
         const url = role == 'user' ? '/resetPassword':`/${role}/resetPassword`
-        console.log('setpass here',url)
         const response = await fetchSetPassword(url,{email,password,role});
         if(response.status == HttpStatusCode.CREATED){
           if(role == 'shop'){
@@ -51,19 +58,19 @@ const SetPassword:React.FC = () => {
           }
         }
       }catch(error){
-        console.log('error')
-        if(axios.isAxiosError(error)){
-          console.error(error.response?.data.message)
-          const err = error as AxiosError<ErrorResponse>;
-          const errorMessage = err?.response?.data?.message || 'error on reset password';
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            });
-        }
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // if(axios.isAxiosError(error)){
+          // const err = error as AxiosError<ErrorResponse>;
+          // const errorMessage = err?.response?.data?.message || 'error on reset password';
+          // toast.error(errorMessage, {
+          //   position: "bottom-right", autoClose: 3000,
+          //   hideProgressBar: false, closeOnClick: true,
+          //   pauseOnHover: true, draggable: true,
+          //   progress: undefined, theme: "dark",
+          //   transition: Bounce,
+          //   });
+        // }
       }finally{
         setIsLoading(false)
       }

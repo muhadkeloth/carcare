@@ -13,16 +13,15 @@ const Shops:React.FC = () => {
         try {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const { latitude, longitude } = position.coords;
-
-                console.log('now showing fetch')
-
                 const shopsData = await fetchNearbyShops(latitude, longitude);
                 setShops(shopsData);
             });
         } catch (error) {
-            console.error("error fetching nearby shops:",error);
-            setShops([]);
-            setError("unable to fetch nearby shops.")
+          const errorMessage = (error as Error).message;
+          console.error("error fetching nearby shops:",error);
+          setShops([]);
+          setError(errorMessage)
+          // setError("unable to fetch nearby shops.")
         }
     }
 

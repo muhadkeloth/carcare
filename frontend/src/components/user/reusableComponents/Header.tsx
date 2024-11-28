@@ -22,7 +22,6 @@ const Header:React.FC = () => {
 
     const getUserData = async () => {
       try {
-        console.log('getuserdata');        
         const response = await fetchUserData()
         if(response.status === HttpStatusCode.SUCCESS){
          dispatch(setUser(response.data.userdet))

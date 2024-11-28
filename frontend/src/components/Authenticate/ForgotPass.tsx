@@ -9,6 +9,7 @@ import { ErrorResponse, HttpStatusCode, RoleProps } from '../utilities/interface
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { fetchForgotPass } from '../../services/apiCall';
 import { ThreeDots } from 'react-loader-spinner';
+import { ToastActive } from '../utilities/functions';
 
 
 const ForgotPass:React.FC<RoleProps> = ({ role }) => {
@@ -20,9 +21,11 @@ const ForgotPass:React.FC<RoleProps> = ({ role }) => {
     const handleForgotPass = async (event:React.FormEvent) => {
       event.preventDefault();
       setIsLoading(true)
-      const emailvalidation = emailValidation(email)
-      if(emailvalidation){ setEmailError(emailvalidation);return; }
-      else{ setEmailError('') }
+      if(!emailValidation(email)){
+        setEmailError('Entered Invalid Email Address');
+        setIsLoading(false);
+        return; 
+      }else{ setEmailError('') }
 
       try{
         const url = role == 'user' ? '/otpgenerate' : `/${role}/otpgenerate` ;
@@ -31,22 +34,23 @@ const ForgotPass:React.FC<RoleProps> = ({ role }) => {
           navigateOtpValidate(navigate,email,role )
         }
       }catch(error){
-        if(axios.isAxiosError(error)){
-          console.error(error.response?.data.message)
-          const err = error as AxiosError<ErrorResponse>;
-        const errorMessage = err?.response?.data?.message || 'error on otp generat.';
-        toast.error(errorMessage, {
-          position: "bottom-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-          });
-        }
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // if(axios.isAxiosError(error)){
+        //   const err = error as AxiosError<ErrorResponse>;
+        // const errorMessage = err?.response?.data?.message || 'error on otp generat.';
+        // toast.error(errorMessage, {
+        //   position: "bottom-right",
+        //   autoClose: 3000,
+        //   hideProgressBar: false,
+        //   closeOnClick: true,
+        //   pauseOnHover: true,
+        //   draggable: true,
+        //   progress: undefined,
+        //   theme: "dark",
+        //   transition: Bounce,
+        //   });
+        // }
       }finally{
         setIsLoading(false);
       }

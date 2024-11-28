@@ -3,7 +3,7 @@ import Shop from "../models/Shop";
 import { randomPassword } from "../utils/functions";
 import { sendOtpEmail } from "../utils/emailService";
 import { AppError } from "../middleware/errorHandler";
-import { AuthenticatedRequest, HttpStatusCode, IUser } from "../utils/interface";
+import { HttpStatusCode, IUser } from "../utils/interface";
 import BaseController from "./BaseController";
 import AdminService from "../services/AdminService";
 import ShopService from "../services/ShopService";

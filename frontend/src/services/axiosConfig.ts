@@ -64,7 +64,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        console.log('currentroute ',window.location.pathname);
         
         if(error.response?.status == HttpStatusCode.FORBIDDEN){
             const currentRoute = window.location.pathname;

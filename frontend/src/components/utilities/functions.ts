@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Bounce, toast } from "react-toastify";
 
 
 // get Address from location
@@ -21,4 +22,16 @@ export const getAddressFromCoordinates = async (latitude: number, longitude: num
       return {street:'',city:'',state:'',country:'',pincode:''};
     }
   };
+
+  export const ToastActive = (statusType: 'error' | 'success' | 'info' | 'warning',message:string) => {
+     toast[statusType](message, {
+      position: "bottom-right", autoClose: 3000,
+      hideProgressBar: false, closeOnClick: true,
+      pauseOnHover: true, draggable: true,
+      progress: undefined, theme: "dark",
+      transition: Bounce,
+      })
+  }
+
+  
   

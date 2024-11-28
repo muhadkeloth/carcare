@@ -4,13 +4,16 @@ import React, { useEffect, useState } from 'react'
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
 import { addNewVehicle, deleteShopVehicle, editVehicle, fetchAllShopVehicle, fetchAllVehicle } from '../../../../services/shopService';
+import { ToastActive } from '../../../utilities/functions';
+import { nameValidation } from '../../../utilities/validation';
 
 
 
 const VehicleManagement:React.FC = () => { 
     const [shopvehicles,setShopVehicles] = useState<Vehicle[]>([])
     const [newVehicle, setNewVehicle] = useState<Vehicle>({ brand:'',vehicleModel:[] });
-    const [newVehicleError, setNewVehicleError] = useState({ brand:'',vehicleModel:'' });
+    // const [newVehicleError, setNewVehicleError] = useState({ brand:'',vehicleModel:'' });
+    const [newVehicleError, setNewVehicleError] = useState<Record<string,string> | null>(null);
     const [inputModel,setInputModel]  = useState<string>('')
     const [showAddModal, setShowAddModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -31,15 +34,17 @@ const VehicleManagement:React.FC = () => {
                 setShopVehicles(vehicleDetails.Vehicle);
                 setTotalPages(vehicleDetails.totalPages);
         } catch (error) {
-            console.log('failed to fetch user:',error);
-        const errorMessage = error instanceof Error?error.message:'error on fetching shop vehicle';
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            })
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+        //     console.log('failed to fetch user:',error);
+        // const errorMessage = error instanceof Error?error.message:'error on fetching shop vehicle';
+        //   toast.error(errorMessage, {
+        //     position: "bottom-right", autoClose: 3000,
+        //     hideProgressBar: false, closeOnClick: true,
+        //     pauseOnHover: true, draggable: true,
+        //     progress: undefined, theme: "dark",
+        //     transition: Bounce,
+        //     })
         }
     };
 
@@ -50,12 +55,14 @@ const VehicleManagement:React.FC = () => {
         
         setVehicles(vehicleDetails.Vehicle);
         } catch (error) {
-          console.log('failed to fetch user:',error);
+          console.log('failed to fetch vehicle details:',error);
       }
     }
 
     const addVehicle = async () => {
-        if(newVehicle.brand.trim().length == 0){
+        // if(nameValidation(inputDetails.username)newVehicle.brand.trim().length == 0){
+        setNewVehicle((prev)=>({...prev,brand:newVehicle.brand.trim()}));
+        if(nameValidation(newVehicle.brand)){
             setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
             return;
         }else{setNewVehicleError((prev)=>({...prev,brand:''}))}
@@ -69,23 +76,26 @@ const VehicleManagement:React.FC = () => {
             await addNewVehicle(newVehicle);
             setShowAddModal(false);
             fetchShopVehicle(currentPage);
-            toast.success('vehicle added successfully', {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+            ToastActive('success','vehicle added successfully')
+            // toast.success('vehicle added successfully', {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
         } catch (error) {
-            console.log('eror to add vehicle')
-            const errorMessage = error instanceof Error?error.message:'error on adding vehicle';
-            toast.error(errorMessage, {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+            // console.log('eror to add vehicle')
+            // const errorMessage = error instanceof Error?error.message:'error on adding vehicle';
+            // toast.error(errorMessage, {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
         }
     }
 
@@ -139,7 +149,6 @@ const VehicleManagement:React.FC = () => {
       const filteredModels = vehicles.find((v) => v.brand === vehicle.brand)?.vehicleModel || [];
       setModels(filteredModels)
       setBrands([vehicle.brand])  
-      console.log('newVehicle',newVehicle)
       setShowAddModal(true);
     }
 
@@ -157,20 +166,23 @@ const VehicleManagement:React.FC = () => {
           setShopVehicles((prev)=>
             prev.filter((v)=>(v.brand !== vehicleToDelete.brand )));
   
-          toast.success('vehicle updated successfully');
+          ToastActive('success','vehicle updated successfully');
         }else{
-          toast.error('failed to delete vehicle.');
+          ToastActive('error','failed to delete vehicle.');
         }
       } catch (error) {
-        console.log('error in deleting vehicle',error)
-        toast.error('failed to delete vehicle.')        
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // console.log('error in deleting vehicle',error)
+        // toast.error('failed to delete vehicle.')        
       }finally{
         setShowConfirmModal(false);
       }
     }
     
     const confirmEdit = async () => {
-      if(newVehicle.brand.trim().length == 0){
+      setNewVehicle((prev)=>({...prev,brand:newVehicle.brand.trim()}));
+      if(nameValidation(newVehicle.brand)){
         setNewVehicleError((prev)=>({...prev,brand:'enter brand name'}))
         setShowConfirmModal(false);
         return;
@@ -188,13 +200,15 @@ const VehicleManagement:React.FC = () => {
           setShopVehicles((prev)=>
           prev.map((v)=> v.brand === vehicle.brand ?  {...v, vehicleModel:vehicle.vehicleModel } : v ));
 
-          toast.success('vehicle updated successfully');
+          ToastActive('success','vehicle updated successfully');
         }else{
-          toast.error('failed to update vehicle.');
+          ToastActive('error','failed to update vehicle.');
         }
       } catch (error) {
-        console.log('error in deleting vehicle',error)
-        toast.error('error updating vehicle');
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // console.log('error in deleting vehicle',error)
+        // toast.error('error updating vehicle');
       }finally{
         setShowConfirmModal(false);
         setShowAddModal(false);
@@ -304,7 +318,7 @@ const VehicleManagement:React.FC = () => {
           }
           }
           className={`mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none ${
-            newVehicleError.brand.length !== 0 ? "border-red-500" : ""
+            newVehicleError?.brand ? "border-red-500" : ""
           }`}
         >
           <option value="" disabled>
@@ -316,7 +330,7 @@ const VehicleManagement:React.FC = () => {
             </option>
           ))}
         </select>
-              <p className='text-red-300'>{newVehicleError.brand}</p>
+              <p className='text-red-300'>{newVehicleError?.brand}</p>
               </div>
 
               <div className='w-full mt-4'>
@@ -336,7 +350,7 @@ const VehicleManagement:React.FC = () => {
             }
             value=""
             className={`mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none ${
-              newVehicleError.vehicleModel.length !== 0 ? "border-red-500" : ""
+              newVehicleError?.vehicleModel ? "border-red-500" : ""
             }`}
           >
             <option value="" disabled>
@@ -360,7 +374,7 @@ const VehicleManagement:React.FC = () => {
                     Clear
                 </button>
                 </div>
-                <p className=' text-red-300'>{newVehicleError.vehicleModel}</p>
+                <p className=' text-red-300'>{newVehicleError?.vehicleModel}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
                     {newVehicle.vehicleModel.map((model) => (

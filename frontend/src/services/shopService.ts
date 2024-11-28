@@ -1,4 +1,5 @@
-import { Estimate, HttpStatusCode } from "../components/utilities/interface";
+import { AxiosError } from "axios";
+import { ErrorResponse, Estimate, HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
 
@@ -11,8 +12,10 @@ export const fetchShopUserDetails = async ():Promise<{status:number;data:any}> =
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find shopuser details');
         return {status:response.status,data:response.data}
     } catch (error) {
-        console.error('Error finding shop user details:', error);
-        throw new Error('error in  finding shop user details');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error finding shop user details:', error);
+        // throw new Error('error in  finding shop user details');
     }
 } 
 
@@ -22,8 +25,10 @@ export const fetchUploadProfileImage = async (formData:FormData):Promise<{status
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error when uploading shop profile image');
         return {status:response.status,data:response.data};
     } catch (error) {
-        console.error('Error uploading shop user profile image:', error);
-        throw new Error('error in uploading shop user profile image');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error uploading shop user profile image:', error);
+        // throw new Error('error in uploading shop user profile image');
     }
 }
 
@@ -33,8 +38,10 @@ export const fetchUpdateProfileDetails = async (details:any):Promise<{data:any}>
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating shop profile details');
         return {data:response.data};
     } catch (error) {
-        console.error('Error updating shop user profile details:', error);
-        throw new Error('error in updating shop user profile details');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error updating shop user profile details:', error);
+        // throw new Error('error in updating shop user profile details');
     }
 }
 
@@ -44,13 +51,13 @@ export const changePasswordShop = async (body:{currentPassword:string; newPasswo
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error changing password');
         return {data:response.data}
     } catch (error) {
-        console.error('Error profile changing password:', error);
-        throw new Error('Error profile changing password:');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error profile changing password:', error);
+        // throw new Error('Error profile changing password:');
     }
 }
 
-
-// 
 
 export const fetchAllVehicle = async():Promise<{Vehicle:any[];}> => {
     try {
@@ -64,8 +71,10 @@ export const fetchAllVehicle = async():Promise<{Vehicle:any[];}> => {
             throw new Error('invalid vehicle response structure.')
         }
     } catch (error) {
-        console.error('error in fetching vehicle details',error);
-        throw new Error('unable to fetch vehicle details'); 
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('error in fetching vehicle details',error);
+        // throw new Error('unable to fetch vehicle details'); 
     }
 }
 
@@ -82,8 +91,10 @@ export const fetchAllShopVehicle = async (page:number):Promise<{Vehicle:any[];to
             throw new Error('invalid vehicle response structure.')
         }
     } catch (error) {
-        console.error('error in fetching vehicle details',error);
-        throw new Error('unable to fetch vehicle details'); 
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('error in fetching vehicle details',error);
+        // throw new Error('unable to fetch vehicle details'); 
     }
 }
 
@@ -93,8 +104,10 @@ export const addNewVehicle = async (newVehicle:any):Promise<{status:number;messa
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error in adding new vehicle');
         return {status:response.status,message:response.data.message}
     } catch (error) {
-        console.error('Error adding new vehicle:', error);
-        throw new Error('error in adding new vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error adding new vehicle:', error);
+        // throw new Error('error in adding new vehicle');
     }
 }
 
@@ -105,8 +118,10 @@ export const editVehicle = async (newVehicle:any):Promise<{status:number;data:an
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
         return {status:response.status,data:response.data}
     } catch (error) {
-        console.error('Error adding new vehicle:', error);
-        throw new Error('error in update  vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error adding new vehicle:', error);
+        // throw new Error('error in update  vehicle');
     }
 }
 
@@ -117,12 +132,13 @@ export const deleteShopVehicle = async (brand:string):Promise<{status:number}> =
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
         return {status:response.status}
     } catch (error) {
-        console.error('Error deleting:', error);
-        throw new Error('error in deleting vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error deleting:', error);
+        // throw new Error('error in deleting vehicle');
     }
 }
 
-// 
 
 export const createShopEstimate = async(newEstimate:Estimate):Promise<{status:number;message:string}> => {
     const response = await api.post('/shop/addestimate', newEstimate);
@@ -142,8 +158,10 @@ export const fetchAllestimates = async(page:number):Promise<{Estimate:any[];tota
             throw new Error('invalid Estimate response structure.')
         }
     } catch (error) {
-        console.error('error in fetching Estimate details',error);
-        throw new Error('unable to fetch Estimate details');  
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('error in fetching Estimate details',error);
+        // throw new Error('unable to fetch Estimate details');  
     }
 }
 
@@ -154,8 +172,10 @@ export const editEstimate = async (newEstimate:any):Promise<{status:number;data:
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
         return {status:response.status,data:response.data}
     } catch (error) {
-        console.error('Error adding new vehicle:', error);
-        throw new Error('error in update  vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error adding new vehicle:', error);
+        // throw new Error('error in update  vehicle');
     }
 }
 
@@ -166,7 +186,9 @@ export const deleteShopEstimate = async (work:string):Promise<{status:number}> =
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
         return {status:response.status}
     } catch (error) {
-        console.error('Error deleting:', error);
-        throw new Error('error in deleting vehicle');
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error('Error deleting:', error);
+        // throw new Error('error in deleting vehicle');
     }
 }

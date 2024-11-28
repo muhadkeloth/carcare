@@ -6,11 +6,12 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import LocationPicker from './LocationPicker';
-import { getAddressFromCoordinates } from '../../../utilities/functions';
+import { getAddressFromCoordinates, ToastActive } from '../../../utilities/functions';
 import { HttpStatusCode, NewShop, Shop } from '../../../utilities/interface';
 import { addNewShop, fetchAllShop, toggleShopStatus } from '../../../../services/adminService';
 import { toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';
+import Table from '../../../reuseComponents/Table';
 
 
 
@@ -34,6 +35,8 @@ const ShopManagement: React.FC = () => {
       setShops(shopsData.workShop); 
       setTotalPages(shopsData.totalPages)
     } catch (error) {
+      const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
       console.error('Failed to fetch shops:', error);
     }
   };
@@ -54,21 +57,25 @@ const ShopManagement: React.FC = () => {
       const address = await getAddressFromCoordinates(selectedLocation.latitude,selectedLocation.longitude);
       formData.append('address',JSON.stringify(address) )       
     }catch(error){
-      console.error('error fetching address from coordinates:',error);
-      toast.success('failed to add new shop')
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
+      // console.error('error fetching address from coordinates:',error);
+      // toast.error('failed to add new shop')
       setIsLoading(false);
       setShowAddModal(false); 
       formData.append('address',JSON.stringify({street:'',city:'',state:'',country:'',pincode:''}));
     }
-    console.log('newShop',newShop)
+    // console.log('newShop',newShop)
       try {
         await addNewShop(formData);
         setShowAddModal(false); 
         fetchShops(currentPage); 
-        toast.success('new shop added successfully')
+        ToastActive('success','new shop added successfully')
       } catch (error) {
-        toast.success('failed to add new shop')
-        console.error('Failed to add shop:', error);
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // toast.error('failed to add new shop')
+        // console.error('Failed to add shop:', error);
     }finally{
       setIsLoading(false);
     }
@@ -79,7 +86,7 @@ const ShopManagement: React.FC = () => {
     try{
       const response = await toggleShopStatus(id);
       if(response.status = HttpStatusCode.CREATED){
-        console.log('shop status updated successfully:', response.data);
+        // console.log('shop status updated successfully:', response.data);
         const index = shops.findIndex(shop => shop._id == id);
         if(index !== -1){
           const updatedShops = [...shops];
@@ -89,13 +96,15 @@ const ShopManagement: React.FC = () => {
           };
           setShops(updatedShops)
         }
-        toast.success('status changed successfully')
+        ToastActive('success','status changed successfully')
       }else{
-        toast.error('status toggle failed')
+        ToastActive('error','status toggle failed')
       }
     }catch(error){
-      console.error('error on toggle status',error);
-      toast.error('status toggle failed')
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
+      // console.error('error on toggle status',error);
+      // toast.error('status toggle failed')
     }finally{
       setToggleId('');
       setShowConfirmModal(false);
@@ -116,6 +125,28 @@ const ShopManagement: React.FC = () => {
     setPreviewUrl('');
   }
 
+  const tableHeaders = [
+    { label: 'Image', key: 'image' },
+    { label: 'Shop Name', key: 'shopName' },
+    { label: 'Owner Name', key: 'ownerName' },
+    { label: 'Email', key: 'email' },
+    { label: 'Phone Number', key: 'phoneNumber' },
+    { label: 'Address', key: 'address' },
+    // { label: 'Status', key: 'isActive' },
+  ];
+
+  const renderActions = (shop: any) => (
+    <span
+      onClick={() => toggleStatus(shop._id)}
+      className={`cursor-pointer ${
+        shop.isActive ? 'text-green-600 hover:text-green-400' : 'text-red-600 hover:text-red-400'
+      }`}
+    >
+      {shop.isActive ? 'Active' : 'Block'}
+    </span>
+  );
+
+
   useEffect(() => {
     fetchShops(currentPage);
   }, [currentPage]);
@@ -127,7 +158,6 @@ const ShopManagement: React.FC = () => {
           Shop Management
         </h2>
         <button
-          // className="font-medium rounded bg-maincol text-white px-2 hover:bg-maincoldark"
           className="btn-primary"
           onClick={() => setShowAddModal(true)}
         >
@@ -136,10 +166,11 @@ const ShopManagement: React.FC = () => {
       </div>
 
       {/* Shop List */}
-      <div className="overflow-x-auto w-full mb-6">
-        <table className="min-w-full border-collapse border border-gray-300"> {/*mb-6*/}
+      {/* <div className="overflow-x-auto w-full mb-6"> */}
+      {/* <div className="relative overflow-x-auto shadow-md rounded-lg"> */}
+        {/* <table className="min-w-full border-collapse border border-gray-300"> 
           <thead>
-            <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">  {/*leading-normal*/}
+            <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal"> 
               <th className="py-3 px-4 text-left border-b border-gray-200">
                 Image
               </th>
@@ -194,14 +225,14 @@ const ShopManagement: React.FC = () => {
               </tr>
             )}
           </tbody>
-        </table>
-      </div>
+        </table>  */}
+        <Table headers={tableHeaders} data={shops} renderActions={renderActions} />
+      {/* </div> */}
 
       <div className="flex justify-center items-center mt-4">
         <button
         onClick={()=>setCurrentPage((prev)=> Math.max(prev-1,1))}
         disabled={currentPage === 1 }
-        // className="px-4 py-2 bg-maincol text-white rounded hover:bg-maincoldark hover:cursor-pointer disabled:bg-gray-200">
         className="btn-primary disabled:bg-gray-200">
           <FontAwesomeIcon icon={faAngleLeft} />
         </button>

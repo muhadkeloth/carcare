@@ -21,7 +21,6 @@ const ShopHome:React.FC = () => {
   const handleActiveSection = (section: string) => {
     setActiveSection(section)
     setShowMenu(!showMenu)
-    console.log('Active section:', section);
 };
 
   useEffect(() => {

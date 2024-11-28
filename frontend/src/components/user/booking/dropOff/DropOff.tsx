@@ -55,7 +55,6 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
   const handleDateClick = (date: Date) => {
     if (!isBefore(date, new Date()) && !isSunday(date)) {
       setSelectedDate(date);
-      console.log('selectedDate',selectedDate)
     }
   };
 

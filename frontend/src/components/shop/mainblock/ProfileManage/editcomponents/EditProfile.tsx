@@ -8,6 +8,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
 import { toast } from "react-toastify";
 import { fetchUpdateProfileDetails, fetchUploadProfileImage } from "../../../../../services/shopService";
+import { HttpStatusCode } from "../../../../utilities/interface";
+import { ToastActive } from "../../../../utilities/functions";
+import { emailValidation, nameValidation, phoneNumberValidation } from "../../../../utilities/validation";
 
 
 
@@ -20,7 +23,8 @@ const EditProfile:React.FC = () => {
   );
   const [editedShopUser, setEditedShopUser] = useState<shopProfile | null>(shopUserDetails || null);
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [errors, setErrors] = useState<{ [key: string]:string }>({});
+  // const [errors, setErrors] = useState<{ [key: string]:string }>({});
+  const [errors, setErrors] = useState<{ [key: string]:string }|null>(null);
 
 
   const handleInputChange = (key: keyof shopProfile, value: any) => {
@@ -34,50 +38,82 @@ const EditProfile:React.FC = () => {
       formData.append("image", file);
       try {
         const response = await fetchUploadProfileImage(formData)
-        if(response.status !== 201) toast.error('failed to upload image.');
-        else{
+        // if(response.status !== HttpStatusCode.CREATED) toast.error('failed to upload image.');
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('failed to upload image.');
           handleInputChange('image',response.data.imagePath);
-          toast.success('Image updated. please save for apply changes.');
-        }
+          ToastActive('success','Image updated. please save for apply changes.');
+          // toast.success('Image updated. please save for apply changes.');
       } catch (error) {
-        console.error('update image error',error);
-        toast.error('error uploading image.')
+        // console.error('update image error',error);
+        ToastActive('error','error uploading image.')
       }
     }
   };
 
-  const validateForm = (): boolean => {
-    setErrors({});
-    const newErrors:{[key:string]:string} = {};
+  // const validateForm = (): boolean => {
+  //   setErrors({});
+  //   const newErrors:{[key:string]:string} = {};
 
-    if(!editedShopUser?.shopName) newErrors.shopName = "Shop Name is required.";
-    if(!editedShopUser?.ownerName) newErrors.ownerName = "Owner Name is required.";
-    if(!editedShopUser?.email) newErrors.email = "Email is required.";
-    if(!editedShopUser?.phoneNumber) newErrors.phoneNumber = "Phone Number is required.";
-    if(!editedShopUser?.about) newErrors.about = "About is required.";
+  //   if(!editedShopUser?.shopName) newErrors.shopName = "Shop Name is required.";
+  //   if(!editedShopUser?.ownerName) newErrors.ownerName = "Owner Name is required.";
+  //   if(!editedShopUser?.email) newErrors.email = "Email is required.";
+  //   if(!editedShopUser?.phoneNumber) newErrors.phoneNumber = "Phone Number is required.";
+  //   if(!editedShopUser?.about) newErrors.about = "About is required.";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; 
-  };
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0; 
+  // };
   
   const handleSaveChanges = async () => {
     setShowConfirmModal(false)
-    if(!editedShopUser) {toast.error('error occured'); return;};
-    if(!validateForm())  return;
+    let flag = false;
+    setErrors(null);
+    // if(!editedShopUser) {toast.error('error occured'); return;};
+    if(!editedShopUser) {ToastActive('error','error occured'); return;};
+    // const newErrors:{[key:string]:string} = {};
+    if(!editedShopUser?.shopName || nameValidation(editedShopUser?.shopName)){
+      // newErrors.shopName = "Shop Name is required.";
+      setErrors((prev) => ({...prev,shopName:'Shop Name is required.'}))
+      flag = true;
+    } 
+    if(!editedShopUser?.ownerName || nameValidation(editedShopUser?.ownerName)){
+      // newErrors.ownerName = "Owner Name is required.";
+      setErrors((prev) => ({...prev,ownerName:'Owner Name is required.'}))
+      flag = true;
+    } 
+    if(!editedShopUser?.email || !emailValidation(editedShopUser?.email)){
+      // newErrors.email = "Email is required.";
+      setErrors((prev) => ({...prev,email:'Email is required.'}))
+      flag = true;
+    } 
+    if(!editedShopUser?.phoneNumber || phoneNumberValidation(editedShopUser?.phoneNumber)){
+      // newErrors.phoneNumber = "Phone Number is required.";
+      setErrors((prev) => ({...prev,phoneNumber:'Phone Number is required.'}))
+      flag = true;
+    } 
+    if(!editedShopUser?.about || nameValidation(editedShopUser?.about)){
+      // newErrors.about = "About is required.";
+      setErrors((prev) => ({...prev,about:'About is required.'}))
+      flag = true;
+    } 
+    if(flag)return;
     
     const changesMade = JSON.stringify(editedShopUser) !== JSON.stringify(shopUserDetails);
-    if(!changesMade){toast.info('No changes applied.');return;};
+    // if(!changesMade){toast.info('No changes applied.');return;};
+    if(!changesMade){ToastActive('info','No changes applied.');return;};
     
     try {
       const response = await fetchUpdateProfileDetails({...editedShopUser,location:{type:"Point",coordinates:[selectedLocation.latitude,selectedLocation.longitude]}});
       if(response.data.success){
-        toast.success("shop details updated successfully");
+        ToastActive('success',"shop details updated successfully");
       }else{
-        toast.error('failed to update shop details.')
+        ToastActive('error','failed to update shop details.')
       }
     } catch (error) {
-      console.error('update shop details error',error);
-      toast.error('error uploading shop details.')
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
+      // console.error('update shop details error',error);
+      // toast.error('error uploading shop details.')
     }
   }
 
@@ -119,23 +155,23 @@ const EditProfile:React.FC = () => {
               <label className="block text-sm font-medium">Shop Name</label>
               <input
                 type="text"
-                className={`w-full border ${errors.shopName ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
+                className={`w-full border ${errors?.shopName ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
                 placeholder="Enter Shop Name"
                 value={editedShopUser?.shopName || ''}
                 onChange={(e) => handleInputChange("shopName", e.target.value)}
                 />
-              {errors.shopName && <span className="text-red-500 text-sm">{errors.shopName}</span>}
+              {errors?.shopName && <span className="text-red-500 text-sm">{errors?.shopName}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium">Owner Name</label>
               <input
                 type="text"
-                className={`w-full border ${errors.ownerName ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
+                className={`w-full border ${errors?.ownerName ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
                 placeholder="Enter Owner Name"
                 value={editedShopUser?.ownerName|| ''}
                 onChange={(e) => handleInputChange("ownerName", e.target.value)}
                 />
-                {errors.ownerName && <span className="text-red-500 text-sm">{errors.ownerName}</span>}
+                {errors?.ownerName && <span className="text-red-500 text-sm">{errors?.ownerName}</span>}
             </div>
           </div>
 
@@ -154,25 +190,25 @@ const EditProfile:React.FC = () => {
               <label className="block text-sm font-medium">Phone Number</label>
               <input
                 type="number"
-                className={`w-full border ${errors.phoneNumber ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
+                className={`w-full border ${errors?.phoneNumber ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
                 placeholder="Enter Phone Number Name"
                 value={editedShopUser?.phoneNumber|| ''}
                 onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                 />
-                {errors.phoneNumber && <span className="text-red-500 text-sm">{errors.phoneNumber}</span>}
+                {errors?.phoneNumber && <span className="text-red-500 text-sm">{errors?.phoneNumber}</span>}
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium">About</label>
             <textarea
-              className={`w-full border ${errors.about ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
+              className={`w-full border ${errors?.about ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
               value={editedShopUser?.about || ''}
               rows={5}
               placeholder="Show users your experience here..."
               onChange={(e) => handleInputChange("about", e.target.value)}
             ></textarea> 
-              {errors.about && <span className="text-red-500 text-sm">{errors.about}</span>}
+              {errors?.about && <span className="text-red-500 text-sm">{errors?.about}</span>}
           </div>
 
           <div className="mb-3">
@@ -193,7 +229,7 @@ const EditProfile:React.FC = () => {
          
           <div className="flex justify-end">
             <button
-              type="button" onClick={()=>(validateForm() ? setShowConfirmModal(true): false )}
+              type="button" onClick={()=>(setShowConfirmModal(true) )}
               // className="bg-maincol hover:bg-maincoldark text-white px-4 py-2 rounded-md"
               className="btn-primary"
             >

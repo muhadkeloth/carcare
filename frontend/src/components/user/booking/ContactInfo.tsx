@@ -29,8 +29,6 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
   }
 
 
-
-
   const formatDate = (isoDate: Date | undefined) => {
     if (!isoDate) return '';
     const dateObj = new Date(isoDate);

@@ -1,4 +1,5 @@
-import { Shop } from "../components/utilities/interface";
+import { AxiosError } from "axios";
+import { ErrorResponse, Shop } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
 
@@ -9,8 +10,10 @@ export const fetchNearbyShops = async (latitude:number,longitude:number):Promise
         });
         return data.shops;
     }catch(error){
-        console.error("Error fetching nearby shops:", error);
-        throw new Error("Unable to fetch nearby shops.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error("Error fetching nearby shops:", error);
+        // throw new Error("Unable to fetch nearby shops.");
     }
 }
 
@@ -19,8 +22,10 @@ export const fetchUserData = async ():Promise<{status:number,data:any}> => {
        const response =  await api.get('/userdetails')
        return {status:response.status,data:response.data}
     } catch (error) {
-        console.error("Error fetching nearby user detail:", error);
-        throw new Error("Unable to fetch nearby user detail.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error("Error fetching nearby user detail:", error);
+        // throw new Error("Unable to fetch nearby user detail.");
     }
 }
 
@@ -29,8 +34,10 @@ export const fetchShopData = async (id:string):Promise<{status:number,data:any}>
        const response =  await api.get(`/shopdetails/${id}`)
        return {status:response.status,data:response.data}
     } catch (error) {
-        console.error("Error fetching nearby user detail:", error);
-        throw new Error("Unable to fetch nearby user detail.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error("Error fetching nearby user detail:", error);
+        // throw new Error("Unable to fetch nearby user detail.");
     }
 }
 
@@ -39,8 +46,10 @@ export const fetchPincode = async (pincode:string):Promise<{status:number,data:a
        const response =  await api.get(`/shopPincode/${pincode}`)
        return {status:response.status,data:response.data}
     } catch (error) {
-        console.error("Error fetching pincode:", error);
-        throw new Error("Unable to fetch pincode.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error("Error fetching pincode:", error);
+        // throw new Error("Unable to fetch pincode.");
     }
 }
 
@@ -49,8 +58,10 @@ export const fetchShopByPincode = async (pincode:string):Promise<{status:number,
        const response =  await api.get(`/shopsFilterByPincode/${pincode}`)
        return {status:response.status,data:response.data}
     } catch (error) {
-        console.error("Error fetching shop by pincode:", error);
-        throw new Error("Unable to fetch shop by pincode.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error("Error fetching shop by pincode:", error);
+        // throw new Error("Unable to fetch shop by pincode.");
     }
 }
 
@@ -58,7 +69,9 @@ export const fetchModeldetail = async (_id:string,make:string):Promise<{status:n
     try {
         return await api.get(`/getModelByMake`, {params:{ _id,make} })
     } catch (error) {
-        console.error("Error fetching model of make:", error);
-        throw new Error("Unable to fetch model of make.");
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+        // console.error("Error fetching model of make:", error);
+        // throw new Error("Unable to fetch model of make.");
     }
 }

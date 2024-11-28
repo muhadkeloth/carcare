@@ -85,7 +85,6 @@ const ShopDetails: React.FC<estimateProps> = ({ setActiveSection }) => {
       const response = await fetchShopByPincode(pincode); 
       if(response.status !== HttpStatusCode.SUCCESS)throw new Error('error fetching shop suggestions')
         const {shops} = response.data;
-      console.log('data',shops)
         setShops(shops);
     } catch (error) {
       console.error('Error fetching shops:', error);

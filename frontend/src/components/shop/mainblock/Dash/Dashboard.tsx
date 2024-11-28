@@ -3,10 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { fetchShopUserDetails } from '../../../../services/shopService'
 import { HttpStatusCode } from '../../../utilities/interface'
+import { ToastActive } from '../../../utilities/functions'
 
+
+interface shopdet {
+  shopName:string;ownerName:string;
+  email:string;image:string;
+}
 
 const Dashboard:React.FC = () => {
-  const [shopdetails,setShopdetails] = useState<{shopName:string;ownerName:string;email:string;image:string;}>({shopName:'',ownerName:'',email:'',image:''})
+  const [shopdetails,setShopdetails] = useState<shopdet>({shopName:'',ownerName:'',email:'',image:''})
 
 
   const handleshopDetails = async() => {
@@ -22,17 +28,18 @@ const Dashboard:React.FC = () => {
       setShopdetails(detail)
     } catch (error) {
       console.log(error)
+      const errorMessage = (error as Error).message;
+      ToastActive('error',errorMessage)
     }
   }
 
 useEffect(()=> {
   handleshopDetails()
 },[])
+
   return (
     <>
-    <div className='flex justify-center mt-10'>
-        
-
+    <div className='flex justify-center mt-10'> 
 <div className="w-full max-w-sm bg-white border  border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
 
     <div className="flex  mt-4 flex-col items-center pb-10">  

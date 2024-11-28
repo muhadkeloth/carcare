@@ -32,9 +32,10 @@ const Mainbody: React.FC = () => {
         setShops(shopsData);
       });
     } catch (error) {
+      const errorMessage = (error as Error).message;
       console.error("error fetching nearby shops:", error);
       setShops([]);
-      setError("unable to fetch nearby shops.");
+      setError(errorMessage);
     }
   };
 
@@ -67,8 +68,8 @@ const Mainbody: React.FC = () => {
              shops.map((shop) => (
                <div key={shop._id} 
                onClick={()=> navigateShopDetailPage(navigate,shop._id)}
-               className="flex border-b  p-4  ps-4 cursor-pointer hover:bg-sky-50" >
-                 <div className="w-2/6 rounded  p-2  ">
+               className="flex border-b p-4  ps-4 cursor-pointer hover:bg-sky-50" >
+                 <div className="w-2/6 h-[228px] rounded  ">
                    <img
                      src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop.image}`}
                      alt="shop img"

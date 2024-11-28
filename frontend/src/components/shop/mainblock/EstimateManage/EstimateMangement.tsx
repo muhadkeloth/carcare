@@ -4,13 +4,16 @@ import React, { useEffect, useState } from 'react'
 import { Estimate, HttpStatusCode } from '../../../utilities/interface';
 import { Bounce, toast } from 'react-toastify';
 import { createShopEstimate, deleteShopEstimate, editEstimate, fetchAllestimates } from '../../../../services/shopService';
+import { ToastActive } from '../../../utilities/functions';
+import { nameValidation } from '../../../utilities/validation';
+
 
 
 
 const EstimateMangement:React.FC = () => {
     const [estimates,setEstimates] = useState<Estimate[]>([])
     const [newEstimate, setNewEstimate] = useState<Estimate>({ work:'',priceStart:null,priceEnd:null });
-    const [newEstimateError, setNewEstimateError] = useState({ work:'',priceStart:'',priceEnd:''});
+    const [newEstimateError, setNewEstimateError] = useState<Record<string,string>|null>(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [actionType, setActionType] = useState("");
@@ -39,55 +42,62 @@ const EstimateMangement:React.FC = () => {
             setEstimates(estimateData.Estimate);
           setTotalPages(estimateData.totalPages);
         }catch(error){
-          console.error('failed to fetch estimate details:',error)
-          const errorMessage = error instanceof Error?error.message:'error on fetching estimate details';
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            })
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+          // console.error('failed to fetch estimate details:',error)
+          // const errorMessage = error instanceof Error?error.message:'error on fetching estimate details';
+          // toast.error(errorMessage, {
+          //   position: "bottom-right", autoClose: 3000,
+          //   hideProgressBar: false, closeOnClick: true,
+          //   pauseOnHover: true, draggable: true,
+          //   progress: undefined, theme: "dark",
+          //   transition: Bounce,
+          //   })
         }
       } 
 
-      const addEstimate = async () => {        
-        if(newEstimate.work.trim().length == 0){
+      const addEstimate = async () => {   
+        let flag = false;  
+        setNewEstimateError(null);  
+        setNewEstimate((prev) => ({...prev,work: newEstimate?.work.trim()}));
+        if(nameValidation(newEstimate.work)){
           setNewEstimateError((prev)=>({...prev,work:'enter work name'}))
-          return;
-        }else{setNewEstimateError((prev)=>({...prev,work:''}))} 
-        
+          flag = true;
+        }        
         if(!newEstimate?.priceStart || newEstimate?.priceStart <= 0){
           setNewEstimateError((prev)=>({...prev,priceStart:'fix range price'}))
-          return;
-        }else {setNewEstimateError((prev)=>({...prev,priceStart:''}))}
-        
-        if(!newEstimate?.priceEnd || newEstimate?.priceEnd <= newEstimate?.priceStart){
+          flag = true;
+        }        
+        if(!newEstimate?.priceEnd || !newEstimate?.priceStart || newEstimate?.priceEnd <= newEstimate?.priceStart){
           setNewEstimateError((prev)=>({...prev,priceEnd:'fix range price'}))
-          return;
-        }else {setNewEstimateError((prev)=>({...prev,priceEnd:''}))}
+          flag = true;
+        }
+        if(flag) return;
 
         try {
             await createShopEstimate(newEstimate);
             setShowAddModal(false);
             fetchEstimates(currentPage);
-            toast.success('vehicle added successfully', {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+            ToastActive('success','vehicle added successfully')
+            // toast.success('vehicle added successfully', {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
         } catch (error) {
-            console.log('eror to add vehicle')
-            const errorMessage =  error instanceof Error?error?.message:'error on adding vehicle';
-            toast.error(errorMessage, {
-                position: "bottom-right", autoClose: 3000,
-                hideProgressBar: false, closeOnClick: true,
-                pauseOnHover: true, draggable: true,
-                progress: undefined, theme: "dark",
-                transition: Bounce,
-                })
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+            // console.log('eror to add vehicle')
+            // const errorMessage =  error instanceof Error?error?.message:'error on adding vehicle';
+            // toast.error(errorMessage, {
+            //     position: "bottom-right", autoClose: 3000,
+            //     hideProgressBar: false, closeOnClick: true,
+            //     pauseOnHover: true, draggable: true,
+            //     progress: undefined, theme: "dark",
+            //     transition: Bounce,
+            //     })
         }
     }
 
@@ -98,52 +108,55 @@ const EstimateMangement:React.FC = () => {
             setEstimates((prev)=>
               prev.filter((v)=>(v.work !== estimateToDelete?.work )));
     
-            toast.success('vehicle deleted successfully');
+            ToastActive('success','vehicle deleted successfully');
           }else{
-            toast.error('failed to delete vehicle.');
+            ToastActive('error','failed to delete vehicle.');
           }
         } catch (error) {
-          console.log('error in deleting vehicle',error)
-          toast.error('failed to delete vehicle.')        
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+          // console.log('error in deleting vehicle',error)
+          // toast.error('failed to delete vehicle.')        
         }finally{
           setShowConfirmModal(false);
         }
       }
       
       const confirmEdit = async () => {
-        if(newEstimate.work.trim().length == 0){
+        let flag = false;  
+        setNewEstimateError(null);  
+        setNewEstimate((prev) => ({...prev,work: newEstimate?.work.trim()}));
+        if(nameValidation(newEstimate.work)){
           setNewEstimateError((prev)=>({...prev,work:'enter work name'}))
-          setShowConfirmModal(false);
-          return;
-      }else{setNewEstimateError((prev)=>({...prev,work:''}))} 
-  
+          flag = true;
+      }
       if(!newEstimate?.priceStart || newEstimate?.priceStart <= 0){
           setNewEstimateError((prev)=>({...prev,priceStart:'fix range price'}))
-          setShowConfirmModal(false);
-          return;
-      }else {setNewEstimateError((prev)=>({...prev,priceStart:''}))}
-
-      if(!newEstimate?.priceEnd || newEstimate?.priceEnd <= newEstimate?.priceStart){
+          flag = true;
+      }
+      if(!newEstimate?.priceEnd || !newEstimate?.priceStart || newEstimate?.priceEnd <= newEstimate?.priceStart){
         setNewEstimateError((prev)=>({...prev,priceEnd:'fix range price'}))
-        return;
-      }else {setNewEstimateError((prev)=>({...prev,priceEnd:''}))}
+        flag = true;
+      }
+
+      if(flag) setShowConfirmModal(false);
   
         try {
           const response = await editEstimate(newEstimate);
           if(response){
-            const { Estimate } = response.data; 
-            console.log('Estimate',Estimate);
-            
+            const { Estimate } = response.data;             
             setEstimates((prev)=>
             prev.map((v)=> v.work == Estimate.work ? {...v, priceStart:Estimate.priceStart, priceEnd:Estimate.priceEnd } : v ));
   
-            toast.success('estimate updated successfully');
+            ToastActive('success','estimate updated successfully');
           }else{
-            toast.error('failed to update estimate.');
+            ToastActive('error','failed to update estimate.');
           }
         } catch (error) {
-          console.log('error in update estimate',error)
-          toast.error('error updating estimate');
+          const errorMessage = (error as Error).message;
+          ToastActive('error',errorMessage)
+          // console.log('error in update estimate',error)
+          // toast.error('error updating estimate');
         }finally{
           setShowConfirmModal(false);
           setShowAddModal(false);
@@ -249,11 +262,11 @@ const EstimateMangement:React.FC = () => {
                 value={newEstimate.work}
                 onChange={(e) => setNewEstimate({ ...newEstimate, work: e.target.value })}
                 placeholder='Eg: Engine Oil'
-                style={newEstimateError.work.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                style={newEstimateError?.work ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
                 className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                 readOnly={isEditMode}
               />
-              <p className='text-red-300'>{newEstimateError.work}</p>
+              <p className='text-red-300'>{newEstimateError?.work}</p>
               </div>
              
               <div className='w-full mt-4'>
@@ -266,10 +279,10 @@ const EstimateMangement:React.FC = () => {
                 value={newEstimate.priceStart ?? ''}
                 onChange={(e) => setNewEstimate({ ...newEstimate, priceStart: parseInt(e.target.value) })}
                 className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none "
-                style={newEstimateError.priceStart.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                style={newEstimateError?.priceStart ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
                 />
                 </div>
-                  <p className='text-red-300'>{newEstimateError.priceStart}</p>
+                  <p className='text-red-300'>{newEstimateError?.priceStart}</p>
               <label className=" text-sm font-medium text-gray-700">
                 price range end:
               </label>
@@ -279,11 +292,11 @@ const EstimateMangement:React.FC = () => {
                 value={newEstimate.priceEnd ?? ''}
                 onChange={(e) =>setNewEstimate({ ...newEstimate, priceEnd: parseInt(e.target.value) })}
                 className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none "
-                style={newEstimateError.priceEnd.length !== 0 ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
+                style={newEstimateError?.priceEnd ?{outline: 'none', boxShadow: '0 0 0 1px red'}:{}}
                 />
 
                 </div>
-                <p className='text-red-300'>{newEstimateError.priceEnd}</p>
+                <p className='text-red-300'>{newEstimateError?.priceEnd}</p>
                
               </div>
 

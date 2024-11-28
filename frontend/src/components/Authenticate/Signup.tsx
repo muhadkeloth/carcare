@@ -1,98 +1,290 @@
+// import React, { useState } from 'react'
+// import NavLogin from './NavLogin'
+// import {  useNavigate } from 'react-router-dom';
+// import carlogo from '../../assets/images/CarCare-white.png';
+// import axios, { AxiosError } from 'axios';
+// import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
+// import { emailValidation, handleInputValue, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
+// import { Bounce, toast, ToastContainer } from 'react-toastify';
+// import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
+// import { fetchSignup } from '../../services/apiCall';
+// import { useDispatch } from 'react-redux';
+// import { setSignupDetails } from '../../features/otpSlice';
+// import { ThreeDots } from 'react-loader-spinner';
+
+
+// const Signup:React.FC = () => {
+//     const [name, setName] = useState('');
+//     const [email, setEmail] = useState('');
+//     const [phoneNumber, setPhoneNumber] = useState('');
+//     const [password, setPassword] = useState('');
+//     const [confirmPassword, setConfirmPassword] = useState('');
+//     // const [inputDetails,setInputDetails] = useState<Record<string,string> | null>(null)
+//     const [error,setError] = useState<Record<string,string> | null>(null)
+//     const navigate = useNavigate();
+//     const dispatch = useDispatch();
+//     const [isLoading,setIsLoading] = useState(false);
+
+//     const handleSignup = async (e:React.FormEvent) => {
+//       e.preventDefault();
+//       setIsLoading(true);
+//       setError(null);
+//       setName(name.trim())
+//       if(nameValidation(name)){
+//         setError((prev) => ({...prev,nameError:"Name must be at least 4 characters long."}))
+//       }
+//       if(!emailValidation(email)){
+//         setError((prev) => ({...prev,emailError:'Entered Invalid Email Address'}))
+//       }
+//       if(phoneNumberValidation(phoneNumber)){
+//         setError((prev) => ({...prev,phoneNumberError:'Invalid phone number'}))
+//       }
+//       const passwordvalidation = passwordValidation(password)
+//       if(typeof passwordvalidation == 'string'){
+//         setError((prev) => ({...prev,passError:passwordvalidation}))
+//       }  
+//       if(!confirmPassword || passwordConfirmValidation(password,confirmPassword)){
+//         setError((prev) => ({...prev,confirmPasswordError:'password mismatch or required'}))
+//       }
+//       if(error){
+//         setIsLoading(false); 
+//         return;
+//       }
+
+//       try{
+//         const response = await fetchSignup('/signupOtpGenerate',{email,phoneNumber});
+//         if(response.status == HttpStatusCode.CREATED){
+//           const userData = {
+//             username:name,
+//             email,
+//             phoneNumber,
+//             password,
+//             otp:response.data.otp 
+//           }
+//           dispatch(setSignupDetails(userData));
+//           navigateOtpValidate(navigate,email,'userSign' )
+//         }
+//       }catch(error){
+//         if(axios.isAxiosError(error)){
+//           console.error(error.response?.data.message)
+//           const err = error as AxiosError<ErrorResponse>;
+//           const errorMessage = err?.response?.data?.message || 'signup error';  
+//           toast.error(errorMessage, {
+//             position: "bottom-right", autoClose: 3000,
+//             hideProgressBar: false, closeOnClick: true,
+//             pauseOnHover: true, draggable: true,
+//             progress: undefined, theme: "dark",
+//             transition: Bounce,
+//             });
+//         }
+//       }finally{
+//         setIsLoading(false);
+//       }
+//     }
+
+
+//   return (
+//     <div>
+//         <NavLogin />
+
+//         <ToastContainer />
+
+//         <div className="flex items-center justify-center mt-2 ">
+//         <form onSubmit={handleSignup} className="w-96 p-4 mb-9">
+//           <div className='flex justify-center mb-5 '>
+//             <img src={carlogo} className='w-48' alt="carCare Logo..." />
+//           </div>
+//           <h2 className="text-2xl text-center font-bold mb-2">Sign Up</h2>
+//           <div className="mb-2">
+//             <label className="block text-gray-700 mb-2" htmlFor="name">
+//               Name
+//             </label>
+//             <input 
+//               type="name"  
+//               placeholder='enter user name'
+//               value={name} 
+//               onChange={(e) => setName(e.target.value)} 
+//               className="border border-gray-300 rounded w-full p-2 "
+//               style={error?.nameError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+//             />
+//               <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.nameError}</span>
+
+//           </div>
+//           <div className="mb-2">
+//             <label className="block text-gray-700 mb-2" htmlFor="email">
+//               Email
+//             </label>
+//             <input 
+//               type="email"  
+//               placeholder='email@address.com'
+//               value={email} 
+//               onChange={(e) => setEmail(e.target.value)} 
+//               className="border border-gray-300 rounded w-full p-2 "
+//               style={error?.emailError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+//             />
+//               <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.emailError}</span>
+
+
+//           </div>
+//           <div className="mb-2">
+//             <label className="block text-gray-700 mb-2" htmlFor="number">
+//               Phone Number
+//             </label>
+//             <input 
+//               type="text"  
+//               placeholder='+91 0000 000 000'
+//               value={phoneNumber} 
+//               onChange={(e) => handleInputValue(e, setPhoneNumber)} 
+//               className="border border-gray-300 rounded w-full p-2 appearance-none"
+//               style={error?.phoneNumberError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+//             />
+//               <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.phoneNumberError}</span>
+
+
+//           </div>
+//           <div className="mb-2">
+//             <label className="text-gray-700 flex justify-between items-center mb-2" htmlFor="password">
+//                Password 
+//             </label>
+
+//             <input 
+//             type="password" 
+//             placeholder='••••••••••••'
+//             value={password} 
+//             onChange={(e) => setPassword(e.target.value)} 
+//             className="border border-gray-300 rounded w-full p-2"
+//             style={error?.passError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+//             />
+//              <span className='block text-red-600 opacity-80 font-extralight text-end pe-2'>{error?.passError}</span>
+
+//           </div>
+//           <div className="mb-2">
+//             <label className="text-gray-700 flex justify-between items-center mb-2" htmlFor="confirmPassword">
+//                Confirm Password
+//             </label>
+//             <input 
+//             type="password" 
+//             placeholder='••••••••••••'
+//             value={confirmPassword} 
+//             onChange={(e) => setConfirmPassword(e.target.value)} 
+//             className="border border-gray-300 rounded w-full p-2"
+//             style={error?.confirmPasswordError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+//             />
+//             <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.confirmPasswordError}</span>
+//           </div>
+//           <button 
+//             type="submit" 
+//             className=" w-full btn-primary flex justify-center mt-4"
+//           >
+//            { isLoading ? <ThreeDots height={20} color='#fff' /> : " Sign Up"}
+//           </button>
+//         <p className='text-center mt-3'>Have Account?  {" "}
+//           <span className='text-mainclr-500 font-medium hover:text-mainclr-600 hover:underline cursor-pointer' onClick={()=>navigateLogin(navigate,'user')}>Log In</span>
+//           </p>
+//         </form>
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default Signup
+
+
+
+/////////////////////////////////
+
+
 import React, { useState } from 'react'
 import NavLogin from './NavLogin'
 import {  useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
 import axios, { AxiosError } from 'axios';
 import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
-import { emailValidation, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
+import { emailValidation, handleInputValue, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
 import { fetchSignup } from '../../services/apiCall';
 import { useDispatch } from 'react-redux';
 import { setSignupDetails } from '../../features/otpSlice';
 import { ThreeDots } from 'react-loader-spinner';
+import { ToastActive } from '../utilities/functions';
 
 
 const Signup:React.FC = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [phoneNumberError, setPhoneNumberError] = useState('');
-    const [passError, setPassError] = useState('');
-    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [inputDetails,setInputDetails] = useState({username:'',email:'',phoneNumber:'',password:'',confirmPassword:''})
+    const [error,setError] = useState<Record<string,string> | null>(null)
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [isLoading,setIsLoading] = useState(false);
-    // const newUserDetails = useSelector((state:RootState) => state.otp.signupDetails)
 
     const handleSignup = async (e:React.FormEvent) => {
+      let flag = false;
       e.preventDefault();
       setIsLoading(true);
-      setName(name.trim())
-      const namevalidation = nameValidation(name)
-      if(namevalidation){
-        setNameError(namevalidation)
-        return
-      }else{ setNameError('') }
-
-      const emailvalidation = emailValidation(email)
-      if(emailvalidation){
-        setEmailError(emailvalidation);
-        return
-      }else{ setEmailError('') }
-
-      const phoneNumbervalidation = phoneNumberValidation(phoneNumber)
-      if(phoneNumbervalidation){
-        setPhoneNumberError(phoneNumbervalidation);
-        return
-      }else{ setPhoneNumberError('') }
-
-      const passwordvalidation = passwordValidation(password)
-      if(passwordvalidation){
-        setPassError(passwordvalidation);
+      setError(null);
+      // setError((prev) => ({...prev,emailError:'Entered Invalid Email Address'}))
+      setInputDetails((prev) => ({
+        ...prev, username: inputDetails?.username.trim(), email: inputDetails?.email.trim(),  
+      }))
+      if(nameValidation(inputDetails.username)){
+        setError((prev) => ({...prev,nameError:"Name must be at least 4 characters long."}));
+        flag = true;
+      }
+      if(!emailValidation(inputDetails.email)){
+        setError((prev) => ({...prev,emailError:'Entered Invalid Email Address'}))
+        flag = true;
+      }
+      if(phoneNumberValidation(inputDetails.phoneNumber)){
+        setError((prev) => ({...prev,phoneNumberError:'Invalid phone number'}))
+        flag = true;
+      }
+      const passwordvalidation = passwordValidation(inputDetails.password)
+      if(typeof passwordvalidation == 'string'){
+        setError((prev) => ({...prev,passError:passwordvalidation}))
+        flag = true;
+      }  
+      if(inputDetails.confirmPassword.length === 0 || passwordConfirmValidation(inputDetails.password,inputDetails.confirmPassword)){
+        setError((prev) => ({...prev,confirmPasswordError:'password mismatch or required'}))
+        flag = true;
+      }
+      if(flag){
+        setIsLoading(false); 
         return;
-      }else{ setPassError('') }
-
-      const passwordConfirmvalidation = passwordConfirmValidation(password,confirmPassword)
-      if(passwordConfirmvalidation){
-        setConfirmPasswordError(passwordConfirmvalidation)
-        return;
-      }else{ setConfirmPasswordError('') }
+      }
 
       try{
-        const response = await fetchSignup('/signupOtpGenerate',{email,phoneNumber});
+        const response = await fetchSignup('/signupOtpGenerate',{email:inputDetails.email,phoneNumber:inputDetails.phoneNumber});
         if(response.status == HttpStatusCode.CREATED){
-          const userData = {
-            username:name,
-            email,
-            phoneNumber,
-            password,
-            otp:response.data.otp 
-          }
+          // const userData = {
+          //   username,
+          //   email,
+          //   phoneNumber,
+          //   password,
+          //   otp:response.data.otp 
+          // }
+          const userData = { ...inputDetails, otp:response.data.otp }
           dispatch(setSignupDetails(userData));
-          navigateOtpValidate(navigate,email,'userSign' )
+          navigateOtpValidate(navigate, inputDetails.email, 'userSign' )
         }
       }catch(error){
-        if(axios.isAxiosError(error)){
-          console.error(error.response?.data.message)
-          const err = error as AxiosError<ErrorResponse>;
-          const errorMessage = err?.response?.data?.message || 'signup error';  
-          toast.error(errorMessage, {
-            position: "bottom-right", autoClose: 3000,
-            hideProgressBar: false, closeOnClick: true,
-            pauseOnHover: true, draggable: true,
-            progress: undefined, theme: "dark",
-            transition: Bounce,
-            });
-        }
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        // if(axios.isAxiosError(error)){
+        //   const err = error as AxiosError<ErrorResponse>;
+        //   const errorMessage = err?.response?.data?.message || 'signup error';  
+        //   toast.error(errorMessage, {
+        //     position: "bottom-right", autoClose: 3000,
+        //     hideProgressBar: false, closeOnClick: true,
+        //     pauseOnHover: true, draggable: true,
+        //     progress: undefined, theme: "dark",
+        //     transition: Bounce,
+        //     });
+        // }
       }finally{
         setIsLoading(false);
       }
     }
+
 
 
   return (
@@ -112,15 +304,14 @@ const Signup:React.FC = () => {
               Name
             </label>
             <input 
-              type="name" 
-              id="name" 
+              type="text"  
               placeholder='enter user name'
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
+              value={inputDetails.username} 
+              onChange={(e) => setInputDetails({...inputDetails, username: e.target.value })} 
               className="border border-gray-300 rounded w-full p-2 "
-              style={nameError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+              style={error?.nameError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
-              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{nameError}</span>
+              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.nameError}</span>
 
           </div>
           <div className="mb-2">
@@ -128,15 +319,14 @@ const Signup:React.FC = () => {
               Email
             </label>
             <input 
-              type="email" 
-              id="email" 
+              type="email"  
               placeholder='email@address.com'
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+              value={inputDetails.email} 
+              onChange={(e) => setInputDetails({...inputDetails, email: e.target.value })} 
               className="border border-gray-300 rounded w-full p-2 "
-              style={emailError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+              style={error?.emailError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
-              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{emailError}</span>
+              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.emailError}</span>
 
 
           </div>
@@ -145,15 +335,14 @@ const Signup:React.FC = () => {
               Phone Number
             </label>
             <input 
-              type="number" 
-              id="number" 
+              type="text"  
               placeholder='+91 0000 000 000'
-              value={phoneNumber} 
-              onChange={(e) => setPhoneNumber(e.target.value)} 
+              value={inputDetails.phoneNumber} 
+              onChange={(e) => handleInputValue(e) && setInputDetails({...inputDetails, phoneNumber:e.target.value})} 
               className="border border-gray-300 rounded w-full p-2 appearance-none"
-              style={phoneNumberError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+              style={error?.phoneNumberError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
-              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{phoneNumberError}</span>
+              <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.phoneNumberError}</span>
 
 
           </div>
@@ -163,15 +352,14 @@ const Signup:React.FC = () => {
             </label>
 
             <input 
-            type="password"
-            id="password" 
+            type="password" 
             placeholder='••••••••••••'
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+            value={inputDetails.password} 
+            onChange={(e) => setInputDetails({...inputDetails, password: e.target.value })} 
             className="border border-gray-300 rounded w-full p-2"
-            style={passError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+            style={error?.passError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
-             <span className='block text-red-600 opacity-80 font-extralight text-end pe-2'>{passError}</span>
+             <span className='block text-red-600 opacity-80 font-extralight text-end pe-2'>{error?.passError}</span>
 
           </div>
           <div className="mb-2">
@@ -179,19 +367,17 @@ const Signup:React.FC = () => {
                Confirm Password
             </label>
             <input 
-            type="password"
-            id="confirmPassword" 
+            type="password" 
             placeholder='••••••••••••'
-            value={confirmPassword} 
-            onChange={(e) => setConfirmPassword(e.target.value)} 
+            value={inputDetails.confirmPassword} 
+            onChange={(e) => setInputDetails({...inputDetails, confirmPassword: e.target.value })} 
             className="border border-gray-300 rounded w-full p-2"
-            style={confirmPasswordError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+            style={error?.confirmPasswordError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
-            <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{confirmPasswordError}</span>
+            <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.confirmPasswordError}</span>
           </div>
           <button 
             type="submit" 
-            // className="bg-maincol text-white rounded w-full py-2 hover:bg-maincoldark transition-colors duration-300"
             className=" w-full btn-primary flex justify-center mt-4"
           >
            { isLoading ? <ThreeDots height={20} color='#fff' /> : " Sign Up"}
