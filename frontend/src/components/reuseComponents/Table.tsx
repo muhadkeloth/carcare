@@ -27,7 +27,7 @@ const Table:React.FC<TableProps> = ({headers, data, renderActions}) => {
               {headers.map((header) => (
                  <td key={header.key} className="py-3 px-4">
                  {header.key === 'image' ? (
-                     <img src={`${import.meta.env.VITE_ENDPORTFRONT}/${item[header.key]}`} alt="" className="w-16 h-16 object-cover rounded" />
+                     <img src={item[header.key]} alt="" className="w-16 h-16 object-cover rounded" />
                     ) : header.key === 'address'  ? (
                         Object.values(item[header.key]).join(' ')
                     ) : header.key === 'vehicleModel' ? (

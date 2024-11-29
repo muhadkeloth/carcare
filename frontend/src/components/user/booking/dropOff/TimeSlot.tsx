@@ -7,7 +7,6 @@ const generateTimeSlots = (start: string, end: string): string[] => {
     const [endHour, endMinute] = end.split(":").map(Number);
   
     while (hour < endHour || (hour === endHour && minute < endMinute)) {
-      // const formattedTime = `${hour}:${minute === 0 ? "00" : minute}`;
       const period = hour >= 12 ? "PM" : "AM";
       const adjustedHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
   

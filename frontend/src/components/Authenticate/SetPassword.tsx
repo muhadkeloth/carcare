@@ -4,9 +4,8 @@ import carlogo from '../../assets/images/CarCare-white.png';
 import { navigateHome, navigateLogin } from '../utilities/navigate/common';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { passwordConfirmValidation, passwordValidation } from '../utilities/validation';
-import axios, { AxiosError } from 'axios';
-import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
-import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { HttpStatusCode } from '../utilities/interface';
+import { ToastContainer } from 'react-toastify';
 import { fetchSetPassword } from '../../services/apiCall';
 import { ThreeDots } from 'react-loader-spinner';
 import { ToastActive } from '../utilities/functions';
@@ -60,17 +59,6 @@ const SetPassword:React.FC = () => {
       }catch(error){
         const errorMessage = (error as Error).message;
         ToastActive('error',errorMessage)
-        // if(axios.isAxiosError(error)){
-          // const err = error as AxiosError<ErrorResponse>;
-          // const errorMessage = err?.response?.data?.message || 'error on reset password';
-          // toast.error(errorMessage, {
-          //   position: "bottom-right", autoClose: 3000,
-          //   hideProgressBar: false, closeOnClick: true,
-          //   pauseOnHover: true, draggable: true,
-          //   progress: undefined, theme: "dark",
-          //   transition: Bounce,
-          //   });
-        // }
       }finally{
         setIsLoading(false)
       }

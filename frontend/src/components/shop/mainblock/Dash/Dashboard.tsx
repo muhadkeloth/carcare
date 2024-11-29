@@ -48,7 +48,7 @@ useEffect(()=> {
         <div className="relative w-48 h-48">
           {shopdetails?.image ? (
             <img
-            src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails.image}`}
+            src={shopdetails.image}
             alt="Profile img"
             className="w-full h-full rounded-full object-cover"
             />

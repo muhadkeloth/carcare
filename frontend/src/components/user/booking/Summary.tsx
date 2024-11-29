@@ -44,7 +44,7 @@ const Summary:React.FC<DropOffProps> = ({setActiveSection}) => {
     <div className="flex pb-4 pt-2 mt-3 " >
                <div className="w-32  rounded overflow-hidden">
                  <img
-                   src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
+                   src={shopdetails?.image}
                    alt="shop img"
                    className="w-full h-full object-cover rounded"
                    />

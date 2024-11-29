@@ -131,7 +131,7 @@ const Vehicle:React.FC<DropOffProps> = ({setActiveSection}) => {
 
                  <div className="w-28  rounded overflow-hidden">
                    <img
-                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
+                     src={shopdetails?.image}
                      alt="shop img"
                      className="w-full h-full object-cover rounded"
                      />

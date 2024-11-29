@@ -14,52 +14,48 @@ const AdminDash: React.FC = () => {
     const [activeSection, setActiveSection] = useState('Dash');
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-      navigateLogout(navigate,'admin')
-  };
-
-  const handleActiveSection = (section: string) => {
-      // Your logic to set the active section
-      setActiveSection(section)
+    const handleLogout = () => { navigateLogout(navigate,'admin') };
+    
+    const handleActiveSection = (section: string) => {
+      setActiveSection(section);
       setShowMenu(!showMenu);
-  };
+    };
 
-useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if(!token) navigateLogin(navigate,'admin')
-},[navigate])
+    useEffect(() => {
+      const token = localStorage.getItem("admin_token");
+      if (!token) navigateLogin(navigate, "admin");
+    }, [navigate]);
 
   return (
- <div className="flex flex-col ">
+    <div className="flex flex-col ">
+      <NavLogin />
+      <ToastContainer />
 
-    <NavLogin />
-    <ToastContainer />
-
-    <div className="flex justify-between items-center my-1 ">
-        <button onClick={() => console.log("Go back")} className="text-2xl text-mainclr-800 ps-2">
-            <FontAwesomeIcon icon={faArrowLeft} />
+      <div className="flex justify-between items-center my-1 ">
+        <button onClick={() => console.log("Go back")} className="text-2xl text-mainclr-800 ps-2" >
+          <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <ProfileImage />
-        <button onClick={() => setShowMenu(!showMenu)} className="text-2xl text-mainclr-800 pe-2 md:hidden">
-            <FontAwesomeIcon icon={faBars} />
+        <button onClick={() => setShowMenu(!showMenu)} className="text-2xl text-mainclr-800 pe-2 md:hidden" >
+          <FontAwesomeIcon icon={faBars} />
         </button>
-    </div>
+      </div>
 
-<div className="flex flex-col md:flex-row min-h-screen">
-
-    <div className='md:w-1/6'>
-        <div className="bg-mainclr-500 rounded-e-md  flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
-        <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} /> 
+      <div className="flex flex-col md:flex-row min-h-screen">
+        <div className="md:w-1/6">
+          <div className="bg-mainclr-500 rounded-e-md  flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
+            <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} />
+          </div>
+          <div
+            className={`bg-mainclr-500 rounded-e-md flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out 
+                ${showMenu ? "translate-x-0" : "-translate-x-full" } md:hidden w-3/5`} >
+            <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} showMenu={showMenu}/>
+          </div>
         </div>
-        <div className={`bg-mainclr-500 rounded-e-md flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out ${showMenu ? 'translate-x-0' : '-translate-x-full'} md:hidden w-3/5`}>
-        <AdminSidebar activeSection={activeSection} handleActiveSection={handleActiveSection} handleLogout={handleLogout} showMenu={showMenu} /> 
-        </div>
+
+        <AdminMain activeSection={activeSection} />
+      </div>
     </div>
-
-    <AdminMain activeSection={activeSection} />
-</div>
-
-</div>
   );
 }
 

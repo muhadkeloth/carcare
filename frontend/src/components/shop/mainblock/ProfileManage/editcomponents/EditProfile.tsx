@@ -6,7 +6,6 @@ import LocationPicker from "../../../../admin/mainblock/shopManage/LocationPicke
 import { shopProfile } from "../../../../../features/shopSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
-import { toast } from "react-toastify";
 import { fetchUpdateProfileDetails, fetchUploadProfileImage } from "../../../../../services/shopService";
 import { HttpStatusCode } from "../../../../utilities/interface";
 import { ToastActive } from "../../../../utilities/functions";
@@ -23,7 +22,6 @@ const EditProfile:React.FC = () => {
   );
   const [editedShopUser, setEditedShopUser] = useState<shopProfile | null>(shopUserDetails || null);
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  // const [errors, setErrors] = useState<{ [key: string]:string }>({});
   const [errors, setErrors] = useState<{ [key: string]:string }|null>(null);
 
 
@@ -38,68 +36,43 @@ const EditProfile:React.FC = () => {
       formData.append("image", file);
       try {
         const response = await fetchUploadProfileImage(formData)
-        // if(response.status !== HttpStatusCode.CREATED) toast.error('failed to upload image.');
         if(response.status !== HttpStatusCode.CREATED) throw new Error('failed to upload image.');
           handleInputChange('image',response.data.imagePath);
           ToastActive('success','Image updated. please save for apply changes.');
-          // toast.success('Image updated. please save for apply changes.');
       } catch (error) {
-        // console.error('update image error',error);
         ToastActive('error','error uploading image.')
       }
     }
   };
-
-  // const validateForm = (): boolean => {
-  //   setErrors({});
-  //   const newErrors:{[key:string]:string} = {};
-
-  //   if(!editedShopUser?.shopName) newErrors.shopName = "Shop Name is required.";
-  //   if(!editedShopUser?.ownerName) newErrors.ownerName = "Owner Name is required.";
-  //   if(!editedShopUser?.email) newErrors.email = "Email is required.";
-  //   if(!editedShopUser?.phoneNumber) newErrors.phoneNumber = "Phone Number is required.";
-  //   if(!editedShopUser?.about) newErrors.about = "About is required.";
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0; 
-  // };
   
   const handleSaveChanges = async () => {
     setShowConfirmModal(false)
     let flag = false;
     setErrors(null);
-    // if(!editedShopUser) {toast.error('error occured'); return;};
     if(!editedShopUser) {ToastActive('error','error occured'); return;};
-    // const newErrors:{[key:string]:string} = {};
     if(!editedShopUser?.shopName || nameValidation(editedShopUser?.shopName)){
-      // newErrors.shopName = "Shop Name is required.";
       setErrors((prev) => ({...prev,shopName:'Shop Name is required.'}))
       flag = true;
     } 
     if(!editedShopUser?.ownerName || nameValidation(editedShopUser?.ownerName)){
-      // newErrors.ownerName = "Owner Name is required.";
       setErrors((prev) => ({...prev,ownerName:'Owner Name is required.'}))
       flag = true;
     } 
     if(!editedShopUser?.email || !emailValidation(editedShopUser?.email)){
-      // newErrors.email = "Email is required.";
       setErrors((prev) => ({...prev,email:'Email is required.'}))
       flag = true;
     } 
     if(!editedShopUser?.phoneNumber || phoneNumberValidation(editedShopUser?.phoneNumber)){
-      // newErrors.phoneNumber = "Phone Number is required.";
       setErrors((prev) => ({...prev,phoneNumber:'Phone Number is required.'}))
       flag = true;
     } 
     if(!editedShopUser?.about || nameValidation(editedShopUser?.about)){
-      // newErrors.about = "About is required.";
       setErrors((prev) => ({...prev,about:'About is required.'}))
       flag = true;
     } 
     if(flag)return;
     
     const changesMade = JSON.stringify(editedShopUser) !== JSON.stringify(shopUserDetails);
-    // if(!changesMade){toast.info('No changes applied.');return;};
     if(!changesMade){ToastActive('info','No changes applied.');return;};
     
     try {
@@ -112,8 +85,6 @@ const EditProfile:React.FC = () => {
     } catch (error) {
       const errorMessage = (error as Error).message;
       ToastActive('error',errorMessage)
-      // console.error('update shop details error',error);
-      // toast.error('error uploading shop details.')
     }
   }
 
@@ -125,7 +96,7 @@ const EditProfile:React.FC = () => {
         <div className="relative w-48 h-48">
           {editedShopUser?.image ? (
             <img
-              src={`${import.meta.env.VITE_ENDPORTFRONT}/${editedShopUser.image}`}
+              src={editedShopUser.image}
               alt="Profile img"
               className="w-full h-full rounded-full object-cover"
             />
@@ -230,7 +201,6 @@ const EditProfile:React.FC = () => {
           <div className="flex justify-end">
             <button
               type="button" onClick={()=>(setShowConfirmModal(true) )}
-              // className="bg-maincol hover:bg-maincoldark text-white px-4 py-2 rounded-md"
               className="btn-primary"
             >
               Save Changes
@@ -248,13 +218,11 @@ const EditProfile:React.FC = () => {
             <div className="flex items-center justify-end">
               <button
                 className="btn-secondary mr-2"
-                // className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 mr-2"
                 onClick={() => setShowConfirmModal(false)}
               >
                 Cancel
               </button>
               <button
-                // className="bg-maincol text-white px-4 py-2 rounded-md hover:bg-maincoldark"
                 className="btn-primary"
                 onClick={handleSaveChanges} >
                 Confirm

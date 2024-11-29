@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
-import { AxiosError } from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { navigateHome, navigateLogin, navigatePasswordChange } from '../utilities/navigate/common';
-import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
-import { Bounce, toast, ToastContainer } from 'react-toastify';
+import { HttpStatusCode } from '../utilities/interface';
+import { ToastContainer } from 'react-toastify';
 import { fetchOtpGenerate, fetchOtpValidate, fetchSignup } from '../../services/apiCall';
 import { useDispatch, useSelector } from 'react-redux';
 import { setResetOtp } from '../../features/otpSlice';
@@ -53,15 +52,6 @@ const OtpValidation:React.FC = () => {
       } catch (error) {
         const errorMessage = (error as Error).message;
         ToastActive('error',errorMessage)
-          // const err = error as AxiosError<ErrorResponse>;
-          // const errorMessage = err?.response?.data?.message || 'oops please go back to login';
-          // toast.error(errorMessage, {
-          //   position: "bottom-right", autoClose: 3000,
-          //   hideProgressBar: false, closeOnClick: true,
-          //   pauseOnHover: true, draggable: true,
-          //   progress: undefined, theme: "dark",
-          //   transition: Bounce,
-          //   });
       }
   };
 
@@ -89,18 +79,8 @@ const OtpValidation:React.FC = () => {
         }
       }
     }catch(error){
-      // console.error('OTP validation failed:', error);
       const errorMessage = (error as Error).message;
       setOtpError(errorMessage)
-      // const err = error as AxiosError<ErrorResponse>;
-      //     const errorMessage = err?.response?.data?.message || 'otp validation error';
-      //     toast.error(errorMessage, {
-      //       position: "bottom-right", autoClose: 3000,
-      //       hideProgressBar: false, closeOnClick: true,
-      //       pauseOnHover: true, draggable: true,
-      //       progress: undefined, theme: "dark",
-      //       transition: Bounce,
-      //       });
     }finally{
       setIsLoading(false);
     }
@@ -109,7 +89,6 @@ const OtpValidation:React.FC = () => {
   const handleChange = (event:React.ChangeEvent<HTMLInputElement>, index:number ) => {
     const value = event?.target.value;
     if(/\D/.test(value))return;
-
     const updatedOtp = [...otp];
     updatedOtp[index] = value;
     setOtp(updatedOtp);
@@ -129,9 +108,7 @@ const OtpValidation:React.FC = () => {
 
   useEffect(() => {
     if (timeLeft > 0) {
-        const timer = setInterval(() => {
-            setTimeLeft((prev) => prev - 1);
-        }, 1000);
+        const timer = setInterval(() => { setTimeLeft((prev) => prev - 1); }, 1000);
         return () => clearInterval(timer); 
       } else {
         setShowResend(true); 
@@ -154,32 +131,22 @@ const OtpValidation:React.FC = () => {
             <label className="block font-light text-gray-700 mb-4" htmlFor="number">
               Check mail for OTP: <span className='font-semibold'>"{ email}"</span>
             </label>
-              <div className="flex justify-between mb-4">
+            <div className="flex justify-between mb-4">
           {otp.map((digit, index) => (
-            <input
-              key={index}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
+            <input key={index} type="text" inputMode="numeric" maxLength={1} value={digit}
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               ref={(el) => (inputRefs.current[index] = el)}
               className="border border-gray-300 rounded w-12 h-12 text-center text-lg font-semibold"
               style={otpError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}} 
-              autoFocus={index === 0}
-            />
+              autoFocus={index === 0} />
           ))}
         </div>
         {otpError && <p className="text-red-600 text-center mb-2">{otpError}</p>}
           </div>
-          <button 
-            type="button" 
-            onClick={()=> validateOtp(otp.join(''))}
-            className="w-full btn-primary flex justify-center"
-          >
-            { isLoading ? <ThreeDots height="20" color='#fff' /> : 'VERIFY OTP' } 
-            
+          <button type="button" onClick={()=> validateOtp(otp.join(''))}
+            className="w-full btn-primary flex justify-center" >
+            { isLoading ? <ThreeDots height="20" color='#fff' /> : 'VERIFY OTP' }     
           </button>
         <p className='text-center mt-3'>Don't you receive OTP? {" "}
           { showResend ? (

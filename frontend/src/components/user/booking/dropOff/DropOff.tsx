@@ -3,7 +3,6 @@ import { addDays, format, isBefore, isSunday, startOfMonth, endOfMonth, startOfW
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faArrowRight, faStar } from '@fortawesome/free-solid-svg-icons';
 import TimeSlot from './TimeSlot';
-import { Shop } from '../../../utilities/interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDateAndTime } from '../../../../features/bookingSlice';
 import { RootState } from '../../../../store';
@@ -29,13 +28,11 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
       ? state.estimate.estimateDetails.shopdetails
       : state.bookingdetails.bookingDetails?.shopdetails;
     } );
-    // const { shopdetails } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
     
     const generateDaysInMonth = (month:Date): Day[] => {
         const start = startOfWeek(startOfMonth(month));
         const end = endOfWeek(endOfMonth(month));
-
         const days:Day[] = [];
         let date = start;
 
@@ -43,7 +40,6 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
             const isDisabled = isBefore(date, new Date()) || isSunday(date);
             const isToday = isSameDay(date,new Date());
             const isSelected = selectedDate ? isSameDay(date,selectedDate) : false;
-
             days.push({date,isDisabled,isToday, isSelected});
             date = addDays(date,1);
         }
@@ -133,13 +129,11 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
 
       <div className="border rounded-lg h-fit p-3  ">
         <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p>
-
-{/* start herer */}
     
       <div className="flex pb-4 pt-2   border-b" >
                  <div className="w-28  rounded overflow-hidden">
                    <img
-                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
+                     src={shopdetails?.image}
                      alt="shop img"
                      className="w-full h-full object-cover rounded"
                      />
@@ -173,11 +167,6 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
                        confirm date and time <FontAwesomeIcon icon={faArrowRight} />
                      </button>
                    </div>
-        
-    
-
-
-      {/* end here  */}
       </div>
     </div>
   );

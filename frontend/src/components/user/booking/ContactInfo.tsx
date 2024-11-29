@@ -7,7 +7,6 @@ import { RootState } from '../../../store'
 import { setuserdetails } from '../../../features/bookingSlice'
 
 
-
 const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
   const [userdetails, setUserdetails] = useState<{
     firstName:string;lastName:string;email:string;phoneNumber:string;
@@ -108,7 +107,7 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
     <div className="flex pb-4 pt-2 " >
                <div className="w-28  rounded overflow-hidden">
                  <img
-                   src={`${import.meta.env.VITE_ENDPORTFRONT}/${shopdetails?.image}`}
+                   src={shopdetails?.image}
                    alt="shop img"
                    className="w-full h-full object-cover rounded"
                    />

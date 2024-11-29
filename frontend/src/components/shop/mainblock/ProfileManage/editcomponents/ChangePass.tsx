@@ -1,21 +1,14 @@
 import React, { useState } from 'react'
 import { ThreeDots } from 'react-loader-spinner'
-import { toast } from 'react-toastify'
 import { changePasswordShop } from '../../../../../services/shopService'
 import { passwordConfirmValidation, passwordValidation } from '../../../../utilities/validation'
 import { ToastActive } from '../../../../utilities/functions'
 
 
 const ChangePass:React.FC = () => {
-  // const [currentPassword, setCurrentPassword] = useState('')
-  // const [newPassword, setNewPassword] = useState('')
-  // const [confirmPassword, setConfirmPassword] = useState('')
   const [input,setInput] = useState({password:'',newPassword:'',confirmPassword:''});
   const [error,setError] = useState<Record<string,string> | null>(null)
-  // const [currentpass, setCurrentpass] = useState('')
-  // const [confirmpass, setConfirmpass] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
 
   const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
@@ -34,35 +27,14 @@ const ChangePass:React.FC = () => {
       setError((prev) => ({...prev,confirmPasswordError:'password mismatch or required'}))
       return;
     }
-    // if(!currentPassword.trim()){
-    //   setCurrentpass('Current password is required.')
-    //   return
-    // }else setCurrentpass('')
-    // if(!newPassword.trim()){
-    //   setConfirmpass('New password is required.')
-    //   return
-    // }else if(newPassword !== confirmPassword){
-    //   setConfirmpass('Confirm password does not match.')
-    //   return
-    // }else{
-    //   setConfirmpass('')
-    // }
-
     setIsLoading(true);
 
     try {
       const response = await changePasswordShop({currentPassword:input.password, newPassword:input.newPassword});
       if (response.data?.success) ToastActive('success',"Password changed successfully.");
-      // if(response.data?.message) ToastActive('error',response.data?.message)
     } catch (error) {
       const errorMessage = (error as Error).message;
       ToastActive('error',errorMessage)
-      // if (typeof error === 'object' && error !== null && 'response' in error) {
-      //   const err = error as { response: { data: {message?:string}}};
-      //   toast.error(err.response.data.message || "Error changing password");
-      // } else {
-      //   toast.error("Something went wrong!");
-      // }
     } finally {
       setIsLoading(false);
     }
@@ -115,7 +87,6 @@ const ChangePass:React.FC = () => {
       ) : 'Change Password'}
       </button>
           </form>
-
     </div>
 
   );

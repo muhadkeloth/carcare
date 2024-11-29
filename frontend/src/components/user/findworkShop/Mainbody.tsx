@@ -71,7 +71,7 @@ const Mainbody: React.FC = () => {
                className="flex border-b p-4  ps-4 cursor-pointer hover:bg-sky-50" >
                  <div className="w-2/6 h-[228px] rounded  ">
                    <img
-                     src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop.image}`}
+                     src={shop.image}
                      alt="shop img"
                      className="w-full h-full object-cover rounded"
                      />

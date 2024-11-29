@@ -128,7 +128,7 @@ const MainBlock:React.FC = () => {
     <div ref={overviewRef} className="space-y-4">
         <div className="">
         <img
-                  src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop?.image}`}
+                  src={shop?.image}
                   alt="shop img"
                   className="w-fit object-cover rounded"
                 />

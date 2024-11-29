@@ -2,11 +2,10 @@ import React, { useState } from 'react'
 import NavLogin from './NavLogin'
 import {  useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
-import axios, { AxiosError } from 'axios';
 import { navigateLogin, navigateOtpValidate } from '../utilities/navigate/common';
 import { emailValidation, handleInputValue, nameValidation, passwordConfirmValidation, passwordValidation, phoneNumberValidation } from '../utilities/validation';
-import { Bounce, toast, ToastContainer } from 'react-toastify';
-import { ErrorResponse, HttpStatusCode } from '../utilities/interface';
+import { ToastContainer } from 'react-toastify';
+import { HttpStatusCode } from '../utilities/interface';
 import { fetchSignup } from '../../services/apiCall';
 import { useDispatch } from 'react-redux';
 import { setSignupDetails } from '../../features/otpSlice';
@@ -26,7 +25,6 @@ const Signup:React.FC = () => {
       e.preventDefault();
       setIsLoading(true);
       setError(null);
-      // setError((prev) => ({...prev,emailError:'Entered Invalid Email Address'}))
       setInputDetails((prev) => ({
         ...prev, username: inputDetails?.username.trim(), email: inputDetails?.email.trim(),  
       }))
@@ -59,13 +57,6 @@ const Signup:React.FC = () => {
       try{
         const response = await fetchSignup('/signupOtpGenerate',{email:inputDetails.email,phoneNumber:inputDetails.phoneNumber});
         if(response.status == HttpStatusCode.CREATED){
-          // const userData = {
-          //   username,
-          //   email,
-          //   phoneNumber,
-          //   password,
-          //   otp:response.data.otp 
-          // }
           const userData = { ...inputDetails, otp:response.data.otp }
           dispatch(setSignupDetails(userData));
           navigateOtpValidate(navigate, inputDetails.email, 'userSign' )
@@ -73,17 +64,6 @@ const Signup:React.FC = () => {
       }catch(error){
         const errorMessage = (error as Error).message;
         ToastActive('error',errorMessage)
-        // if(axios.isAxiosError(error)){
-        //   const err = error as AxiosError<ErrorResponse>;
-        //   const errorMessage = err?.response?.data?.message || 'signup error';  
-        //   toast.error(errorMessage, {
-        //     position: "bottom-right", autoClose: 3000,
-        //     hideProgressBar: false, closeOnClick: true,
-        //     pauseOnHover: true, draggable: true,
-        //     progress: undefined, theme: "dark",
-        //     transition: Bounce,
-        //     });
-        // }
       }finally{
         setIsLoading(false);
       }

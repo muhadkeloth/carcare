@@ -1,10 +1,8 @@
 import { faAngleRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import carcare_logo from '../../../assets/images/Car_Care_logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {  useNavigate } from 'react-router-dom'
-import { HttpStatusCode, Shop } from '../../utilities/interface'
-import { fetchShopData } from '../../../services/userService'
 import DropOff from './dropOff/DropOff'
 import Vehicle from './Vehicle'
 import Summary from './Summary'
@@ -23,7 +21,6 @@ const BookingSlot:React.FC = () => {
     ? state.estimate.estimateDetails.shopdetails
     : state.bookingdetails.bookingDetails?.shopdetails;
   } );
-  // const { shopdetails } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
   return (
     <div>

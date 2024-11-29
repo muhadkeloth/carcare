@@ -3,7 +3,7 @@ import { navigateLogin, navigateLogout } from '../utilities/navigate/common';
 import { useNavigate } from 'react-router-dom';
 import NavLogin from '../authenticate/NavLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import ProfileImage from '../utilities/ProfileImage';
 import ShopMain from './MainShop';
 import SidebarShop from './SidebarShop';

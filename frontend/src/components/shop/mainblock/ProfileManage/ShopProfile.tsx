@@ -1,7 +1,5 @@
-
-
 import React, {  useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import EditProfile from './editcomponents/EditProfile';
 import SidebarShopprofile from './SidebarShopprofile';
 import AddImages from './editcomponents/AddImages';
@@ -13,7 +11,6 @@ import { useDispatch } from 'react-redux';
 import { clearShopUser, setShopUser } from '../../../../features/shopSlice';
 import { ThreeDots } from 'react-loader-spinner';
 import { ToastActive } from '../../../utilities/functions';
-
 
 
 
@@ -35,8 +32,6 @@ const ShopProfile: React.FC = () => {
     } catch (error) {
       const errorMessage = (error as Error).message;
       ToastActive('error',errorMessage)
-      // console.log('error to find shop user details',error)
-      // toast.error('error on finding shop user details')
     }finally{
       setIsLoading(false)
     }

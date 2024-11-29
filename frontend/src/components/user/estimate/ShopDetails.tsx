@@ -114,7 +114,7 @@ const ShopDetails: React.FC<estimateProps> = ({ setActiveSection }) => {
                 className="border rounded-lg shadow-md cursor-pointer flex items-center hover:shadow-sm" >
                 <div className="w-1/4">
                 <img
-                  src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop.image}`}
+                  src={shop.image}
                   alt={shop.shopName}
                   className="w-32 h-32 object-cover rounded-md "
                 />

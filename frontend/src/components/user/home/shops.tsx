@@ -41,7 +41,7 @@ const Shops:React.FC = () => {
               className="flex flex-col  bg-white border border-gray-200 rounded-lg shadow  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700" >
               <img
                 className="object-cover w-full rounded-t-lg h-96 md:h-72 "
-                src={`${import.meta.env.VITE_ENDPORTFRONT}/${shop.image}`}
+                src={shop.image}
                 alt="" />
               <div className="flex-col  p-4">
                 <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">

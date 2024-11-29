@@ -2,7 +2,6 @@ import { faAngleLeft, faAngleRight, faPencil, faPlus, faTrash } from '@fortaweso
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react'
 import { Estimate, HttpStatusCode } from '../../../utilities/interface';
-import { Bounce, toast } from 'react-toastify';
 import { createShopEstimate, deleteShopEstimate, editEstimate, fetchAllestimates } from '../../../../services/shopService';
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
@@ -44,15 +43,6 @@ const EstimateMangement:React.FC = () => {
         }catch(error){
           const errorMessage = (error as Error).message;
           ToastActive('error',errorMessage)
-          // console.error('failed to fetch estimate details:',error)
-          // const errorMessage = error instanceof Error?error.message:'error on fetching estimate details';
-          // toast.error(errorMessage, {
-          //   position: "bottom-right", autoClose: 3000,
-          //   hideProgressBar: false, closeOnClick: true,
-          //   pauseOnHover: true, draggable: true,
-          //   progress: undefined, theme: "dark",
-          //   transition: Bounce,
-          //   })
         }
       } 
 
@@ -79,25 +69,9 @@ const EstimateMangement:React.FC = () => {
             setShowAddModal(false);
             fetchEstimates(currentPage);
             ToastActive('success','vehicle added successfully')
-            // toast.success('vehicle added successfully', {
-            //     position: "bottom-right", autoClose: 3000,
-            //     hideProgressBar: false, closeOnClick: true,
-            //     pauseOnHover: true, draggable: true,
-            //     progress: undefined, theme: "dark",
-            //     transition: Bounce,
-            //     })
         } catch (error) {
           const errorMessage = (error as Error).message;
           ToastActive('error',errorMessage)
-            // console.log('eror to add vehicle')
-            // const errorMessage =  error instanceof Error?error?.message:'error on adding vehicle';
-            // toast.error(errorMessage, {
-            //     position: "bottom-right", autoClose: 3000,
-            //     hideProgressBar: false, closeOnClick: true,
-            //     pauseOnHover: true, draggable: true,
-            //     progress: undefined, theme: "dark",
-            //     transition: Bounce,
-            //     })
         }
     }
 
@@ -115,8 +89,6 @@ const EstimateMangement:React.FC = () => {
         } catch (error) {
           const errorMessage = (error as Error).message;
           ToastActive('error',errorMessage)
-          // console.log('error in deleting vehicle',error)
-          // toast.error('failed to delete vehicle.')        
         }finally{
           setShowConfirmModal(false);
         }
@@ -155,8 +127,6 @@ const EstimateMangement:React.FC = () => {
         } catch (error) {
           const errorMessage = (error as Error).message;
           ToastActive('error',errorMessage)
-          // console.log('error in update estimate',error)
-          // toast.error('error updating estimate');
         }finally{
           setShowConfirmModal(false);
           setShowAddModal(false);

@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css'
 import Shop from './components/routes/Shop';
 import 'react-toastify/dist/ReactToastify.css';
 import Admin from './components/routes/Admin';
@@ -14,11 +13,9 @@ const App:React.FC = () => {
 
       <Route path='/*' element={<User />} />
 
+      <Route path='/shop/*' element={<Shop />} />
 
-        <Route path='/shop/*' element={<Shop />} />
-
-
-        <Route path='/admin/*' element={<Admin />} />
+      <Route path='/admin/*' element={<Admin />} />
         
     </Routes>
     </BrowserRouter>

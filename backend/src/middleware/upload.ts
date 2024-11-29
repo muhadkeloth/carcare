@@ -1,25 +1,15 @@
 import multer from 'multer';
-import path from 'path';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../utils/cloudinary';
 
-const storage = multer.diskStorage({
-    destination:(req,file,cb) => {
-        // const folder = req.body.folder; // Expects 'folder' in the request body
-        // let uploadPath = 'public/uploads/';
 
-        // // Customize based on folder type
-        // if (folder === 'shopimg') {
-        //     uploadPath += 'shopimg';
-        // } else if (folder === 'profileimg') {
-        //     uploadPath += 'profileimg';
-        // } else {
-        //     uploadPath += 'other'; // Default folder or handle other cases
-        // }
-        cb(null,'public/uploads/');
-    },
-    filename:(req,file,cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: async (req,file) =>({
+        folder: "uploads",
+        allowed_formats:["jpeg","png","jpg","webp"]
+    }),
+})
 
 const upload = multer({
     storage,
@@ -27,3 +17,4 @@ const upload = multer({
 });
 
 export default upload;
+
