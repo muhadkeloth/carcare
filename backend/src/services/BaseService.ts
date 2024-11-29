@@ -16,7 +16,7 @@ export default abstract class BaseService<T extends Document> {
     }
 
 
-    async validatePassword(inputPassword: string, storedPassword: string,inputType:string){//check for impliment in base
+    async validatePassword( inputPassword: string, storedPassword: string, inputType:string){//check for impliment in base
         const isValid = await bcrypt.compare(inputPassword, storedPassword);
         if (!isValid) {
             logger.error(`Invalid ${inputType}`)

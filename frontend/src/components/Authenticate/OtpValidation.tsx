@@ -71,7 +71,7 @@ const OtpValidation:React.FC = () => {
     try{      
       if(role == 'userSign'){
         const response = await fetchSignup('/signup',{...newUserDetails,userOtp:otp});
-        if(response.status == HttpStatusCode.SUCCESS) {
+        if(response.status == HttpStatusCode.CREATED) {
           if(response.data.token){
             localStorage.setItem(`${response.data.role}_token`,response.data.token);
             navigateHome(navigate,response.data.role);

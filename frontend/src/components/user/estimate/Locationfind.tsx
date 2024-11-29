@@ -79,7 +79,7 @@ const Locationfind:React.FC<estimateProps> = ({setActiveSection}) => {
           <input
             type="text"
             value={input}
-            onChange={(e) => handleInputValue(e) && setInput(e.target.value)}
+            onChange={(e) => handleInputValue(e,6) && setInput(e.target.value)}
             className="block w-96 p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
             placeholder="Enter Pincode..."
             required

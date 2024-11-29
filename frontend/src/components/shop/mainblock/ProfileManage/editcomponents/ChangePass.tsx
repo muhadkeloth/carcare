@@ -53,7 +53,7 @@ const ChangePass:React.FC = () => {
     try {
       const response = await changePasswordShop({currentPassword:input.password, newPassword:input.newPassword});
       if (response.data?.success) ToastActive('success',"Password changed successfully.");
-      if(response.data?.message) ToastActive('error',response.data?.message)
+      // if(response.data?.message) ToastActive('error',response.data?.message)
     } catch (error) {
       const errorMessage = (error as Error).message;
       ToastActive('error',errorMessage)

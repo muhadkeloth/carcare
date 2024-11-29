@@ -10,6 +10,8 @@ import logger from "../middleware/logger";
 interface Doc extends Document {
   isActive?: boolean;
   password?: string;
+  otp?:string;
+  otpExpiry?:Date;
 }
 
 export default abstract class BaseController<T extends Doc> {
@@ -29,13 +31,28 @@ export default abstract class BaseController<T extends Doc> {
         logger.warn('user blocked')
         throw new AppError("Account is blocked. Please contact customer care.",HttpStatusCode.FORBIDDEN);
       }
+      // if(role === 'shop'){
+        if(!user.password && role === 'shop'){
+          if(user.otpExpiry && new Date() > user.otpExpiry){
+            logger.warn("OTP expired.");
+            throw new AppError("OTP expired. Please generate another OTP.", HttpStatusCode.BAD_REQUEST);
+          }
+          if(user.otp && user.otp === password){
+            res.status(HttpStatusCode.SUCCESS).json({validotp:true,role,message:"OTP verified. Please proceed to change your password."})
+          }else{
+            logger.warn("Invalid OTP");
+            throw new AppError("Invalid OTP",HttpStatusCode.BAD_REQUEST)
+          }
+        }else{
+          await this.service.validatePassword(password,user?.password || '',"password");
+    
+          const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
+          const token = jwt.sign({ id: user._id, role }, JWT_SALT, {expiresIn: "1D",});
+    
+          res.status(HttpStatusCode.SUCCESS).json({ token, role, message: "Login successful" });
+        }
+      // }
 
-      await this.service.validatePassword(password,user?.password ?? "","password");
-
-      const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
-      const token = jwt.sign({ id: user._id, role }, JWT_SALT, {expiresIn: "1D",});
-
-      res.status(HttpStatusCode.SUCCESS).json({ token, role, message: "Login successful" });
     } catch (error) {
       const err = error as Error;
       logger.error(`error login ${err.message}`)
@@ -71,7 +88,7 @@ export default abstract class BaseController<T extends Doc> {
     const { email, password, role } = req.body;
     try {
       const response = await resetPasswordFn(email, password, role);
-      res.status(response.status).json({ message: response.message });
+      res.status(response.status).json({token:response.token, message: response.message });
     } catch (error) {
         const err = error as Error;
         logger.error(`reset password error: ${err.message}`);

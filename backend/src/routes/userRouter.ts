@@ -4,6 +4,7 @@ import User from '../models/User';
 import UserRepository from '../repositories/UserRepository';
 import UserService from '../services/UserService';
 import  UserController  from '../controllers/userController';
+import { IUser } from '../utils/interface';
 
 
 const router = Router();

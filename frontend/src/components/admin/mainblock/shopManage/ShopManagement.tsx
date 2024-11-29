@@ -12,6 +12,7 @@ import { addNewShop, fetchAllShop, toggleShopStatus } from '../../../../services
 import { toast } from 'react-toastify';
 import { ThreeDots } from 'react-loader-spinner';
 import Table from '../../../reuseComponents/Table';
+import { handleInputValue } from '../../../utilities/validation';
 
 
 
@@ -303,10 +304,11 @@ const ShopManagement: React.FC = () => {
                 Phone Number
               </label>
               <input
-                type="number"
+                type="text"
+                placeholder='+91 0000 000 000'
                 value={newShop.phoneNumber}
                 onChange={(e) =>
-                  setNewShop({ ...newShop, phoneNumber: e.target.value })
+                  handleInputValue(e, 10) && setNewShop({ ...newShop, phoneNumber: e.target.value })
                 }
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
               />
@@ -334,6 +336,7 @@ const ShopManagement: React.FC = () => {
               </label>
               <input
                 type="file"
+                required
                 onChange={handleImageChange}
                 className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-maincol hover:file:bg-maincoldark"
               />
