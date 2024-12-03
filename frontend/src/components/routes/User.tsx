@@ -10,6 +10,8 @@ import FindWS from '../user/findworkShop/FindWS'
 import ShopDetails from '../user/shopDetailsPage/ShopDetails'
 import BookingSlot from '../user/booking/BookingSlot'
 import Estimate from '../user/estimate/Estimate'
+import ProfileHome from '../user/profileManage/ProfileHome'
+import PickCarHome from '../user/pickMyCar/PickCarHome'
 
 const User:React.FC = () => {
 
@@ -26,9 +28,13 @@ const User:React.FC = () => {
       <Route path='findworkshop' element={<FindWS  />} />
       <Route path='workshopdetails' element={<ShopDetails  />} />
 
+      <Route path='profile' element={<ProfileHome  />} />
+      
       <Route path='bookingSlot' element={<BookingSlot  />} />
 
       <Route path='getEstimate' element={<Estimate  />} />
+      
+      <Route path='pickMyCar' element={<PickCarHome  />} />
 
       <Route path='*' element={<div>404 user</div>} />
     </Routes>

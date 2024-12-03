@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from '../reusableComponents/Header';
 import MainSection from './MainSection';
 import Shops from './Shops';
@@ -9,8 +9,10 @@ import { clearOtpState } from '../../../features/otpSlice';
 
 const Home:React.FC = () => {
   const dispatch = useDispatch() 
-  dispatch(clearOtpState())
-
+  
+  useEffect(()=> {
+    dispatch(clearOtpState())
+  },[dispatch])
 
   return (
     <>

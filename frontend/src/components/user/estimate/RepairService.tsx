@@ -19,7 +19,7 @@ const RepairService:React.FC<estimateProps> = ({setActiveSection}) => {
   return (
 <div className="flex justify-center p-5 pt-2">
       <div className="flex max-w-6xl mx-auto px-4 mb-10 py-12 flex-col mt-24 items-center">
-        <h2 className="text-5xl font-semibold">Choose Nearby Shop</h2>
+        <h2 className="text-5xl font-semibold">Choose Repair Service</h2>
         <div className="mt-10 w-full ">
           <div className="grid grid-cols-1  gap-3">
             {shopdetails?.estimate?.map((work) => (
@@ -38,10 +38,10 @@ const RepairService:React.FC<estimateProps> = ({setActiveSection}) => {
               </div>
             ))}
           </div>
-          {!shopdetails?.estimate && shopdetails?.estimate?.length === 0 && (
+          {!shopdetails?.estimate || shopdetails?.estimate?.length === 0 && (
             <div className='flex flex-col items-center py-4  text-center border'>
             <p className="text-gray-500 my-4 ">shops dont have estimates.</p>
-            <button className='btn-primary  w-1/2' onClick={()=>setActiveSection('Location')}>
+            <button className='btn-primary  w-1/2' onClick={()=>setActiveSection('Workshop')}>
             <FontAwesomeIcon icon={faArrowLeft} /> Change Location
             </button>
             </div>

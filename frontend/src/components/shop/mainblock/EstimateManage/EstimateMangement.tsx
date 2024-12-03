@@ -5,6 +5,7 @@ import { Estimate, HttpStatusCode } from '../../../utilities/interface';
 import { createShopEstimate, deleteShopEstimate, editEstimate, fetchAllestimates } from '../../../../services/shopService';
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
+import Table from '../../../reuseComponents/Table';
 
 
 
@@ -142,6 +143,19 @@ const EstimateMangement:React.FC = () => {
         }
       }
 
+      const tableHeaders = [
+        { label: 'work', key: 'work' },
+        { label: 'Price start', key: 'priceStart' },
+        { label: 'Price end', key: 'priceEnd' },
+      ];
+  
+      const renderActions = (estimate: any) => (
+        <div className='flex py-1 px-4 gap-4 text-center' >
+          <button className='text-white' onClick={() => openEditModel(estimate)}><FontAwesomeIcon icon={faPencil} /></button>
+          <button className='text-red-600' onClick={() => openDeleteConfirm(estimate)}><FontAwesomeIcon icon={faTrash} /></button>
+        </div>
+      );
+
       useEffect(()=>{
         fetchEstimates(currentPage)
       },[currentPage]);
@@ -161,7 +175,7 @@ const EstimateMangement:React.FC = () => {
         </button>
       </div>
 
-    <div className="relative overflow-x-auto shadow-md rounded-lg">
+    {/* <div className="relative overflow-x-auto shadow-md rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">
         <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
           <tr>
@@ -197,7 +211,9 @@ const EstimateMangement:React.FC = () => {
           )} 
         </tbody>
       </table>
-    </div>
+    </div> */}
+    <Table headers={tableHeaders} data={estimates} renderActions={renderActions} />
+
 
     <div className="flex justify-center items-center mt-4">
       <button

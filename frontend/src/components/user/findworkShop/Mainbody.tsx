@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import LocationPicker from "../../admin/mainblock/shopManage/LocationPicker";
+import LocationPicker from "../../reuseComponents/LocationPicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faClock, faPhone, faStar, } from "@fortawesome/free-solid-svg-icons";
 import { fetchNearbyShops } from "../../../services/userService";
@@ -14,20 +14,20 @@ import { clearbookingdetails, setShopdetails } from "../../../features/bookingSl
 import { clearestimateDetails } from "../../../features/estimateSlice";
 
 const Mainbody: React.FC = () => {
-  const [selectedLocation, setSelectedLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  }>({ latitude: 0, longitude: 0 });
+  const [hoveredLocation, setHoveredLocation] = useState<[number, number]|null>(null);
+  const [hoveredDetails,setHoveredDetails] = useState<{shopName:string;image:string;address:any}|null>(null); 
   const [shops, setShops] = useState<Shop[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
   const fetchShops = async () => {
     try {
+      setIsLoading(true)
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
-
+        setHoveredLocation([latitude,longitude]);        
         const shopsData = await fetchNearbyShops(latitude, longitude);
         setShops(shopsData);
       });
@@ -36,8 +36,20 @@ const Mainbody: React.FC = () => {
       console.error("error fetching nearby shops:", error);
       setShops([]);
       setError(errorMessage);
+    }finally{
+      setIsLoading(false);
     }
   };
+
+  const handleHover = (location:[number,number]|undefined,details:{image:string;shopName:string;address:any}) => {
+    setHoveredLocation(location ||null);
+    setHoveredDetails(details);
+  }
+
+  const handleCursorLeave = () => {
+    setHoveredLocation(null);
+    setHoveredDetails(null);
+  }
 
   const handleAvailability = (event:React.MouseEvent<HTMLButtonElement>,shop:Shop) => {
     event.stopPropagation(); 
@@ -54,7 +66,7 @@ const Mainbody: React.FC = () => {
 
   return (
     <div className="flex flex-row ">
-      <div className="w-full md:w-1/2 flex flex-col ">
+      <div className="w-full md:w-1/2 flex flex-col">
        <Navbar />
 
        <div className="overflow-auto ">       
@@ -62,11 +74,14 @@ const Mainbody: React.FC = () => {
              {shops.length !== 0 ? shops.length : ""} CarCare Certified shops nearby
            </h4>
    
+           { isLoading && <ThreeDots height={10} color="#0098d3" wrapperClass=" mt-2" /> }
            {error && <p>{error}</p>}
-   
+
            {shops.length !== 0 ? (
              shops.map((shop) => (
                <div key={shop._id} 
+               onMouseEnter={()=> handleHover(shop?.location?.coordinates,{shopName:shop.shopName,image:shop.image,address:shop.address})}
+               onMouseLeave={()=> handleCursorLeave()}
                onClick={()=> navigateShopDetailPage(navigate,shop._id)}
                className="flex border-b p-4  ps-4 cursor-pointer hover:bg-sky-50" >
                  <div className="w-2/6 h-[228px] rounded  ">
@@ -124,7 +139,7 @@ const Mainbody: React.FC = () => {
                </div>
              ))
            ) : (
-             <ThreeDots height={10} color="#0098d3" wrapperClass=" mt-2" />
+             <p className="flex justify-center p-4  ps-4">No Shops Found</p>
            )}
    
            </div>      
@@ -138,7 +153,9 @@ const Mainbody: React.FC = () => {
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <LocationPicker
-            onLocationChange={setSelectedLocation}
+            hoverLocation={hoveredLocation}
+            hoverDetails={hoveredDetails}
+            // onLocationChange={setSelectedLocation}
             // initialPosition={shopUserDetails?.location.coordinates? [shopUserDetails.location.coordinates[0],shopUserDetails.location.coordinates[1]] : undefined}
           />
         </MapContainer>

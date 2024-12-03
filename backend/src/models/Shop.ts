@@ -38,6 +38,8 @@ const ShopSchema:Schema = new Schema(
             priceEnd:{type:Number,required:true}
         }],
         about:{type:String },
+        discription:{title:{type:String},discript:{type:String}},
+        workingTime:{opening:{type:String,default:'09:00'},closing:{type:String,default:'17:00'}},
 
         createdAt: { type: Date, default: Date.now },
     },

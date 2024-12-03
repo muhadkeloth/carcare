@@ -5,6 +5,7 @@ import UserRepository from '../repositories/UserRepository';
 import UserService from '../services/UserService';
 import  UserController  from '../controllers/userController';
 import { IUser } from '../utils/interface';
+import upload from '../middleware/upload';
 
 
 const router = Router();
@@ -28,6 +29,9 @@ router.get('/shopPincode/:pincode', userController.getShopByPincode);
 router.get('/shopsFilterByPincode/:pincode', userController.getShopsFilterByPincode);
 router.get('/getModelByMake', userController.getModelByMakeVehicle);
 
+router.put('/uploadprofileimage', authenticateToken, upload.single('image'), userController.uploadUserProfileImg);
+router.put('/updateprofiledetails', authenticateToken, userController.updateUserProfileDetails);
+router.put('/changepassword', authenticateToken, userController.updateUserProfilepassword);
 
 export default router;
 

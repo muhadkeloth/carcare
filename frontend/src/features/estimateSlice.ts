@@ -2,7 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Shop } from "../components/utilities/interface";
 
 type estimatetype = {
-    pincode?:string;
+    locationdetails?:{
+        description:string;
+        location:[number,number];
+    };
     vehicleDetails?:{make:string;model:string;year:string;description?:string;};
     shopdetails?:Shop;
     repairWork?:{work:string;priceStart:number;priceEnd:number};
@@ -18,11 +21,11 @@ const estimateSlice = createSlice({
     name:'estimate',
     initialState,
     reducers:{
-        setpincode(state,action:PayloadAction<string>){
+        setEstimateAddress(state,action:PayloadAction<{description:string,location:[number,number]}>){
             if(state.estimateDetails){
-                state.estimateDetails.pincode = action.payload;
+                state.estimateDetails.locationdetails = action.payload;
             }else{
-                state.estimateDetails = {pincode:action.payload};
+                state.estimateDetails = {locationdetails:action.payload};
             }
         },
         setEstimateShopdetails(state,action:PayloadAction<Shop>){
@@ -32,20 +35,6 @@ const estimateSlice = createSlice({
                 state.estimateDetails = {shopdetails:action.payload};
             }
         },
-        // setDateAndTime(state,action:PayloadAction<{selectedDate:Date;selectedTime:string;}>){
-        //     if(state.bookingDetails){
-        //         state.bookingDetails.shedule = {date:action.payload.selectedDate,time:action.payload.selectedTime}
-        //     }else{
-        //         state.bookingDetails = {shedule:{date:action.payload.selectedDate,time:action.payload.selectedTime}}
-        //     };
-        // },
-        // setVehicleDetails(state,action:PayloadAction<{model:string;make:string;year:string;description?:string;}>){
-        //     if(state.bookingDetails){
-        //         state.bookingDetails.vehicleDetails = action.payload;
-        //     }else{
-        //         state.bookingDetails = {vehicleDetails:action.payload};
-        //     };            
-        // },
         setEstimateWorkDetails(state,action:PayloadAction<{work:string;priceStart:number;priceEnd:number;}>){
             if(state.estimateDetails){
                 state.estimateDetails.repairWork = action.payload;
@@ -59,5 +48,5 @@ const estimateSlice = createSlice({
     },
 });
 
-export const { setpincode, clearestimateDetails, setEstimateShopdetails, setEstimateWorkDetails  } = estimateSlice.actions;
+export const { setEstimateAddress, clearestimateDetails, setEstimateShopdetails, setEstimateWorkDetails  } = estimateSlice.actions;
 export default estimateSlice.reducer;

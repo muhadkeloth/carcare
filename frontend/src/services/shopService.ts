@@ -14,8 +14,6 @@ export const fetchShopUserDetails = async ():Promise<{status:number;data:any}> =
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error finding shop user details:', error);
-        // throw new Error('error in  finding shop user details');
     }
 } 
 
@@ -27,23 +25,31 @@ export const fetchUploadProfileImage = async (formData:FormData):Promise<{status
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error uploading shop user profile image:', error);
-        // throw new Error('error in uploading shop user profile image');
     }
 }
 
-export const fetchUpdateProfileDetails = async (details:any):Promise<{data:any}> => {
+export const fetchUpdateProfileDetails = async (url:string,details:any):Promise<{data:any}> => {
     try {
-        const response = await api.put('/shop/updateprofiledetails',details);
+        const response = await api.put(url,details);
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating shop profile details');
         return {data:response.data};
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error updating shop user profile details:', error);
-        // throw new Error('error in updating shop user profile details');
     }
 }
+
+export const fetchUpdateProfileWorkTime = async (opening:string,closing:string):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/shop/updateprofileWorkTime',{opening,closing});
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating shop work time');
+        return {data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 
 export const changePasswordShop = async (body:{currentPassword:string; newPassword:string}):Promise<{data:any}> => {
     try {
@@ -53,8 +59,6 @@ export const changePasswordShop = async (body:{currentPassword:string; newPasswo
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error profile changing password:', error);
-        // throw new Error('Error profile changing password:');
     }
 }
 
@@ -73,8 +77,6 @@ export const fetchAllVehicle = async():Promise<{Vehicle:any[];}> => {
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('error in fetching vehicle details',error);
-        // throw new Error('unable to fetch vehicle details'); 
     }
 }
 
@@ -93,8 +95,6 @@ export const fetchAllShopVehicle = async (page:number):Promise<{Vehicle:any[];to
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('error in fetching vehicle details',error);
-        // throw new Error('unable to fetch vehicle details'); 
     }
 }
 
@@ -106,8 +106,6 @@ export const addNewVehicle = async (newVehicle:any):Promise<{status:number;messa
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error adding new vehicle:', error);
-        // throw new Error('error in adding new vehicle');
     }
 }
 
@@ -120,8 +118,6 @@ export const editVehicle = async (newVehicle:any):Promise<{status:number;data:an
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error adding new vehicle:', error);
-        // throw new Error('error in update  vehicle');
     }
 }
 
@@ -134,8 +130,6 @@ export const deleteShopVehicle = async (brand:string):Promise<{status:number}> =
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error deleting:', error);
-        // throw new Error('error in deleting vehicle');
     }
 }
 
@@ -160,8 +154,6 @@ export const fetchAllestimates = async(page:number):Promise<{Estimate:any[];tota
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('error in fetching Estimate details',error);
-        // throw new Error('unable to fetch Estimate details');  
     }
 }
 
@@ -174,8 +166,6 @@ export const editEstimate = async (newEstimate:any):Promise<{status:number;data:
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error adding new vehicle:', error);
-        // throw new Error('error in update  vehicle');
     }
 }
 
@@ -188,7 +178,5 @@ export const deleteShopEstimate = async (work:string):Promise<{status:number}> =
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error deleting:', error);
-        // throw new Error('error in deleting vehicle');
     }
 }

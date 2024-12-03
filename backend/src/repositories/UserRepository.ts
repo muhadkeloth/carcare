@@ -7,7 +7,11 @@ export default class UserRepository extends BaseRepository<IUser>{
     constructor(userModel: typeof User){
         super(userModel);
     }
-    
+
+    async updateById(Id: string, updateData: IUser){
+       return  await this.model.findByIdAndUpdate(Id, updateData, { new: true });
+    }
+            
  
 
 }

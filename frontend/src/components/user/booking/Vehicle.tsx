@@ -114,10 +114,7 @@ const Vehicle:React.FC<DropOffProps> = ({setActiveSection}) => {
           placeholder='Enter a description of your issue'
           value={description} onChange={(e)=> setDescription(e.target.value)}></textarea>
           </div>
-
-      
         </div>
-
       </div>
 
 

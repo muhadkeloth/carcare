@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { ErrorResponse, Shop } from "../components/utilities/interface";
+import { ErrorResponse, HttpStatusCode, Shop } from "../components/utilities/interface";
 import api from "./axiosConfig";
 
 
@@ -12,8 +12,6 @@ export const fetchNearbyShops = async (latitude:number,longitude:number):Promise
     }catch(error){
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error("Error fetching nearby shops:", error);
-        // throw new Error("Unable to fetch nearby shops.");
     }
 }
 
@@ -24,8 +22,6 @@ export const fetchUserData = async ():Promise<{status:number,data:any}> => {
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error("Error fetching nearby user detail:", error);
-        // throw new Error("Unable to fetch nearby user detail.");
     }
 }
 
@@ -36,8 +32,6 @@ export const fetchShopData = async (id:string):Promise<{status:number,data:any}>
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error("Error fetching nearby user detail:", error);
-        // throw new Error("Unable to fetch nearby user detail.");
     }
 }
 
@@ -48,8 +42,6 @@ export const fetchPincode = async (pincode:string):Promise<{status:number,data:a
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error("Error fetching pincode:", error);
-        // throw new Error("Unable to fetch pincode.");
     }
 }
 
@@ -60,8 +52,6 @@ export const fetchShopByPincode = async (pincode:string):Promise<{status:number,
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error("Error fetching shop by pincode:", error);
-        // throw new Error("Unable to fetch shop by pincode.");
     }
 }
 
@@ -71,7 +61,42 @@ export const fetchModeldetail = async (_id:string,make:string):Promise<{status:n
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error("Error fetching model of make:", error);
-        // throw new Error("Unable to fetch model of make.");
     }
 }
+
+
+export const fetchUserUploadProfileImage = async (formData:FormData):Promise<{status:number;data:any}> => {
+    try {
+        console.log('fomr ',formData);
+        const response = await api.put('/uploadprofileimage',formData);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when uploading user profile image');
+        return {status:response.status,data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchUserUpdateProfileDetails = async (details:any):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/updateprofiledetails',details);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating profile details');
+        return {data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const changePasswordUser = async (body:{currentPassword:string; newPassword:string}):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/changepassword',body);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error changing password');
+        return {data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+

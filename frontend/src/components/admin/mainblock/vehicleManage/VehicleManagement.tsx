@@ -161,8 +161,8 @@ const VehicleManagement:React.FC = () => {
 
     const renderActions = (vehicle: any) => (
       <div className='flex py-1 px-4 gap-4 text-center' >
-        <button onClick={() => openEditModel(vehicle)}><FontAwesomeIcon icon={faPencil} /></button>
-        <button onClick={() => openDeleteConfirm(vehicle)}><FontAwesomeIcon icon={faTrash} /></button>
+        <button className='text-white' onClick={() => openEditModel(vehicle)}><FontAwesomeIcon icon={faPencil} /></button>
+        <button className='text-red-600' onClick={() => openDeleteConfirm(vehicle)}><FontAwesomeIcon icon={faTrash} /></button>
       </div>
     );
     
@@ -174,7 +174,7 @@ const VehicleManagement:React.FC = () => {
 
   return (
     <div className="p-4">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
 
       <div className="flex justify-between mt-1 mb-4 pe-1">
         <h2 className="text-2xl font-bold ms-1 text-gray-800">Vehicle Management</h2>

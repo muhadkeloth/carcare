@@ -19,7 +19,6 @@ export const fetchAllShop = async (page:number):Promise<{ workShop:any[]; totalP
     }catch(error){
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // throw new Error("Unable to fetch nearby shops.");
     }
 }
 
@@ -29,8 +28,6 @@ export const addNewShop = async (formData:any) => {
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error adding new shop:', error);
-        // throw error;
     }
 }
 
@@ -49,8 +46,6 @@ export const fetchAllUsers = async (page:number):Promise<{users:any[]; totalPage
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('error fetching users',error);
-        // throw new Error('unable to fetch users')
     }
 }
 
@@ -60,8 +55,6 @@ export const toggleuserStatus = async (id:string):Promise<{status:number,data:an
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('unable to change user status',error)
-        // throw new Error(`unable to change user status${error}`)
     }
 }
 
@@ -71,8 +64,6 @@ export const toggleShopStatus = async (id:string):Promise<{status:number,data:an
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('unable to change shop status',error)
-        // throw new Error(`unable to change shop status${error}`)
     }
 }
 
@@ -92,8 +83,6 @@ export const fetchAllVehicle = async (page:number):Promise<{Vehicle:any[];totalP
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('error in fetching vehicle details',error);
-        // throw new Error('unable to fetch vehicle details'); 
     }
 }
 
@@ -105,8 +94,6 @@ export const addNewVehicle = async (newVehicle:any):Promise<{status:number;messa
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error adding new vehicle:', error);
-        // throw new Error('error in adding new vehicle');
     }
 }
 
@@ -119,8 +106,6 @@ export const editVehicle = async (newVehicle:any):Promise<{status:number;data:an
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error adding new vehicle:', error);
-        // throw new Error('error in update  vehicle');
     }
 }
 
@@ -133,8 +118,6 @@ export const deleteVehicle = async (brand:string):Promise<{status:number}> => {
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
-        // console.error('Error deleting:', error);
-        // throw new Error('error in deleting vehicle');
     }
 }
 

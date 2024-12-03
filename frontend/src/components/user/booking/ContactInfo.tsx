@@ -5,13 +5,17 @@ import { faArrowRight, faCar, faClock, faStar } from '@fortawesome/free-solid-sv
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { setuserdetails } from '../../../features/bookingSlice'
+import { handleInputValue } from '../../utilities/validation'
 
 
 const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
+  const userfromRedux = useSelector((state:RootState)=>state.user.userDetails)
   const [userdetails, setUserdetails] = useState<{
     firstName:string;lastName:string;email:string;phoneNumber:string;
   }>({
-    firstName:'',lastName:'',email:'',phoneNumber:''
+    firstName:userfromRedux?.username ||'',
+    lastName:'',email:userfromRedux?.email || '',
+    phoneNumber:userfromRedux?.phoneNumber || ''
   });
   const dispatch = useDispatch();
   const shopdetails = useSelector((state:RootState)=>{
@@ -24,7 +28,6 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
   const handleSaveChanges = async () => {
     dispatch(setuserdetails(userdetails))
     setActiveSection('Summary')
-
   }
 
 
@@ -32,8 +35,8 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
     if (!isoDate) return '';
     const dateObj = new Date(isoDate);
     const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Month is zero-based
-    const year = String(dateObj.getFullYear()).slice(-2); // Get last two digits of year
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
+    const year = String(dateObj.getFullYear()).slice(-2); 
     return `${day}/${month}/${year}`;
   };
 
@@ -45,9 +48,7 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
       <h1 className="text-2xl border-b py-6 px-14 font-semibold">
         Contact Information
       </h1>
-
       <div className="p-4 mt-4">
-        
         
       <form className="space-y-4 m-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -86,11 +87,11 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
             <div>
               <label className="block text-sm font-medium">Phone Number</label>
               <input
-                type="number"
+                type="text"
                 className='w-full border rounded-md p-2'
                 placeholder="Enter Phone Number Name"
                 value={userdetails?.phoneNumber}
-                onChange={(e) => setUserdetails({...userdetails,phoneNumber: e.target.value})}
+                onChange={(e) => handleInputValue(e,10) && setUserdetails({...userdetails,phoneNumber: e.target.value})}
                 />
             </div>
         </form>
@@ -130,10 +131,7 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
                    <h6 className='mt-3 text-sm  text-gray-600'>
                      availability Wed, Oct 15 at 8 am
                    </h6>
- 
-               </div>
-                 
-
+               </div>         
              </div>
 
                <div className='w-full mt-2 ms-1  p-4  border-b pb-3'>
@@ -142,7 +140,6 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
                <p className='text-gray-600'><FontAwesomeIcon icon={faCar} /> {`${vehicleDetails?.make}, ${vehicleDetails?.model} ${vehicleDetails?.year}`} </p>
                <p className='text-gray-600'>{vehicleDetails?.description && vehicleDetails.description} </p>
                </div>
-
                  <div className="mt-3 px-1 flex justify-center ">
                    <button 
                    onClick={()=>handleSaveChanges()}
@@ -152,8 +149,6 @@ const ContactInfo:React.FC<DropOffProps> = ({setActiveSection}) => {
                      continue to Summary <FontAwesomeIcon icon={faArrowRight} />
                    </button>
                  </div>
-      
-  
     </div>
   </div>
   )

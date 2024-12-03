@@ -28,9 +28,9 @@ const Table:React.FC<TableProps> = ({headers, data, renderActions}) => {
                  <td key={header.key} className="py-3 px-4">
                  {header.key === 'image' ? (
                      <img src={item[header.key]} alt="" className="w-16 h-16 object-cover rounded" />
-                    ) : header.key === 'address'  ? (
+                    ) : typeof item[header.key] === 'object' ? (
                         Object.values(item[header.key]).join(' ')
-                    ) : header.key === 'vehicleModel' ? (
+                    ) : Array.isArray(item[header.key]) ? (
                         item[header.key].join(', ')
                     ) : (
                         item[header.key]

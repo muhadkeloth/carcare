@@ -64,7 +64,7 @@ const Login: React.FC<RoleProps> = ({ role }) => {
 
   return (
     <>
-      <NavLogin />
+      <NavLogin showBar={false} />
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import carcare_logo from '../../../assets/images/Car_Care_logo.png'
 import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useNavigate } from 'react-router-dom';
-import { navigateHome, navigateLogin, navigateLogout } from '../../utilities/navigate/common';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { navigateHome, navigateLogin, navigateLogout, navigateProfile } from '../../utilities/navigate/common';
 import { fetchUserData } from '../../../services/userService';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../../features/userSlice';
 import { RootState } from '../../../store';
-import { navigateEstimate, navigateFindWorkShop } from '../../utilities/navigate/userNavigator';
+import { navigateEstimate, navigateFindWorkShop, navigatePickMyCar } from '../../utilities/navigate/userNavigator';
 import { HttpStatusCode } from '../../utilities/interface';
 
 
@@ -19,39 +19,43 @@ const Header:React.FC = () => {
     const userprofile = useSelector((state:RootState)=> state.user.userDetails)
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation().pathname;
 
-    const getUserData = async () => {
+    const getUserData = useCallback(async () => {
       try {
         const response = await fetchUserData()
-        if(response.status === HttpStatusCode.SUCCESS){
+        if(response.status === HttpStatusCode.SUCCESS){          
          dispatch(setUser(response.data.userdet))
         }
       } catch (error) {
         console.error('Failed to fetch userdata:', error);
       }
-    }
+    },[dispatch])
 
     useEffect(() => {
       const token = localStorage.getItem("user_token");
       if(token){
         getUserData() 
       }
-    },[])
+    },[getUserData])
 
   return (   
  <nav className="bg-white border-gray-200 dark:bg-gray-900 z-50`"> 
   <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-3 sm:p-4">
       <img src={carcare_logo} className="h-8" alt="carCare" />
   <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-
     {userprofile ? (
       <button type="button" 
       className="flex w-8 h-8 text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
       onClick={()=>{setIsUserDropdownOpen((prev)=> !prev)}}>
-        <FontAwesomeIcon icon={faUserCircle} className="w-full h-full text-gray-400" />
+        { userprofile.image ? (
+          <img src={userprofile.image} alt="profile img" className='w-full h-full rounded-full object-cover' />
+        ) : (
+          <FontAwesomeIcon icon={faUserCircle} className="w-full h-full text-gray-400" />
+        ) }
       </button>
     ):(
-      <button className='text-white' onClick={()=>{navigateLogin(navigate,'user')}}>Sign In</button>
+      <button className='dark:text-white' onClick={()=>{navigateLogin(navigate,'user')}}>Sign In</button>
     )}
 
         {isUserDropdownOpen && (
@@ -62,11 +66,11 @@ const Header:React.FC = () => {
         </div>
         <ul className="py-2" >
           <li>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
+            <span onClick={()=>navigateProfile(navigate)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</span>
           </li>
-          <li>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
-          </li>
+          {/* <li>
+            <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</span>
+          </li> */}
           <li>
             <span onClick={() => {navigateLogout(navigate,'user')}}  className="block px-4 py-2 text-sm text-gray-700 hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</span>
           </li>
@@ -86,27 +90,31 @@ const Header:React.FC = () => {
     <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
       <li>
         <button onClick={()=>navigateHome(navigate,'user')}
-        className="block py-2 px-3 text-white bg-mainclr-700 rounded md:bg-transparent md:text-mainclr-700 md:p-0 md:dark:text-mainclr-500" >Home</button>
-        {/* className=" text-white bg-blue-700  md:bg-transparent md:text-blue-700 md:dark:text-blue-500" >Home</button> */}
-        {/* className=" text-gray-900  hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700  dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Find WorkShop</button> */}
+        className={`block py-2 px-3 ${location === '/' ? 'text-mainclr-700 md:dark:text-mainclr-500' : 'text-gray-900 dark:text-white'} hover:text-mainclr-700 md:p-0 `} >
+          Home</button>
       </li>
       <li>
         <button 
         onClick={()=>navigateFindWorkShop(navigate)}
-        className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-mainclr-700 md:p-0 dark:text-white md:dark:hover:text-mainclr-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Find WorkShop</button>
+        className={`block py-2 px-3 ${location === '/findworkshop' ? 'text-mainclr-700 md:dark:text-mainclr-500' : 'text-gray-900 dark:text-white'} hover:text-mainclr-700 md:p-0 `}>
+          Find WorkShop</button>
       </li>
       <li>
         <button 
         onClick={()=>navigateEstimate(navigate)}
-        className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-mainclr-700 md:p-0 dark:text-white md:dark:hover:text-mainclr-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Get an Estimate</button>
+        className={`block py-2 px-3 ${location === '/getEstimate' ? 'text-mainclr-700 md:dark:text-mainclr-500' : 'text-gray-900 dark:text-white'} hover:text-mainclr-700 md:p-0 `}>
+          Get an Estimate</button>
       </li>
       <li>
         <button 
-        className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-mainclr-700 md:p-0 dark:text-white md:dark:hover:text-mainclr-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Pick My Car</button>
+          onClick={()=>navigatePickMyCar(navigate)}
+        className={`block py-2 px-3 ${location === '/pickMyCar' ? 'text-mainclr-700 md:dark:text-mainclr-500' : 'text-gray-900 dark:text-white'} hover:text-mainclr-700 md:p-0 `}>
+          Pick My Car</button>
       </li>
       <li>
         <button 
-        className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-mainclr-700 md:p-0 dark:text-white md:dark:hover:text-mainclr-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Chat with us</button>
+        className={`block py-2 px-3 ${location == '/chatWithUs' ? 'text-mainclr-700 md:dark:text-mainclr-500' : 'text-gray-900 dark:text-white'} hover:text-mainclr-700 md:p-0 `}>
+          Chat with us</button>
       </li>
     </ul>
   </div>

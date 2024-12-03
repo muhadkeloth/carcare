@@ -33,6 +33,5 @@ export const phoneNumberValidation = (number:string):returnvalue => {
 export const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>, maxLength: number):boolean => {
     const value = e.target.value;
     const regex = new RegExp(`^\\d{0,${maxLength}}$`)
-    // return /^\d{0,6}$/.test(value)
     return regex.test(value);
 };

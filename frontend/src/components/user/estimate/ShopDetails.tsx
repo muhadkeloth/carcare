@@ -50,42 +50,57 @@ import React, { useEffect, useState } from 'react';
 import { estimateProps } from './Locationfind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { HttpStatusCode } from '../../utilities/interface';
-import { fetchShopByPincode } from '../../../services/userService';
+import { HttpStatusCode, Shop } from '../../utilities/interface';
+import { fetchNearbyShops, fetchShopByPincode } from '../../../services/userService';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setEstimateShopdetails } from '../../../features/estimateSlice';
 
-interface Shop {
-  id: string;
-  shopName: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    country: string;
-    pincode: string;
-  };
-  image: string;
-}
+// interface Shop {
+//   id: string;
+//   shopName: string;
+//   address: {
+//     street: string;
+//     city: string;
+//     state: string;
+//     country: string;
+//     pincode: string;
+//   };
+//   image: string;
+// }
 
 const ShopDetails: React.FC<estimateProps> = ({ setActiveSection }) => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(false);
-  const { pincode } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
+  const { locationdetails } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
   const dispatch = useDispatch()
 
+  // const fetchShops = async () => {
+  //   try {
+  //     setLoading(true);
+  //     if(!pincode || pincode.length == 0){
+  //       setActiveSection('Location');
+  //       return;
+  //     }
+  //     const response = await fetchShopByPincode(pincode); 
+  //     if(response.status !== HttpStatusCode.SUCCESS)throw new Error('error fetching shop suggestions')
+  //       const {shops} = response.data;
+  //       setShops(shops);
+  //   } catch (error) {
+  //     console.error('Error fetching shops:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const fetchShops = async () => {
     try {
       setLoading(true);
-      if(!pincode || pincode.length == 0){
+      if(!locationdetails?.location){
         setActiveSection('Location');
         return;
       }
-      const response = await fetchShopByPincode(pincode); 
-      if(response.status !== HttpStatusCode.SUCCESS)throw new Error('error fetching shop suggestions')
-        const {shops} = response.data;
-        setShops(shops);
+      const shopsData = await fetchNearbyShops(locationdetails.location[0],locationdetails.location[1]); 
+      setShops(shopsData);
     } catch (error) {
       console.error('Error fetching shops:', error);
     } finally {
@@ -109,7 +124,7 @@ const ShopDetails: React.FC<estimateProps> = ({ setActiveSection }) => {
         <div className="mt-10 w-full ">
           <div className="grid grid-cols-1  gap-6">
             {shops.map((shop) => (
-              <div key={shop.id}
+              <div key={shop._id}
                 onClick={() => handleSelectShop(shop)}
                 className="border rounded-lg shadow-md cursor-pointer flex items-center hover:shadow-sm" >
                 <div className="w-1/4">

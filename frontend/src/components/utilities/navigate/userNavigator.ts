@@ -32,3 +32,7 @@ export const navigateBookingSlot = (navigate:any):void => {
 export const navigateEstimate = (navigate:any):void => {
   if(checkToken(navigate)) navigate('/getEstimate')
 }
+
+export const navigatePickMyCar = (navigate:any):void => {
+  if(checkToken(navigate)) navigate('/pickMyCar')
+}

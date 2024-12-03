@@ -6,6 +6,7 @@ import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
 import { addNewVehicle, deleteShopVehicle, editVehicle, fetchAllShopVehicle, fetchAllVehicle } from '../../../../services/shopService';
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
+import Table from '../../../reuseComponents/Table';
 
 
 
@@ -159,6 +160,18 @@ const VehicleManagement:React.FC = () => {
       }
     }
 
+    const tableHeaders = [
+      { label: 'brand', key: 'brand' },
+      { label: 'Model', key: 'vehicleModel' },
+    ];
+
+    const renderActions = (vehicle: any) => (
+      <div className='flex py-1 px-4 gap-4 text-center' >
+        <button className='text-white' onClick={() => openEditModel(vehicle)}><FontAwesomeIcon icon={faPencil} /></button>
+        <button className='text-red-600' onClick={() => openDeleteConfirm(vehicle)}><FontAwesomeIcon icon={faTrash} /></button>
+      </div>
+    );
+
     useEffect(()=>{
         fetchShopVehicle(currentPage)
         fetchVehicle()
@@ -166,7 +179,7 @@ const VehicleManagement:React.FC = () => {
 
   return (
     <div className='p-4'>
-          <ToastContainer />
+          {/* <ToastContainer /> */}
 
     <div className="flex justify-between mt-1 mb-4 pe-1">
         <h2 className="text-2xl font-bold ms-1 text-gray-800">
@@ -179,11 +192,11 @@ const VehicleManagement:React.FC = () => {
         </button>
       </div>
 
-    <div className="relative overflow-x-auto shadow-md rounded-lg">
+    {/* <div className="relative overflow-x-auto shadow-md rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">
         <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
           <tr>
-            <th className="py-3 px-6" scope='col'>Brand</th>
+            <th className="py-3 px-6" scope='col'>Brand samoethg</th>
             <th className="py-3 px-6" scope='col'>Model</th>
             <th className="py-3 px-6" scope='col'>Action</th>
           </tr>
@@ -213,7 +226,9 @@ const VehicleManagement:React.FC = () => {
           )} 
         </tbody>
       </table>
-    </div>
+    </div> */}
+    <Table headers={tableHeaders} data={shopvehicles} renderActions={renderActions} />
+
 
     <div className="flex justify-center items-center mt-4">
       <button

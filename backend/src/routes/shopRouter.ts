@@ -33,6 +33,8 @@ router.delete('/deleteestimate/:work', authenticateToken, shopController.deleteE
 router.get('/shopdetails', authenticateToken, shopController.shopDetails);
 router.put('/uploadprofileimage', authenticateToken, upload.single('image'), shopController.uploadShopProfileImg);
 router.put('/updateprofiledetails', authenticateToken, shopController.updateShopProfileDetails);
+router.put('/updateprofileinfo', authenticateToken, shopController.updateShopProfileInfo);
+router.put('/updateprofileWorkTime', authenticateToken, shopController.updateShopProfileWorkTime);
 router.put('/changepassword', authenticateToken, shopController.updateShopProfilepassword);
 
 

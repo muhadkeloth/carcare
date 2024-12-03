@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import LocationPicker from './LocationPicker';
+import LocationPicker from '../../../reuseComponents/LocationPicker';
 import { getAddressFromCoordinates, ToastActive } from '../../../utilities/functions';
 import { HttpStatusCode, NewShop, Shop } from '../../../utilities/interface';
 import { addNewShop, fetchAllShop, toggleShopStatus } from '../../../../services/adminService';
@@ -19,7 +19,7 @@ const ShopManagement: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newShop, setNewShop] = useState<NewShop>({ shopName: '', ownerName: '',email:'', image: null, phoneNumber: '', location:'' });
   const [previewUrl,setPreviewUrl] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number }>({ latitude: 0, longitude: 0 });
+  const [selectedLocation, setSelectedLocation] = useState<[number, number ]>([0, 0]);
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -51,7 +51,7 @@ const ShopManagement: React.FC = () => {
     
     setIsLoading(true);
     try{
-      const address = await getAddressFromCoordinates(selectedLocation.latitude,selectedLocation.longitude);
+      const address = await getAddressFromCoordinates(selectedLocation);
       formData.append('address',JSON.stringify(address) )       
     }catch(error){
       const errorMessage = (error as Error).message;
@@ -195,7 +195,10 @@ const ShopManagement: React.FC = () => {
 
             <div className="mb-3">
               <label className="mb-1 block text-sm font-medium text-gray-700">Location</label>
-              <MapContainer center={[40.7128, -74.006]} zoom={10} style={{ height: "250px", width: "100%" }} >
+              <MapContainer 
+                center={[11.875080, 75.373848]} 
+                zoom={10} 
+                className="h-72 w-full z-10" >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <LocationPicker onLocationChange={setSelectedLocation} />
               </MapContainer>

@@ -48,7 +48,7 @@ api.interceptors.request.use((config) => {
         window.location.href = endpoint;        
     }
 
-    const urlForm = ['/admin/addShop','/shop/uploadprofileimage']
+    const urlForm = [ '/uploadprofileimage', '/admin/addShop','/shop/uploadprofileimage']
 
     if(config.url && urlForm.includes(config.url) ){
         config.headers['Content-Type'] = 'multipart/form-data'

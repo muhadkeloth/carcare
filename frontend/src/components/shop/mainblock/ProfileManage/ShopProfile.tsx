@@ -2,7 +2,7 @@ import React, {  useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import EditProfile from './editcomponents/EditProfile';
 import SidebarShopprofile from './SidebarShopprofile';
-import AddImages from './editcomponents/AddImages';
+import WorkingTime from './editcomponents/WorkingTime';
 import MoreInfo from './editcomponents/MoreInfo';
 import Reviews from './editcomponents/Reviews';
 import ChangePass from './editcomponents/ChangePass';
@@ -46,7 +46,7 @@ const ShopProfile: React.FC = () => {
 
   return (
     <div className="p-4">
-        <ToastContainer />
+        {/* <ToastContainer /> */}
 
         <h2 className="text-2xl font-bold ms-1 mt-1 mb-4 pe-1 text-gray-800">
           Profile Management
@@ -60,8 +60,8 @@ const ShopProfile: React.FC = () => {
           <SidebarShopprofile activeSection={activeSection} handleActiveSection={handleActiveSection} >
         {activeSection === 'EditProfile' && <EditProfile />}
         {activeSection === 'ChangePass' && <ChangePass />}
-        {activeSection === 'AddImages' && <AddImages />}
         {activeSection === 'MoreInfo' && <MoreInfo />}
+        {activeSection === 'WorkingTime' && <WorkingTime />}
         {activeSection === 'Reviews' && <Reviews />}
       </SidebarShopprofile>
       )} 

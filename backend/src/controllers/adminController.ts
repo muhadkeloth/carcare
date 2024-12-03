@@ -68,6 +68,18 @@ export default class AdminController extends BaseController<IUser> {
       const parseAddress = JSON.parse(address);
       const parsedLocation = JSON.parse(location);
       const otp = randomPassword(8);
+      let existingUser = await this.shopService.findOne({ email });
+      if (existingUser){
+        logger.warn('email address already exists')
+        throw new AppError("email address already exists",HttpStatusCode.BAD_REQUEST);
+      }
+      if (phoneNumber) {
+        existingUser = await this.shopService.findOne({ phoneNumber });
+        if (existingUser){
+            logger.warn('phoneNumber already exists')
+            throw new AppError("phoneNumber already exists",HttpStatusCode.BAD_REQUEST);
+        }
+      }
       await sendOtpEmail(email, otp);
 
       const newShop = new Shop({//make a obj and pass it
@@ -77,7 +89,7 @@ export default class AdminController extends BaseController<IUser> {
         otpExpiry: new Date(Date.now() + 5 * 60 * 1000),
         location: {
           type: "Point",
-          coordinates: [parsedLocation.longitude, parsedLocation.latitude],
+          coordinates: parsedLocation,
         },
         image: req.file ? req.file.path : null,
       });

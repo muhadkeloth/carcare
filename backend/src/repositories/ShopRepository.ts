@@ -12,16 +12,17 @@ export default class ShopRepository extends BaseRepository<IShop> {
     }
 
     async updateById(Id: string, updateData: { shopName: string, ownerName: string, phoneNumber: string, about: string, location: string, image: string}){
-        return  await Shop.findByIdAndUpdate(Id, updateData, { new: true });
+    // async updateById(Id: string, updateData: IShop){
+        return  await this.model.findByIdAndUpdate(Id, updateData, { new: true });
     }
 
      async findNearbyShops(latitude:number,longitude:number,radiusInKm:number,limit:number){
-        return await Shop.aggregate([
+        return await this.model.aggregate([
             {
                 $geoNear: {
-                    near: { type: "Point", coordinates: [longitude, latitude] },
+                    near: { type: "Point", coordinates: [latitude, longitude] },
                     distanceField: "distance",
-                    maxDistance: radiusInKm * 1000, // Convert km to meters
+                    maxDistance: radiusInKm * 1000, 
                     spherical: true,
                 },
             },

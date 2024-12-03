@@ -144,13 +144,23 @@ export class ShopController extends BaseController<any> {
 
   uploadShopProfileImg = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
     try {
+      if (!req.user){
+        logger.warn('update shop details shop id not found')
+        throw new AppError("update shop details shop id not found",HttpStatusCode.BAD_REQUEST);
+      }
       if (!req.file){
         logger.warn('file required')
         throw new AppError("upload shop image file not found",HttpStatusCode.BAD_REQUEST);
       }
-      const imagePath = req.file.path;
-
-      res.status(HttpStatusCode.CREATED).json({ imagePath, message: "image uploaded successfully" });
+      const userdetails = await this.service.findOne({_id:req.user});
+      if (!userdetails){
+        logger.warn('userdetails not found')
+        throw new AppError("userdetails shop detail not found",HttpStatusCode.BAD_REQUEST);
+      }
+      userdetails.image = req.file.path
+      const updateduser = await this.service.updateById(req.user as string,userdetails)
+      
+      res.status(HttpStatusCode.CREATED).json({ imagePath:updateduser.image, message: "image uploaded successfully" });
     } catch (error) {
         const err = error as Error;
         logger.error(`Error upload shop profile image: ${err.message}`);
@@ -163,12 +173,11 @@ export class ShopController extends BaseController<any> {
       if (!req.user){
         logger.warn('update shop details shop id not found')
         throw new AppError("update shop details shop id not found",HttpStatusCode.BAD_REQUEST);
-      }
-      const { shopName, ownerName, phoneNumber, about, location, image } =req.body;
-
+      }      
+      const { shopName, ownerName, phoneNumber, location, address, image } =req.body;
       const updatedShop = await this.service.updateById(req.user as string, {
         shopName,ownerName,
-        phoneNumber,about,
+        phoneNumber,address,
         location,image,
       });
 
@@ -176,6 +185,46 @@ export class ShopController extends BaseController<any> {
     } catch (error) {
         const err = error as Error;
         logger.error(`Error updating shop profile details: ${err.message}`);
+        next(err);
+    }
+  };
+  
+  updateShopProfileInfo = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('update shop details shop id not found')
+        throw new AppError("update shop details shop id not found",HttpStatusCode.BAD_REQUEST);
+      }      
+      const { about, title, discript } =req.body;
+
+      const updatedShop = await this.service.updateById(req.user as string, {
+        about,
+        discription:{title,discript}
+      });
+
+      res.status(HttpStatusCode.CREATED).json({ success: true, shop: updatedShop });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error updating shop profile details: ${err.message}`);
+        next(err);
+    }
+  };
+
+  updateShopProfileWorkTime = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('update shop details shop id not found')
+        throw new AppError("update shop details shop id not found",HttpStatusCode.BAD_REQUEST);
+      }      
+      const { opening, closing} =req.body;      
+      const updatedShop = await this.service.updateById(req.user as string, {
+        workingTime:{ opening, closing },
+      });
+
+      res.status(HttpStatusCode.CREATED).json({ success: true, shop: updatedShop });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error updating shop worktime details: ${err.message}`);
         next(err);
     }
   };

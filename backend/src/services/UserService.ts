@@ -22,6 +22,15 @@ export default class UserService extends BaseService<IUser> {
       }
 // *******************************************
 
+async updateById(id:string, updateData:any):Promise<IUser> {
+    const updateddata = await this.repository.updateById(id, updateData);
+    if(!updateddata){
+        logger.error('user not found or update failed');
+        throw new AppError("user not found or update failed", HttpStatusCode.NOT_FOUND);
+    }
+    return updateddata;
+}
+
 
 
 

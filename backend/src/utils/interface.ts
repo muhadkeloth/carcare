@@ -23,6 +23,7 @@ export interface IUser extends Document {
     otp?: string;
     otpExpiry?:Date;
     createdAt?:Date;
+    image?:string;
 }
 
 export interface IShop extends Document {
@@ -57,6 +58,8 @@ export interface IShop extends Document {
         priceEnd:number;
     }[];
     about?:string;
+    discription:{title:string;discript:string};
+    workingTime?:{opening:string;closing:string};
 }
 
 export interface IVehicle extends Document {

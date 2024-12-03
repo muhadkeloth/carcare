@@ -2,28 +2,30 @@ import React, { useState } from "react";
 import {  faPencilAlt, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MapContainer, TileLayer } from "react-leaflet";
-import LocationPicker from "../../../../admin/mainblock/shopManage/LocationPicker";
+import LocationPicker from "../../../../reuseComponents/LocationPicker";
 import { shopProfile } from "../../../../../features/shopSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
 import { fetchUpdateProfileDetails, fetchUploadProfileImage } from "../../../../../services/shopService";
 import { HttpStatusCode } from "../../../../utilities/interface";
-import { ToastActive } from "../../../../utilities/functions";
-import { emailValidation, nameValidation, phoneNumberValidation } from "../../../../utilities/validation";
+import { getAddressFromCoordinates, ToastActive } from "../../../../utilities/functions";
+import { emailValidation, handleInputValue, nameValidation, phoneNumberValidation } from "../../../../utilities/validation";
+import { ThreeDots } from "react-loader-spinner";
 
 
 
 const EditProfile:React.FC = () => {
   const shopUserDetails = useSelector((state:RootState)=> state.shop.shopDetails)
-  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number }>(
+  const [selectedLocation, setSelectedLocation] = useState<[number,number]|null>(
     shopUserDetails?.location.coordinates 
-    ? {latitude: shopUserDetails.location.coordinates[0], longitude:shopUserDetails.location.coordinates[1]}
-    : { latitude: 0, longitude: 0 }
+    ? [ shopUserDetails.location.coordinates[0], shopUserDetails.location.coordinates[1]]
+    : null
   );
   const [editedShopUser, setEditedShopUser] = useState<shopProfile | null>(shopUserDetails || null);
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]:string }|null>(null);
-
+  const [isImageLoading,setImageIsLoading] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
 
   const handleInputChange = (key: keyof shopProfile, value: any) => {
     setEditedShopUser((prev)=> (prev ? {...prev, [key]:value} : null));
@@ -35,12 +37,15 @@ const EditProfile:React.FC = () => {
       const formData = new FormData();
       formData.append("image", file);
       try {
+        setImageIsLoading(true);
         const response = await fetchUploadProfileImage(formData)
         if(response.status !== HttpStatusCode.CREATED) throw new Error('failed to upload image.');
           handleInputChange('image',response.data.imagePath);
-          ToastActive('success','Image updated. please save for apply changes.');
+          ToastActive('success','Image updated successfully.');
       } catch (error) {
         ToastActive('error','error uploading image.')
+      }finally{
+        setImageIsLoading(false);
       }
     }
   };
@@ -66,17 +71,27 @@ const EditProfile:React.FC = () => {
       setErrors((prev) => ({...prev,phoneNumber:'Phone Number is required.'}))
       flag = true;
     } 
-    if(!editedShopUser?.about || nameValidation(editedShopUser?.about)){
-      setErrors((prev) => ({...prev,about:'About is required.'}))
-      flag = true;
-    } 
     if(flag)return;
     
     const changesMade = JSON.stringify(editedShopUser) !== JSON.stringify(shopUserDetails);
-    if(!changesMade){ToastActive('info','No changes applied.');return;};
-    
+    const locationChanged = JSON.stringify(selectedLocation) !== JSON.stringify(shopUserDetails?.location.coordinates);
+    if(!changesMade && !locationChanged){ ToastActive('info','No changes applied.' );return; };
+
+    if(locationChanged){
+      try{
+        setIsLoading(true);
+        const address = await getAddressFromCoordinates(selectedLocation || [0,0]);
+        setEditedShopUser((prev)=> (prev ? {...prev, address:address} : null));
+      }catch(error){
+        const errorMessage = (error as Error).message;
+        ToastActive('error',errorMessage)
+        setIsLoading(false);
+      }
+    }
+
     try {
-      const response = await fetchUpdateProfileDetails({...editedShopUser,location:{type:"Point",coordinates:[selectedLocation.latitude,selectedLocation.longitude]}});
+      setIsLoading(true);
+      const response = await fetchUpdateProfileDetails('/shop/updateprofiledetails',{...editedShopUser,location:{type:"Point",coordinates:selectedLocation}});
       if(response.data.success){
         ToastActive('success',"shop details updated successfully");
       }else{
@@ -85,6 +100,8 @@ const EditProfile:React.FC = () => {
     } catch (error) {
       const errorMessage = (error as Error).message;
       ToastActive('error',errorMessage)
+    }finally{
+      setIsLoading(false);
     }
   }
 
@@ -109,7 +126,7 @@ const EditProfile:React.FC = () => {
             htmlFor="profileImage"
             className="absolute bottom-2  right-2 bg-gray-200 px-3 py-2 rounded-full cursor-pointer hover:bg-gray-300"
           >
-          <FontAwesomeIcon icon={faPencilAlt}/>
+          { isImageLoading ? <ThreeDots height="" color='black' wrapperClass="w-10 h-6" /> : <FontAwesomeIcon icon={faPencilAlt}/> } 
             <input
               type="file"
               id="profileImage"
@@ -160,26 +177,14 @@ const EditProfile:React.FC = () => {
             <div>
               <label className="block text-sm font-medium">Phone Number</label>
               <input
-                type="number"
+                type="text"
                 className={`w-full border ${errors?.phoneNumber ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
                 placeholder="Enter Phone Number Name"
                 value={editedShopUser?.phoneNumber|| ''}
-                onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                onChange={(e) => handleInputValue(e,10) && handleInputChange("phoneNumber", e.target.value)}
                 />
                 {errors?.phoneNumber && <span className="text-red-500 text-sm">{errors?.phoneNumber}</span>}
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">About</label>
-            <textarea
-              className={`w-full border ${errors?.about ? "border-gray-500" : "border-gray-300"} rounded-md p-2`}
-              value={editedShopUser?.about || ''}
-              rows={5}
-              placeholder="Show users your experience here..."
-              onChange={(e) => handleInputChange("about", e.target.value)}
-            ></textarea> 
-              {errors?.about && <span className="text-red-500 text-sm">{errors?.about}</span>}
           </div>
 
           <div className="mb-3">
@@ -189,11 +194,12 @@ const EditProfile:React.FC = () => {
 
               <MapContainer
                 center={[11.875080, 75.373848]}
-                zoom={15}
+                zoom={10}
                 className="h-72 w-full z-10" >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <LocationPicker onLocationChange={setSelectedLocation}
-                initialPosition={shopUserDetails?.location.coordinates? [shopUserDetails.location.coordinates[0],shopUserDetails.location.coordinates[1]] : undefined} />
+                //  initialPosition={shopUserDetails?.location.coordinates? [shopUserDetails.location.coordinates[0],shopUserDetails.location.coordinates[1]] : undefined} />
+                 initialPosition={ selectedLocation } />
               </MapContainer>
 
             </div>
@@ -203,7 +209,7 @@ const EditProfile:React.FC = () => {
               type="button" onClick={()=>(setShowConfirmModal(true) )}
               className="btn-primary"
             >
-              Save Changes
+              { isLoading ? <ThreeDots height="" color='white' wrapperClass="w-10 h-6" /> : 'Save Changes' }
             </button>
           </div>
         </form>

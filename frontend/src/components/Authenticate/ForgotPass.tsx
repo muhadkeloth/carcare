@@ -42,7 +42,7 @@ const ForgotPass:React.FC<RoleProps> = ({ role }) => {
 
   return (
     <div>
-      <NavLogin />
+      <NavLogin showBar={false} />
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">

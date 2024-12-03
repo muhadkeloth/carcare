@@ -1,4 +1,4 @@
-import { faCircleInfo, faImages, faKey, faPencil, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faCircleInfo, faClock, faKey, faPencil, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { SidebarProps } from '../../../utilities/interface'
@@ -26,16 +26,16 @@ const SidebarShopprofile:React.FC<SidebarProps> = ({activeSection, handleActiveS
           </li>
           <li>
             <button 
-            onClick={()=>handleActiveSection('AddImages')}
-            className={`inline-block py-2 px-4 ${activeSection == 'AddImages'? 'text-mainclr-500 border-b-2 border-mainclr-500' : 'text-gray-500' } `}>
-              <FontAwesomeIcon icon={faImages} /> Add Images
+            onClick={()=>handleActiveSection('MoreInfo')}
+            className={`inline-block py-2 px-4 ${activeSection == 'MoreInfo'? 'text-mainclr-500 border-b-2 border-mainclr-500' : 'text-gray-500' } `}>
+              <FontAwesomeIcon icon={faCircleInfo} /> More Info
             </button>
           </li>
           <li>
             <button 
-            onClick={()=>handleActiveSection('MoreInfo')}
-            className={`inline-block py-2 px-4 ${activeSection == 'MoreInfo'? 'text-mainclr-500 border-b-2 border-mainclr-500' : 'text-gray-500' } `}>
-              <FontAwesomeIcon icon={faCircleInfo} /> More Info
+            onClick={()=>handleActiveSection('WorkingTime')}
+            className={`inline-block py-2 px-4 ${activeSection == 'WorkingTime'? 'text-mainclr-500 border-b-2 border-mainclr-500' : 'text-gray-500' } `}>
+              <FontAwesomeIcon icon={faClock} /> Working Time
             </button>
           </li>
           <li>

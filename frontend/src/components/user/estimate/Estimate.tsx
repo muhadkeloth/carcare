@@ -49,18 +49,12 @@ useEffect(() => {
       </nav>
 
       <div className="container flex flex-col max-w-6xl mx-auto px-4 mb-10  ">
-        {/* <div className="flex p-6 justify-center ">
-         
-        </div> */}
+  
         {activeSection === 'Location'  && < Locationfind setActiveSection={setActiveSection} />}
         {activeSection === 'Workshop'  && <VehicleDetails setActiveSection={setActiveSection} />}
         {activeSection === 'RepairService'  && <RepairService setActiveSection={setActiveSection} />}
         {activeSection === 'Estimate'  && <FindEstimate setActiveSection={setActiveSection} />}   
       </div>
-
-      
-
-
 
       <Footer />
     </div>

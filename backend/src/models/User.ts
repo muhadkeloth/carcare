@@ -14,6 +14,7 @@ const UserSchema:Schema = new Schema(
         otp: { type: String },
         otpExpiry:{ type: Date },
         createdAt: { type: Date, default: Date.now },
+        image:{type:String},
     },
     { timestamps: true }
 );

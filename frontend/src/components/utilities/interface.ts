@@ -1,8 +1,7 @@
 
 export interface RoleProps { role:string; }
 export interface ErrorResponse { message:string; } 
-export interface AdminMainProps { activeSection: string; }
-export interface ShopMainProps { activeSection: string; }
+export interface SectionMainProps { activeSection: string; }
 
 
 export enum HttpStatusCode {
@@ -17,8 +16,10 @@ export enum HttpStatusCode {
 
 
 export interface LocationPickerProps {
-    onLocationChange:(location:{latitude:number;longitude:number}) => void;
-    initialPosition?:[number,number];
+    onLocationChange?:(location:[number,number]) => void;
+    initialPosition?:[number,number]| null;
+    hoverLocation?:[number,number]| null;
+    hoverDetails?:{image:string;shopName:string;address:any}|null;
 }
   
   export interface NewShop {
@@ -53,11 +54,21 @@ export interface LocationPickerProps {
 
   export interface SidebarProps {
     activeSection: string;
-    handleActiveSection: (section: string) => void;
-    handleLogout?: () => void;
+    handleActiveSection: (key: string) => void;
     children?: React.ReactNode;
-    showMenu?:boolean;
+  }
+  
+  export interface CRUDbarProps {
+  title:string;
+  sections:{
+    key:string;
+    label:string;
+    icon:any;
+  }[];
+  handleLogout?: () => void;
+  showMenu?:boolean;
 }
+
 
 export interface Shop {
   _id:string;
@@ -83,6 +94,9 @@ estimate?:{
   priceEnd:number;
 }[];
   image: string;
-  // location: {latitude:number,longitude:number}; 
+  location?: {
+    type:string;
+    coordinates:[number,number];
+  }; 
 }
 

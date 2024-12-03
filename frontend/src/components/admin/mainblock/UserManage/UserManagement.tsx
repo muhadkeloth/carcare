@@ -4,6 +4,7 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { HttpStatusCode, User } from '../../../utilities/interface';
 import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminService';
 import { ToastActive } from '../../../utilities/functions';
+import Table from '../../../reuseComponents/Table';
 
 
 const UserManagement:React.FC = () => {
@@ -49,6 +50,20 @@ const UserManagement:React.FC = () => {
     }
   }
 
+  const tableHeaders = [
+    { label: 'username', key: 'username' },
+    { label: 'email', key: 'email' },
+    { label: 'Phone Number', key: 'phoneNumber' },
+  ];
+
+  const renderActions = (user: any) => (
+    <span onClick={() => { setToggleId(user._id); setShowConfirmModal(true); }}
+    className={`cursor-pointer ${
+      user.isActive ? 'text-green-600 hover:text-green-400' : 'text-red-600 hover:text-red-400' }`} >
+    {user.isActive ? 'Active' : 'Block'}
+  </span>
+  );
+
   useEffect(()=>{
     fetchUsers(currentPage)
   },[currentPage]);
@@ -56,65 +71,8 @@ const UserManagement:React.FC = () => {
   return (
     <>
       <h2 className="text-2xl font-bold mb-4 text-gray-800">User Management</h2>
-      {/* convert table reusable */}
-      <div className="relative overflow-x-auto shadow-md rounded-lg">sdf
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">
-          <thead className="text-sm text-gray-700 uppercase leading-normal bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th className="py-3 px-6" scope="col">
-                Username
-              </th>
-              <th className="py-3 px-6" scope="col">
-                Email
-              </th>
-              <th className="py-3 px-6" scope="col">
-                Phone Number
-              </th>
-              <th className="py-3 px-6" scope="col">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {users && users.length > 0 ? (
-              users.map((user) => (
-                <tr
-                  key={user._id}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95"
-                >
-                  <th
-                    scope="row"
-                    className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
-                    {user.username}
-                  </th>
-                  <td className="py-4 px-6">{user.email}</td>
-                  <td className="py-4 px-6">{user.phoneNumber}</td>
-                  <td
-                    onClick={() => {
-                      setToggleId(user._id);
-                      setShowConfirmModal(true);
-                    }}
-                    className={`py-3 px-4 hover:cursor-pointer ${
-                      user.isActive
-                        ? "text-green-600 hover:text-green-400"
-                        : "text-red-600 hover:text-red-400"
-                    }`}
-                  >
-                    {user.isActive ? "Active" : "Block"}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="text-center py-3">
-                  No user listed.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+
+      <Table headers={tableHeaders} data={users} renderActions={renderActions} />
 
       <div className="flex justify-center items-center mt-4">
         <button disabled={currentPage === 1} className="btn-primary disabled:bg-gray-200"

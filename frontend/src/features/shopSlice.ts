@@ -10,6 +10,8 @@ export type shopProfile = {
         state:string;country:string;pincode:string;
     };
     about?:string;
+    discription?:{title:string;discript:string};
+    workingTime?:{opening:string;closing:string};
 }
 interface userState {
     shopDetails:shopProfile | null,

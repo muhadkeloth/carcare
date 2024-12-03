@@ -90,7 +90,7 @@ export default class UserController extends BaseController<IUser> {
   getNearShops = async (req: Request, res: Response, next: NextFunction) => {
     const { latitude, longitude } = req.query;
     const radiusInKm = 20;
-    const limit = 3;
+    const limit = 10;
 
     if (!latitude || !longitude) {
         logger.warn('Latitude and longitude are required.')
@@ -130,7 +130,7 @@ export default class UserController extends BaseController<IUser> {
         username: userdetails?.username,
         phoneNumber: userdetails?.phoneNumber,
         email: userdetails?.email,
-        // image:userdetails?.image,
+        image:userdetails?.image,
         isActive: userdetails?.isActive,
         role: userdetails?.role,
       };
@@ -225,6 +225,86 @@ export default class UserController extends BaseController<IUser> {
     }
   }
 
+  uploadUserProfileImg = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('update details user id not found')
+        throw new AppError("update details user id not found",HttpStatusCode.BAD_REQUEST);
+      }
+      if (!req.file){
+        logger.warn('file required')
+        throw new AppError("upload user image file not found",HttpStatusCode.BAD_REQUEST);
+      }
+      const userdetails = await this.service.findOne({_id:req.user});
+      if (!userdetails){
+        logger.warn('userdetails not found')
+        throw new AppError("userdetails shop detail not found",HttpStatusCode.BAD_REQUEST);
+      }
+      userdetails.image = req.file.path
+      const updateduser = await this.service.updateById(req.user as string,userdetails)
+      
+      res.status(HttpStatusCode.CREATED).json({ imagePath:updateduser.image, message: "image uploaded successfully" });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error upload user profile image: ${err.message}`);
+        next(err);
+    }
+  };
+
+  updateUserProfileDetails = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('update details user id not found')
+        throw new AppError("update details user id not found",HttpStatusCode.BAD_REQUEST);
+      }
+      const { username, phoneNumber } =req.body;
+      const existingUser = await this.service.findOne({ $and:[{phoneNumber:phoneNumber},{_id:{$ne:req.user}}] });
+      if (existingUser){
+        logger.warn('phoneNumber already exists')
+        throw new AppError("phoneNumber already exists",HttpStatusCode.BAD_REQUEST);
+      }
+      const updatedUser = await this.service.updateById(req.user as string, {username,phoneNumber});
+
+      res.status(HttpStatusCode.CREATED).json({ success: true, updatedUser });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error updating user profile details: ${err.message}`);
+        next(err);
+    }
+  };
+
+  updateUserProfilepassword = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('password change error, user id not found')
+        throw new AppError("password change error, user id not found",HttpStatusCode.BAD_REQUEST);
+      }
+      const { currentPassword, newPassword } = req.body;
+
+      const userdetails = await this.service.findOne({_id: req.user as string,});
+      if (!userdetails){
+        logger.warn('user details not found ')
+        throw new AppError("user details not found ", HttpStatusCode.NOT_FOUND);
+      }
+      if (userdetails?.password) {
+        await this.service.validatePassword(currentPassword,userdetails.password,"password");
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+        userdetails.password = hashedNewPassword;
+        await userdetails.save(); 
+
+        res.status(HttpStatusCode.CREATED).json({ success: true, message: "password updated successfully" });
+      } else{
+        logger.warn('password not found')
+        throw new AppError("password not found ", HttpStatusCode.NOT_FOUND);
+      }
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`Error updating shop profile password: ${err.message}`);
+        next(err);
+    }
+  };
 
 
 

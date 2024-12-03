@@ -66,7 +66,7 @@ const SetPassword:React.FC = () => {
 
   return (
     <div>
-        <NavLogin />
+        <NavLogin showBar={false} />
 
       <ToastContainer />
 
