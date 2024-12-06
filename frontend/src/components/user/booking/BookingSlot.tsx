@@ -11,6 +11,8 @@ import Footer from '../reusableComponents/Footer'
 import {  useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { navigateHome } from '../../utilities/navigate/common'
+import { ToastContainer } from 'react-toastify'
+
 
 
 const BookingSlot:React.FC = () => {
@@ -24,6 +26,7 @@ const BookingSlot:React.FC = () => {
 
   return (
     <div>
+      <ToastContainer />
       <nav className="flex p-4 border-b justify-between">
         <button>
           <span onClick={()=>navigateHome(navigate, 'user')}

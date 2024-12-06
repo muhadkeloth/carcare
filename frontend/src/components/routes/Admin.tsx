@@ -5,6 +5,7 @@ import AdminDash from '../admin/DashAdmin'
 import ForgotPass from '../authenticate/ForgotPass'
 import OtpValidation from '../authenticate/OtpValidation'
 import SetPassword from '../authenticate/SetPassword'
+import Error from '../reuseComponents/Error'
 
 const Admin:React.FC = () => {
   return (
@@ -15,7 +16,7 @@ const Admin:React.FC = () => {
       <Route path='Otpvalidation' element={<OtpValidation  />} />
       <Route path='setpassword' element={<SetPassword  />} />
 
-      <Route path='*' element={<div>404 admin</div>} />
+      <Route path='*' element={ <Error role='admin' /> } />
     </Routes>
   )
 }

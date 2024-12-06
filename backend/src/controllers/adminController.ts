@@ -68,6 +68,8 @@ export default class AdminController extends BaseController<IUser> {
       const parseAddress = JSON.parse(address);
       const parsedLocation = JSON.parse(location);
       const otp = randomPassword(8);
+      console.log('some thing');
+      
       let existingUser = await this.shopService.findOne({ email });
       if (existingUser){
         logger.warn('email address already exists')

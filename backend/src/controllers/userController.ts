@@ -14,10 +14,18 @@ import logger from "../middleware/logger";
 import VehicleService from "../services/VehicleService";
 import VehicleRepository from "../repositories/VehicleRepository";
 import Vehicle from "../models/Vehicle";
+import { handlePayment } from "./paymentController";
+import BookingService from "../services/BookingService";
+import BookingRepository from "../repositories/BookingRepository";
+import Bookings from "../models/Bookings";
+
+
+
 
 export default class UserController extends BaseController<IUser> {
   protected shopService: ShopService;
   protected vehicleService: VehicleService;
+  protected bookingService: BookingService;
 
   constructor(protected service: UserService) {
     super(service);
@@ -25,6 +33,8 @@ export default class UserController extends BaseController<IUser> {
     this.shopService = new ShopService(shopRepository);
     const vehicleRepository = new VehicleRepository(Vehicle)
     this.vehicleService = new VehicleService(vehicleRepository);
+    const bookingRepository = new BookingRepository(Bookings)
+    this.bookingService = new BookingService(bookingRepository);
 
   }
 
@@ -32,6 +42,7 @@ export default class UserController extends BaseController<IUser> {
     const { phoneNumber, email } = req.body;
     try {
       let existingUser = await this.service.findOne({ email });
+      
       if (existingUser){
         logger.warn('email address already exists')
         throw new AppError("email address already exists",HttpStatusCode.BAD_REQUEST);
@@ -305,6 +316,36 @@ export default class UserController extends BaseController<IUser> {
         next(err);
     }
   };
+
+  bookingConfirm = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn('password change error, user id not found')
+        throw new AppError("password change error, user id not found",HttpStatusCode.BAD_REQUEST);
+      }
+      const { token, bookingDetails, description } = req.body;
+      const bookingdetail = {
+        ...bookingDetails,
+        userId:req.user,
+        PaymentStatus:'PENDING',
+      }
+      const paymentResult  = await handlePayment(token,bookingDetails.amount,description);
+      if(paymentResult.success){
+          bookingdetail.PaymentStatus = 'PAID';
+          await this.bookingService.create(bookingdetail);
+          res.status(HttpStatusCode.SUCCESS).json({success:true,message:"Booking confirmed and payment successful."})
+      }else{
+          await this.bookingService.create(bookingdetail);
+          res.status(HttpStatusCode.BAD_REQUEST).json({success:false,message:'Payment failed. Booking status set to pending.'})
+      }
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error updating shop profile password: ${err.message}`);
+      next(err);
+    }
+  }
+
+ 
 
 
 

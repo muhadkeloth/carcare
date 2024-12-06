@@ -34,18 +34,9 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
             : role === 'admin' 
             ? await adminService.findOne({_id:id})
             : await userService.findOne({_id:id});
-            // if(verified.role == 'shop'){
-                //     user = await Shop.findById(verified.id).select('_id isActive').lean();
-                // }else{
-                    //     user = await User.findById(verified.id).select('_id isActive').lean();
-        // }
         if (!user || !user.isActive) {
             return next(new AppError("Access Denied: User inactive or not found", FORBIDDEN));
         }
-        // if(!user)return next(new AppError('user not found',FORBIDDEN));
-        // if(!user.isActive) return next(new AppError('user is blocked.access denied.',FORBIDDEN));
-        // user = user._id || user;
-        // req.user = req.user;
         req.user = user._id as string;
         
         logger.info(`req.user: ${req.user}`,)
@@ -54,7 +45,6 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
         const err = error as Error;
         logger.error(`Error in auth ${err.message}` );
         next(new AppError(`Invalid token: ${err.message}`, FORBIDDEN));
-
 
     }
 }

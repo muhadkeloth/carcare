@@ -78,5 +78,24 @@ export interface IEstimate extends Document {
     createdAt?:Date;
 }
 
+export interface IBookings extends Document {
+    userId:Types.ObjectId;
+    shopId:Types.ObjectId;
+    shedule:{date:string;time:string};
+    vehicleDetails:{make:string,model:string;year:string;description?:string};
+    userDetails:{
+        firstName:string;lastName:string;
+        email:string;phoneNumber:string;
+    };
+    amount:number;
+    repairWork?:string;
+    locationdetails?:{
+        description:string;
+        location:[number,number];
+    };
+    PaymentStatus:'PAID'|'PENDING'|'FAILED';
+    createdAt?:Date;
+}
+
 
 export interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }

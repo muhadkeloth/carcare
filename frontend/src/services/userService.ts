@@ -99,4 +99,19 @@ export const changePasswordUser = async (body:{currentPassword:string; newPasswo
     }
 }
 
+export const confirmBooking = async (token:any,bookingDetails:any,description:string):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.post('/bookingConfirm',{
+            token,
+            bookingDetails,
+            description,
+        })
+        if(response.status !== HttpStatusCode.SUCCESS)throw new Error('payment error');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 

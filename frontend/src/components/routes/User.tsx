@@ -12,12 +12,16 @@ import BookingSlot from '../user/booking/BookingSlot'
 import Estimate from '../user/estimate/Estimate'
 import ProfileHome from '../user/profileManage/ProfileHome'
 import PickCarHome from '../user/pickMyCar/PickCarHome'
+import Error from '../reuseComponents/Error'
+
+
 
 const User:React.FC = () => {
 
 
   return (
     <Routes>
+
       <Route path='' element={<Home />} />
       <Route path='login' element={<Login role="user" />} />
       <Route path='signup' element={<Signup  />} />
@@ -36,7 +40,8 @@ const User:React.FC = () => {
       
       <Route path='pickMyCar' element={<PickCarHome  />} />
 
-      <Route path='*' element={<div>404 user</div>} />
+      <Route path='*' element={ <Error role='user' /> } />
+
     </Routes>
   )
 }

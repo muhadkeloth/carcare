@@ -21,12 +21,15 @@ export const sendOtpEmail = async (to: string,otp: string) => {
     const subject = isOTP ? 'OTP for Account Verification':'Your Login Password for Secure Access';
     
     const emailBody = template.replace('{{subject}}',subject)
-                              .replace('{{otpType}}',isOTP?'OTP code':'password')
-                              .replace('{{carCareUrl}}',`${process.env.CarCare_icon}/public/images/CarCare_icon.png`)
-                              .replace('{{otp}}',otp)
-
+    .replace('{{otpType}}',isOTP?'OTP code':'password')
+    .replace('{{carCareUrl}}',`${process.env.CarCare_icon}/public/images/CarCare_icon.png`)
+    .replace('{{otp}}',otp)
+    
     const mailOptions = {
-        from: process.env.MAILERID,
+        from:{
+                name:'carCare',
+            address:process.env.MAILERID || '',
+        } ,
         to,
         subject: `CarCare: ${subject}`,
         html: emailBody,

@@ -5,6 +5,7 @@ import ForgotPass from '../authenticate/ForgotPass'
 import OtpValidation from '../authenticate/OtpValidation'
 import SetPassword from '../authenticate/SetPassword'
 import ShopHome from '../shop/HomeShop'
+import Error from '../reuseComponents/Error'
 
 const Shop:React.FC = () => {
     return (
@@ -15,7 +16,7 @@ const Shop:React.FC = () => {
       <Route path='Otpvalidation' element={<OtpValidation />} />
       <Route path='setpassword' element={<SetPassword  />} />
 
-      <Route path='*' element={<div>404 shop</div>} />
+      <Route path='*' element={ <Error role='shop' /> } />
     </Routes>
   )
 }

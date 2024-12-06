@@ -6,6 +6,7 @@ import UserService from '../services/UserService';
 import  UserController  from '../controllers/userController';
 import { IUser } from '../utils/interface';
 import upload from '../middleware/upload';
+import { handlePayment } from '../controllers/paymentController';
 
 
 const router = Router();
@@ -32,6 +33,8 @@ router.get('/getModelByMake', userController.getModelByMakeVehicle);
 router.put('/uploadprofileimage', authenticateToken, upload.single('image'), userController.uploadUserProfileImg);
 router.put('/updateprofiledetails', authenticateToken, userController.updateUserProfileDetails);
 router.put('/changepassword', authenticateToken, userController.updateUserProfilepassword);
+
+router.post('/bookingConfirm', authenticateToken, userController.bookingConfirm );
 
 export default router;
 

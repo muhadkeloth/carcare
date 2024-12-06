@@ -113,69 +113,8 @@ const Vehicle:React.FC<estimateProps> = ({setActiveSection}) => {
             Add contact info <FontAwesomeIcon icon={faArrowRight} />
           </button>
         )}
-
-      
         </div>
-
       </div>
-
-
-      {/* <div className="border rounded-lg h-fit p-3  "> */}
-        {/* <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p> */}
-
-{/* start herer */}
-    
-      {/* <div className="flex pb-4 pt-2 " > */}
-  
-
-                 {/* <div className="w-28  rounded overflow-hidden">
-                   <img
-                     src={shopdetails?.image}
-                     alt="shop img"
-                     className="w-full h-full object-cover rounded"
-                     />
-                 </div> */}
-   
-                 {/* <div className="flex flex-col  ms-3 w-full">
-                 <div className="flex  justify-between">
-                   <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
-                     {shopdetails?.shopName && shopdetails?.shopName[0].toUpperCase() + shopdetails?.shopName.slice(1)}
-                   </h2>
-                   <p className='text-gray-500 text-sm'> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
-                 </div>
-                   <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
-                     {shopdetails?.address && Object.values(shopdetails?.address).join(" ")}
-                   </span>
-                   <span className="mt-3 text-sm  text-gray-600">
-                     {shopdetails?.phoneNumber}
-                   </span>
-           
-                     <h6 className='mt-3 text-sm  text-gray-600'>
-                       availability Wed, Oct 15 at 8 am
-                     </h6>
-   
-                 </div> */}
-                   
-
-               {/* </div> */}
-
-                 {/* <div className='w-full mt-2 ms-1  p-4  border-b pb-3'>
-                 <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p>
-                 <p className='text-gray-600'><FontAwesomeIcon icon={faClock} /> {formatDate(shedule?.date)} at {shedule?.time} </p>
-                 </div> */}
-
-                   {/* <div className="mt-3 px-1 flex justify-center ">
-                     <button 
-                     onClick={()=>handlevehicledetails()}
-                    disabled={!make || !model || !year}
-                     className= {`btn-primary ${!make || !year || !model ? "opacity-50 cursor-not-allowed" : "" } `}
-                    >
-                       continue to contact info <FontAwesomeIcon icon={faArrowRight} />
-                     </button>
-                   </div> */}
-        
-    
-      {/* </div> */}
     </div>
   )
 }
