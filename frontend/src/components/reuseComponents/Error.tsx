@@ -5,16 +5,16 @@ import NavLogin from '../authenticate/NavLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { RoleProps } from '../utilities/interface';
 
-interface errorProps {
-    role:'user'|'admin'|'shop';
-}
-const Error:React.FC<errorProps> = ({role}) => {
+
+const Error:React.FC<RoleProps> = ({role}) => {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
         navigate(-1);
     }
+
   return (
     <div className='flex flex-col min-h-screen'>
         {role == 'user' ? (

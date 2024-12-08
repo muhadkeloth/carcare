@@ -4,8 +4,6 @@ import api from "./axiosConfig";
 
 
 
-
-
 export const fetchShopUserDetails = async ():Promise<{status:number;data:any}> => {
     try {
         const response = await api.get('/shop/shopdetails');
@@ -175,6 +173,52 @@ export const deleteShopEstimate = async (work:string):Promise<{status:number}> =
 
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
         return {status:response.status}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllPickupsByShopId = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/pickupsDetailsByShopId?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find pickup details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const togglepickupStatus = async (id:string,status:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/shop/pickup/${id}`, {status})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  pickup status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllBookingsByShopId = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/bookingDetailsByShopId?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find booking details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const toggleBookingStatus = async (id:string,status:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/shop/booking/${id}`, {status})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  booking status');
+        return response;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);

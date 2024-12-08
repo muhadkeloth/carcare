@@ -2,8 +2,6 @@ import React from 'react';
 import carcare_cut from '../../assets/images/carCare_logo_cut.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBars } from '@fortawesome/free-solid-svg-icons';
-import { navigateLogout } from '../utilities/navigate/common';
-import { useNavigate } from 'react-router-dom';
 
 interface NavLoginProps {
   showBar:boolean;
@@ -18,7 +16,6 @@ const NavLogin: React.FC<NavLoginProps> = ({ showBar, showMenu,toggleMenu, handl
       <div className="w-10 h-4 mt-3 overflow-hidden">
         <img src={carcare_cut} alt="carcare logo" className="w-full h-full object-cover" />
       </div>
-      {/* <div className="flex">     */}
       { showBar && (
         <>
         <button onClick={ toggleMenu }
@@ -31,7 +28,6 @@ const NavLogin: React.FC<NavLoginProps> = ({ showBar, showMenu,toggleMenu, handl
           className="text-mainclr-600 hover:text-mainclr-500 hidden md:block cursor-pointer">LogOut</p>
             </>
             )}
-      {/* </div> */}
     </header>
   );
 };

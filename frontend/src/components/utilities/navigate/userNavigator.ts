@@ -10,19 +10,14 @@ const checkToken = (navigate:any):boolean | null => {
 }
 
 
-
 export const navigateFindWorkShop = (navigate:any):void => {
     if(checkToken(navigate)) navigate('/findworkshop')
   }
 
 
 export const navigateShopDetailPage = (navigate:any,id:string):void => {
-    // const token = localStorage.getItem('user_token');
-    // if(!token) navigateLogin(navigate,'user');
-    // else navigate('/workshopdetails',{ state:{id} })
     if(checkToken(navigate)) navigate('/workshopdetails',{ state:{id} })
 }
-
 
 
 export const navigateBookingSlot = (navigate:any):void => {

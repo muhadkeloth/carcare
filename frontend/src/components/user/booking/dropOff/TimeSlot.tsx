@@ -1,33 +1,11 @@
-import React from 'react'
+import React from "react";
+import { TimeSlotProps } from "../../../utilities/interface";
+import { generateTimeSlots } from "../../../utilities/functions";
 
 
-const generateTimeSlots = (start: string, end: string): string[] => {
-    const slots: string[] = [];
-    let [hour, minute] = start.split(":").map(Number);
-    const [endHour, endMinute] = end.split(":").map(Number);
-  
-    while (hour < endHour || (hour === endHour && minute < endMinute)) {
-      const period = hour >= 12 ? "PM" : "AM";
-      const adjustedHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  
-      slots.push(`${adjustedHour}:${minute === 0 ? "00" : minute} ${period}`);
-      minute += 30;
-      if (minute >= 60) {
-        minute = 0;
-        hour += 1;
-      }
-    }
-    return slots;
-  };
-
-  interface TimeSlotProps {
-    selectedTime: string | null;
-    setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
-  }
 
 
-const TimeSlot:React.FC<TimeSlotProps> = ({ selectedTime, setSelectedTime }) => {
-
+const TimeSlot: React.FC<TimeSlotProps> = ({selectedTime,setSelectedTime}) => {
   const timeSlots = generateTimeSlots("9:00", "17:00");
 
   const handleTimeSelect = (time: string) => {
@@ -50,7 +28,7 @@ const TimeSlot:React.FC<TimeSlotProps> = ({ selectedTime, setSelectedTime }) => 
         </button>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default TimeSlot
+export default TimeSlot;

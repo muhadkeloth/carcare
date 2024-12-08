@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { estimateProps } from '../estimate/Locationfind'
-import {  Shop } from '../../utilities/interface';
+import {  BookingProps, Shop } from '../../utilities/interface';
 import { RootState } from '../../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNearbyShops } from '../../../services/userService';
@@ -8,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { setPickCarShopdetails } from '../../../features/pickMyCarSlice';
 
-const WorkShop:React.FC<estimateProps> = ({setActiveSection}) => {
+const WorkShop:React.FC<BookingProps> = ({setActiveSection}) => {
     const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(false);
   const { locationdetails } = useSelector((state: RootState) => state.pickMyCar.PickCarDetails) || {};
@@ -17,11 +16,11 @@ const WorkShop:React.FC<estimateProps> = ({setActiveSection}) => {
   const fetchShops = async () => {
     try {
       setLoading(true);
-      if(!locationdetails?.location){
+      if(!locationdetails?.coordinates){
         setActiveSection('Location');
         return;
       }
-      const shopsData = await fetchNearbyShops(locationdetails.location[0],locationdetails.location[1]); 
+      const shopsData = await fetchNearbyShops(locationdetails.coordinates[0],locationdetails.coordinates[1]); 
         setShops(shopsData);
     } catch (error) {
       console.error('Error fetching shops:', error);

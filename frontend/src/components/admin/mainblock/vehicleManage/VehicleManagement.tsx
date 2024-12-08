@@ -1,7 +1,6 @@
 import { faAngleLeft, faAngleRight, faPencil, faPlus, faTrash, faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import { ToastContainer } from 'react-toastify';
 import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
 import { addNewVehicle, deleteVehicle, editVehicle, fetchAllVehicle } from '../../../../services/adminService';
 import Table from '../../../reuseComponents/Table';
@@ -174,7 +173,6 @@ const VehicleManagement:React.FC = () => {
 
   return (
     <div className="p-4">
-      {/* <ToastContainer /> */}
 
       <div className="flex justify-between mt-1 mb-4 pe-1">
         <h2 className="text-2xl font-bold ms-1 text-gray-800">Vehicle Management</h2>

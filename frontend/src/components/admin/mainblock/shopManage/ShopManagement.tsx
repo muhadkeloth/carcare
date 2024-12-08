@@ -76,7 +76,7 @@ const ShopManagement: React.FC = () => {
   const toggleStatus = async(id:string) =>{
     try{
       const response = await toggleShopStatus(id);
-      if(response.status = HttpStatusCode.CREATED){
+      if(response.status == HttpStatusCode.CREATED){
         const index = shops.findIndex(shop => shop._id == id);
         if(index !== -1){
           const updatedShops = [...shops];
@@ -114,7 +114,6 @@ const ShopManagement: React.FC = () => {
     { label: 'Email', key: 'email' },
     { label: 'Phone Number', key: 'phoneNumber' },
     { label: 'Address', key: 'address' },
-    // { label: 'Status', key: 'isActive' },
   ];
 
   const renderActions = (shop: any) => (

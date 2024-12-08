@@ -1,24 +1,17 @@
 import React, { useState } from 'react'
-import { addDays, format, isBefore, isSunday, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addMonths, isSameDay, isAfter } from "date-fns";
+import { format, isBefore, isSunday,  addMonths } from "date-fns";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faArrowRight, faStar } from '@fortawesome/free-solid-svg-icons';
 import TimeSlot from './TimeSlot';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDateAndTime } from '../../../../features/bookingSlice';
 import { RootState } from '../../../../store';
+import {  BookingProps } from '../../../utilities/interface';
+import { generateDaysInMonth } from '../../../utilities/functions';
 
-type Day = {
-    date:Date;
-    isDisabled:boolean;
-    isToday:boolean;
-    isSelected:boolean;
-};
 
-export interface DropOffProps {
-  setActiveSection:React.Dispatch<React.SetStateAction<string>>;
-}
 
-const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
+const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -29,30 +22,13 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
       : state.bookingdetails.bookingDetails?.shopdetails;
     } );
 
-    
-    const generateDaysInMonth = (month:Date): Day[] => {
-        const start = startOfWeek(startOfMonth(month));
-        const end = endOfWeek(endOfMonth(month));
-        const days:Day[] = [];
-        let date = start;
+    const daysInMonth = generateDaysInMonth(currentMonth, selectedDate);
 
-        while(!isAfter(date,end)){
-            const isDisabled = isBefore(date, new Date()) || isSunday(date);
-            const isToday = isSameDay(date,new Date());
-            const isSelected = selectedDate ? isSameDay(date,selectedDate) : false;
-            days.push({date,isDisabled,isToday, isSelected});
-            date = addDays(date,1);
-        }
-        return days;
-    }
-
-    const daysInMonth = generateDaysInMonth(currentMonth);
-
-  const handleDateClick = (date: Date) => {
-    if (!isBefore(date, new Date()) && !isSunday(date)) {
-      setSelectedDate(date);
-    }
-  };
+    const handleDateClick = (date: Date) => {
+      if (!isBefore(date, new Date()) && !isSunday(date)) {
+        setSelectedDate(date);
+      }
+    };
 
   const handleDropoffDateAndTime = () => {
       if(selectedDate && selectedTime){
@@ -121,52 +97,71 @@ const DropOff:React.FC<DropOffProps> = ({ setActiveSection}) => {
             times for {format(currentMonth, "MMMM yyyy")}
           </h2>
           <div className="flex flex-wrap">
-            <TimeSlot setSelectedTime={setSelectedTime} selectedTime={selectedTime} />
+            <TimeSlot
+              setSelectedTime={setSelectedTime}
+              selectedTime={selectedTime}
+            />
           </div>
         </div>
       </div>
 
-
       <div className="border rounded-lg h-fit p-3  ">
-        <p className="text-gray-500 text-sm font-semibold uppercase">drop off at</p>
-    
-      <div className="flex pb-4 pt-2   border-b" >
-                 <div className="w-28  rounded overflow-hidden">
-                   <img
-                     src={shopdetails?.image}
-                     alt="shop img"
-                     className="w-full h-full object-cover rounded"
-                     />
-                 </div>
-   
-                 <div className="flex flex-col  ms-3 w-full">
-                 <div className="flex  justify-between">
-                   <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
-                     {shopdetails?.shopName && shopdetails?.shopName[0].toUpperCase() + shopdetails?.shopName.slice(1)}
-                   </h2>
-                   <p className='text-gray-500 text-sm'> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
-                 </div>
-                   <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
-                     {shopdetails?.address && Object.values(shopdetails?.address).join(" ")}
-                   </span>
-                   <span className="mt-3 text-sm  text-gray-600">
-                     {shopdetails?.phoneNumber}
-                   </span>
-           
-                     <h6 className='mt-3 text-sm  text-gray-600'>
-                       Soonest availability Wed, Oct 15 at 8 am
-                     </h6>
-   
-                 </div>
-               </div>
+        <p className="text-gray-500 text-sm font-semibold uppercase">
+          drop off at
+        </p>
 
-                   <div className="mt-3 px-1 flex justify-center ">
-                     <button onClick={()=>handleDropoffDateAndTime()}
-                     disabled={!selectedDate || !selectedTime}
-                     className= {`btn-primary ${!selectedDate || !selectedTime ? "opacity-50 cursor-not-allowed" : "" } `}>
-                       confirm date and time <FontAwesomeIcon icon={faArrowRight} />
-                     </button>
-                   </div>
+        <div className="flex pb-4 pt-2   border-b">
+          <div className="w-28  rounded overflow-hidden">
+            <img
+              src={shopdetails?.image}
+              alt="shop img"
+              className="w-full h-full object-cover rounded"
+            />
+          </div>
+
+          <div className="flex flex-col  ms-3 w-full">
+            <div className="flex  justify-between">
+              <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
+                {shopdetails?.shopName &&
+                  shopdetails?.shopName[0].toUpperCase() +
+                    shopdetails?.shopName.slice(1)}
+              </h2>
+              <p className="text-gray-500 text-sm">
+                {" "}
+                <FontAwesomeIcon
+                  icon={faStar}
+                  className="text-yellow-400"
+                />{" "}
+                4.8 (15)
+              </p>
+            </div>
+            <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
+              {shopdetails?.address &&
+                Object.values(shopdetails?.address).join(" ")}
+            </span>
+            <span className="mt-3 text-sm  text-gray-600">
+              {shopdetails?.phoneNumber}
+            </span>
+
+            <h6 className="mt-3 text-sm  text-gray-600">
+              Soonest availability Wed, Oct 15 at 8 am
+            </h6>
+          </div>
+        </div>
+
+        <div className="mt-3 px-1 flex justify-center ">
+          <button
+            onClick={() => handleDropoffDateAndTime()}
+            disabled={!selectedDate || !selectedTime}
+            className={`btn-primary ${
+              !selectedDate || !selectedTime
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            } `}
+          >
+            confirm date and time <FontAwesomeIcon icon={faArrowRight} />
+          </button>
+        </div>
       </div>
     </div>
   );

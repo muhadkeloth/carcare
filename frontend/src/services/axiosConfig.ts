@@ -19,18 +19,9 @@ api.interceptors.request.use((config) => {
         '/shop/login','/shop/otpgenerate','/shop/otpvalidation','/shop/resetPassword'
     ];
     if(config.url && publicRoutes.includes(config.url))return config;
-    // const currentRoute = window.location.pathname;
     let token: string|null = null;
     let endpoint = '/login';
     
-    // const publicRoutes = [
-    //     '/login','/signup','/otpgenerate','/otpvalidation','/resetPassword','/getnearshops',
-    //     '/admin/login','/admin/otpgenerate','/admin/otpvalidation','/admin/resetPassword',
-    //     '/shop/login','/shop/otpgenerate','/shop/otpvalidation','/shop/resetPassword'
-    // ];
-
-    // if(publicRoutes.includes(currentRoute)){return config};
-
     if(config.url?.startsWith('/admin/')){
         token = localStorage.getItem('admin_token');
         endpoint = '/admin/login';
@@ -63,8 +54,7 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        
+    (error) => {        
         if(error.response?.status == HttpStatusCode.FORBIDDEN){
             const currentRoute = window.location.pathname;
             let logoutUrl = 'user';
@@ -78,7 +68,6 @@ api.interceptors.response.use(
             }
 
             localStorage.removeItem(`${logoutUrl}_token`);
-            // window.location.href = logoutUrl == 'user' ? '/login':`/${logoutUrl}/login`;
         }
         return Promise.reject(error);
     }

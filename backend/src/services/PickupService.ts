@@ -1,18 +1,17 @@
 import { AppError } from "../middleware/errorHandler";
 import logger from "../middleware/logger";
-import BookingRepository from "../repositories/BookingRepository";
+import PickupRepository from "../repositories/PickupRepository";
 import UserRepository from "../repositories/UserRepository";
-import { HttpStatusCode, IBookings, pickupStatus } from "../utils/interface";
+import { HttpStatusCode, IBookings, paymentStatus, pickupStatus } from "../utils/interface";
 import BaseService from "./BaseService";
 
-export default class BookingService extends BaseService<IBookings> {
+export default class PickupService extends BaseService<IBookings> {
 
-    constructor(protected repository: BookingRepository) {
+    constructor(protected repository: PickupRepository) {
         super(repository);
     };
     
 
-    // ******************************************
     async create(data: IBookings): Promise<IBookings> {
         const user =  await this.repository.create(data);
         if(!user){
@@ -20,33 +19,38 @@ export default class BookingService extends BaseService<IBookings> {
             throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
         } 
         return user;
-      }
+    }
 
-      async findBookingsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
-        const bookings =  await this.repository.findBookingByShopId(shopId,skip,limit);
-        if(!bookings){
+    async findPickupsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
+        const pickups =  await this.repository.findPickupsByShopId(shopId,skip,limit);
+        if(!pickups){
             logger.error('error find pickup details')
             throw new AppError('error find pickup details',HttpStatusCode.BAD_REQUEST);
         } 
-        return bookings;
+        return pickups;
     }
     
-    async findBookingsCountByShopId(shopId:string): Promise<number | null> {
-        return await this.repository.findBookingCountByShopId(shopId);
+    async findPickupsCountByShopId(shopId:string): Promise<number | null> {
+        return await this.repository.findPickupsCountByShopId(shopId);
     }
 
-    async toggleBookingStatus(id: string,status:pickupStatus):Promise<IBookings >{
-        const bookingdetails = await this.repository.toggleBookingStatusById(id);
-        if(!bookingdetails){
+    async togglePickupStatus(id: string,status:pickupStatus):Promise<IBookings >{
+        const pickupdetails = await this.repository.togglePickupStatusById(id);
+        if(!pickupdetails){
           logger.error('pickup details not found')
           throw new AppError('pickup details not found',HttpStatusCode.NOT_FOUND);
         } 
-        bookingdetails.status = status;
-        return await bookingdetails.save();
+        pickupdetails.status = status;
+        return await pickupdetails.save();
         // return pickupdetails
     }
 
+ 
 
+
+
+
+    // ******************************************
 // *******************************************
 
 // async updateById(id:string, updateData:any):Promise<IUser> {

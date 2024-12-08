@@ -1,0 +1,261 @@
+import React, { useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { BookingDetailsProps } from '../../../utilities/interface';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCar, faClock, faPencil, faScrewdriverWrench, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { formatDate, ToastActive } from '../../../utilities/functions';
+import { toggleBookingStatus } from '../../../../services/shopService';
+
+
+const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetPickupData } ) => {
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
+    const [toggleId, setToggleId] = useState('')
+    
+    
+    const togglePickupStatus = async(bookingId:string,status:string) => {
+        try{
+            const response = await toggleBookingStatus(bookingId, status);
+            response.data.updatedBookingDetails &&
+              handlesetPickupData &&
+              handlesetPickupData(response.data.updatedBookingDetails);
+            ToastActive("success", "status changed successfully");
+          }catch(error){
+            const errorMessage = (error as Error).message;
+            ToastActive('error',errorMessage)
+          }finally{
+            setToggleId('');
+            setShowConfirmModal(false);
+          }
+    }
+
+
+
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+          <div className="flex items-center space-x-2 mb-4">
+            <FontAwesomeIcon icon={faCar} />
+            <h3 className="text-lg font-semibold">Vehicle Details</h3>
+          </div>
+          <div className="space-y-2">
+            <p>
+              <span className="font-medium">Make:</span>{" "}
+              {bookingDetails?.vehicleDetails?.make}
+            </p>
+            <p>
+              <span className="font-medium">Model:</span>{" "}
+              {bookingDetails?.vehicleDetails?.model}
+            </p>
+            <p>
+              <span className="font-medium">Year:</span>{" "}
+              {bookingDetails?.vehicleDetails?.year}
+            </p>
+            {bookingDetails?.vehicleDetails?.description && (
+              <p>
+                <span className="font-medium">Description:</span>{" "}
+                {bookingDetails?.vehicleDetails.description}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-2 mb-4">
+            <FontAwesomeIcon icon={faClock} />
+            <h3 className="text-lg font-semibold">Appointment Time</h3>
+          </div>
+          <div className="space-y-2">
+            <p>
+              <span className="font-medium">Date:</span>{" "}
+              {formatDate(bookingDetails?.shedule?.date)}
+            </p>
+            <p>
+              <span className="font-medium">Time:</span>{" "}
+              {bookingDetails?.shedule?.time}
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex items-center space-x-2 mb-4">
+            <FontAwesomeIcon icon={faUser} />
+            <h3 className="text-lg font-semibold">Customer Details</h3>
+          </div>
+          <div className="space-y-2 mb-2">
+            <p>
+              <span className="font-medium">Name:</span>{" "}
+              {bookingDetails?.userId?.username}{" "}
+            </p>
+            <p>
+              <span className="font-medium">Email:</span>{" "}
+              {bookingDetails?.userId?.email}
+            </p>
+          </div>
+          <div className="space-y-2 ">
+            <p className="font-medium text-gray-500">Address</p>
+            <p>
+              <span className="font-medium">Name:</span>{" "}
+              {bookingDetails?.userDetails?.firstName}{" "}
+              {bookingDetails?.userDetails?.lastName}
+            </p>
+            <p>
+              <span className="font-medium">Email:</span>{" "}
+              {bookingDetails?.userDetails?.email}
+            </p>
+            <p>
+              <span className="font-medium">Phone:</span>{" "}
+              {bookingDetails?.userDetails?.phoneNumber}
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex items-center space-x-2 mb-4">
+            <FontAwesomeIcon icon={faScrewdriverWrench} />
+            <h3 className="text-lg font-semibold">Repair Details</h3>
+          </div>
+          <div className="space-y-2">
+            {bookingDetails?.repairWork ? (
+              <p>
+                <span className="font-medium">Service:</span>{" "}
+                {bookingDetails.repairWork}
+              </p>
+            ) : (
+              <p className="text-gray-500 italic">No repair work specified</p>
+            )}
+            {bookingDetails?.paymentStatus && (
+              <>
+                <p>
+                  <span className="font-medium">Amount:</span> $
+                  {bookingDetails.amount.toFixed(2)}
+                </p>
+                <p>
+                  <span className="font-medium">Payment Status:</span>
+                  <span
+                    className={`ml-2 inline-flex rounded-full px-2 py-1 text-xs font-semibold
+                ${
+                  bookingDetails.paymentStatus === "PAID"
+                    ? "bg-green-100 text-green-800"
+                    : bookingDetails.paymentStatus === "PENDING"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : bookingDetails.paymentStatus === "FAILED"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+                  >
+                    {bookingDetails.paymentStatus.charAt(0).toUpperCase() +
+                      bookingDetails.paymentStatus.slice(1)}
+                  </span>
+                </p>
+                <p>
+                  <span className="font-medium">Pickup Status:</span>
+                  <span
+                    className={`ml-2 inline-flex rounded-full px-2 py-1 text-xs font-semibold
+                ${
+                  bookingDetails.status === "PICKED"
+                    ? "bg-green-100 text-green-800"
+                    : bookingDetails.status === "PENDING"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : bookingDetails.status === "CONFIRMED"
+                    ? "bg-blue-100 text-blue-800"
+                    : bookingDetails.status === "CANCELED"
+                    ? "bg-red-100 text-red-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+                  >
+                    {bookingDetails.status}
+                  </span>
+                  {!["PICKED", "CANCELED"].includes(bookingDetails.status) && (
+                    <div className="inline-flex space-x-2 ml-2">
+                      <button
+                        onClick={() => {
+                          setToggleId(bookingDetails._id);
+                          setShowConfirmModal(true);
+                        }}
+                        className="btn-primary p-0 px-2"
+                      >
+                        <FontAwesomeIcon icon={faPencil} /> Update
+                      </button>
+                    </div>
+                  )}
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+
+        {bookingDetails?.locationdetails?.description && (
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center space-x-2 mb-4">
+              <h3 className="text-lg font-semibold">Location Details</h3>
+            </div>
+            <p className="mb-4">
+              {bookingDetails?.locationdetails?.description}{" "}
+            </p>
+            <div className="h-48 rounded-lg overflow-hidden">
+              <MapContainer
+                center={bookingDetails?.locationdetails?.coordinates}
+                zoom={13}
+                className="h-72 w-full z-10"
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <Marker
+                  position={bookingDetails?.locationdetails?.coordinates || [0, 0]}
+                >
+                  <Popup>{bookingDetails?.locationdetails?.description}</Popup>
+                </Marker>
+              </MapContainer>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showConfirmModal && (
+        <div className="fixed inset-0  bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className=" bg-white p-6 rounded shadow-md w-full max-w-md">
+            <h3 className="flex justify-between text-lg font-bold mb-4">
+              Choose Pickup Status
+              <FontAwesomeIcon
+                icon={faX}
+                className="cursor-pointer"
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setToggleId("");
+                }}
+              />
+            </h3>
+            <div className="flex items-center justify-end">
+              <button
+                className="btn-secondary  mr-2"
+                onClick={() => togglePickupStatus(toggleId, "CANCELED")}
+              >
+                Cancel Pickup
+              </button>
+              <button
+                className="btn-primary"
+                onClick={() =>
+                  togglePickupStatus(
+                    toggleId,
+                    bookingDetails?.status == "PENDING"
+                      ? "CONFIRMED"
+                      : bookingDetails?.status == "CONFIRMED"
+                      ? "PICKED"
+                      : ""
+                  )
+                }
+              >
+                STATUS{" "}
+                {bookingDetails?.status == "PENDING"
+                  ? "CONFIRM"
+                  : bookingDetails?.status == "CONFIRMED"
+                  ? "PICKUP"
+                  : bookingDetails?.status}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default OrderDetails;

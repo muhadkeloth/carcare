@@ -1,12 +1,12 @@
 import axios from "axios";
 import { Bounce, toast } from "react-toastify";
-import { Suggestion } from "../user/pickMyCar/Location";
+import { Day, Suggestion } from "./interface";
+import { addDays, endOfMonth, endOfWeek, isAfter, isBefore, isSameDay, isSunday, startOfMonth, startOfWeek } from "date-fns";
 
 
-// get Address from location
+
 export const getAddressFromCoordinates = async (location:number[]) => {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${location[0]}&lon=${location[1]}&format=json`;
-  
     try {
       const response = await axios.get(url);
       const { address } = response.data;
@@ -34,7 +34,6 @@ export const getAddressFromCoordinates = async (location:number[]) => {
       })
   }
 
-  // debounc
   export const debounce = (func:(...args: any[])=> void, delay:number) => {
     let timeout:NodeJS.Timeout;
     return (...args:any[])=>{
@@ -59,5 +58,49 @@ export const getAddressFromCoordinates = async (location:number[]) => {
     }
 }
 
-  
-  
+export const generateDaysInMonth = (month:Date,selectedDate:Date | null): Day[] => {
+  const start = startOfWeek(startOfMonth(month));
+  const end = endOfWeek(endOfMonth(month));
+  const days:Day[] = [];
+  let date = start;
+
+  while(!isAfter(date,end)){
+      const isDisabled = isBefore(date, new Date()) || isSunday(date);
+      const isToday = isSameDay(date,new Date());
+      const isSelected = selectedDate ? isSameDay(date,selectedDate) : false;
+      days.push({date,isDisabled,isToday, isSelected});
+      date = addDays(date,1);
+  }
+  return days;
+}
+
+export const generateTimeSlots = (start: string, end: string): string[] => {
+  const slots: string[] = [];
+  let [hour, minute] = start.split(":").map(Number);
+  const [endHour, endMinute] = end.split(":").map(Number);
+
+  while (hour < endHour || (hour === endHour && minute < endMinute)) {
+    const period = hour >= 12 ? "PM" : "AM";
+    const adjustedHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+
+    slots.push(`${adjustedHour}:${minute === 0 ? "00" : minute} ${period}`);
+    minute += 30;
+    if (minute >= 60) {
+      minute = 0;
+      hour += 1;
+    }
+  }
+  return slots;
+};
+
+
+export const formatDate = (isoDate: Date | undefined | string) => {
+  if (!isoDate) return "";
+  const dateObj = new Date(isoDate);
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const year = String(dateObj.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+};
+
+

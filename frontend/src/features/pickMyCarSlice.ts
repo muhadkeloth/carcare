@@ -1,20 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Shop } from "../components/utilities/interface";
+import { LocationDetails, PickCarState, shedule, Shop, UserDetails, VehicleDetails } from "../components/utilities/interface";
 
-type pickCartype = {
-    locationdetails?:{
-        description:string;
-        location:[number,number];
-    };
-    vehicleDetails?:{make:string;model:string;year:string;description?:string;};
-    shopdetails?:Shop;
-    shedule?:{date:Date;time:string;};
-    userDetails?:{firstName:string;lastName:string;email:string;phoneNumber:string;};
-}
 
-interface PickCarState {
-    PickCarDetails:pickCartype | null,
-}
 const initialState:PickCarState = {
     PickCarDetails:null,
 }
@@ -22,7 +9,7 @@ const PickCarSlice = createSlice({
     name:'pickMyCar',
     initialState,
     reducers:{
-        setPickCarAddress(state,action:PayloadAction<{description:string,location:[number,number]}>){
+        setPickCarAddress(state,action:PayloadAction<LocationDetails>){
             if(state.PickCarDetails){
                 state.PickCarDetails.locationdetails = action.payload;
             }else{
@@ -36,25 +23,27 @@ const PickCarSlice = createSlice({
                 state.PickCarDetails = {shopdetails:action.payload};
             }
         },
-        setPickCarVehicleDetails(state,action:PayloadAction<{model:string;make:string;year:string;description?:string;}>){
+        setPickCarVehicleDetails(state,action:PayloadAction<VehicleDetails>){
             if(state.PickCarDetails){
                 state.PickCarDetails.vehicleDetails = action.payload;
             }else{
                 state.PickCarDetails = {vehicleDetails:action.payload};
             };            
         },
-        setPickCaruserdetails(state,action:PayloadAction<{firstName:string;lastName:string;email:string;phoneNumber:string;}>){
+        setPickCaruserdetails(state,action:PayloadAction<UserDetails>){
             if(state.PickCarDetails){
                 state.PickCarDetails.userDetails = action.payload;
             }else{
                 state.PickCarDetails = {userDetails:action.payload};
             };                   
         },
-        setDateAndTimePickCar(state,action:PayloadAction<{selectedDate:Date;selectedTime:string;}>){
+        setDateAndTimePickCar(state,action:PayloadAction<shedule>){
             if(state.PickCarDetails){
-                state.PickCarDetails.shedule = {date:action.payload.selectedDate,time:action.payload.selectedTime}
+                // state.PickCarDetails.shedule = {date:action.payload.selectedDate,time:action.payload.selectedTime}
+                state.PickCarDetails.shedule = {date:action.payload.date,time:action.payload.time}
             }else{
-                state.PickCarDetails = {shedule:{date:action.payload.selectedDate,time:action.payload.selectedTime}}
+                // state.PickCarDetails = {shedule:{date:action.payload.selectedDate,time:action.payload.selectedTime}}
+                state.PickCarDetails = {shedule:{date:action.payload.date,time:action.payload.time}}
             };
         },
         clearPickCarDetails(state){

@@ -22,8 +22,8 @@ export function passwordConfirmValidation(password:string,confirmPassword:string
 }
 
 export function nameValidation(name:string):returnvalue{
-    if(name.length<4 || name.length>14)return true;
-    return false;
+    const trimmedName = name.trim();
+    return trimmedName.length < 4 || trimmedName.length > 16;
 }
 
 export const phoneNumberValidation = (number:string):returnvalue => {

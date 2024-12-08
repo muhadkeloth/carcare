@@ -78,6 +78,7 @@ export interface IEstimate extends Document {
     createdAt?:Date;
 }
 
+// export interface IBookings extends Document {
 export interface IBookings extends Document {
     userId:Types.ObjectId;
     shopId:Types.ObjectId;
@@ -93,9 +94,15 @@ export interface IBookings extends Document {
         description:string;
         location:[number,number];
     };
-    PaymentStatus:'PAID'|'PENDING'|'FAILED';
+    paymentStatus:'PAID'|'PENDING'|'FAILED' | 'REFUNDED';
+    status: 'PENDING' | 'CONFIRMED' | 'PICKED' | 'CANCELED';
     createdAt?:Date;
 }
+
+export type paymentStatus = 'PAID'|'PENDING'|'FAILED';
+export type pickupStatus = 'PENDING' | 'CONFIRMED' | 'PICKED' | 'CANCELED';
+
+
 
 
 export interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }

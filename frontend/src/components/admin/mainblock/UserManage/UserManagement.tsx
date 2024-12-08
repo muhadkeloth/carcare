@@ -30,7 +30,7 @@ const UserManagement:React.FC = () => {
   const toggleStatus = async(id:string) =>{
     try{
       const response = await toggleuserStatus(id);
-      if(response.status = HttpStatusCode.CREATED){
+      if(response.status == HttpStatusCode.CREATED){
         const index = users.findIndex(user => user._id == id);
         if(index !== -1){
           const updatedUsers = [...users];
@@ -91,7 +91,7 @@ const UserManagement:React.FC = () => {
           <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
             <h3 className="text-lg font-bold mb-4">Are you sure you want to confirm change user Status?</h3>
             <div className="flex items-center justify-end">
-              <button className="btn-secondary mr-2" onClick={() => {setShowConfirmModal(false);setToggleId(""); }} >
+              <button className="btn-secondary mr-2" onClick={() => {setShowConfirmModal(false); setToggleId(""); }} >
                 Cancel
               </button>
               <button className="btn-primary" onClick={() => toggleStatus(toggleId)} > Confirm </button>

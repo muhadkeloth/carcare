@@ -35,6 +35,7 @@ router.put('/updateprofiledetails', authenticateToken, userController.updateUser
 router.put('/changepassword', authenticateToken, userController.updateUserProfilepassword);
 
 router.post('/bookingConfirm', authenticateToken, userController.bookingConfirm );
+// router.post('/pickUprConfirm', authenticateToken, userController.bookingConfirm );
 
 export default router;
 

@@ -1,17 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { userProfile } from "../components/utilities/interface";
 
-export type userProfile = {
-    _id:string;
-    username:string;
-    phoneNumber:string;
-    email:string;
-    isActive:boolean;
-    role:string;
-    image:string;
-}
- interface userState {
+export interface userState {
     userDetails:userProfile | null,
-}
+  }
 
 const initialState:userState = {
     userDetails:null,

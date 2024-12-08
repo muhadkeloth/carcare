@@ -16,8 +16,6 @@ const SetPassword:React.FC = () => {
     const [password,setPassword] = useState('')
     const [confirmPassword,setConfirmPassword] = useState('')
     const [error,setError] = useState<Record<string,string> | null>(null)
-    const [passwordError,setPasswordError] = useState('')
-    const [confirmPasswordError,setConfirmPasswordError] = useState('')
     const navigate = useNavigate()
     const location = useLocation();
     const { email,role } = location.state || {};
@@ -32,7 +30,6 @@ const SetPassword:React.FC = () => {
 
       const passwordvalidation = passwordValidation(password)
       if(typeof passwordvalidation == 'string'){
-        setPasswordError(passwordvalidation)
         setError((prev) => ({...prev, passError:passwordvalidation}))
         flag = true;
       }      
@@ -87,8 +84,9 @@ const SetPassword:React.FC = () => {
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             className="border border-gray-300 rounded w-full p-2"
-            style={passwordError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+            style={error?.passError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
+            <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.passError}</span>
           </div>
           <div className="mb-4">
             <label className="text-gray-700 flex justify-between items-center mb-2" htmlFor="confirmPassword">
@@ -101,8 +99,9 @@ const SetPassword:React.FC = () => {
             value={confirmPassword} 
             onChange={(e) => setConfirmPassword(e.target.value)} 
             className="border border-gray-300 rounded w-full p-2"
-            style={confirmPasswordError.length !== 0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
+            style={error?.confirmPasswordError ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
             />
+            <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.confirmPasswordError}</span>
           </div>
           <button type="submit" className="w-full btn-primary flex justify-center">
             { isLoading ? <ThreeDots height={20} color='#fff' /> : "Reset Password"}

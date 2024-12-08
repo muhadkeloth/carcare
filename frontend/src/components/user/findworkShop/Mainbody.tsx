@@ -67,82 +67,101 @@ const Mainbody: React.FC = () => {
   return (
     <div className="flex flex-row ">
       <div className="w-full md:w-1/2 flex flex-col">
-       <Navbar />
+        <Navbar />
 
-       <div className="overflow-auto ">       
-       <h4 className="text-lg font-semibold p-5">
-             {shops.length !== 0 ? shops.length : ""} CarCare Certified shops nearby
-           </h4>
-   
-           { isLoading && <ThreeDots height={10} color="#0098d3" wrapperClass=" mt-2" /> }
-           {error && <p>{error}</p>}
+        <div className="overflow-auto ">
+          <h4 className="text-lg font-semibold p-5">
+            {shops.length !== 0 ? shops.length : ""} CarCare Certified shops
+            nearby
+          </h4>
 
-           {shops.length !== 0 ? (
-             shops.map((shop) => (
-               <div key={shop._id} 
-               onMouseEnter={()=> handleHover(shop?.location?.coordinates,{shopName:shop.shopName,image:shop.image,address:shop.address})}
-               onMouseLeave={()=> handleCursorLeave()}
-               onClick={()=> navigateShopDetailPage(navigate,shop._id)}
-               className="flex border-b p-4  ps-4 cursor-pointer hover:bg-sky-50" >
-                 <div className="w-2/6 h-[228px] rounded  ">
-                   <img
-                     src={shop.image}
-                     alt="shop img"
-                     className="w-full h-full object-cover rounded"
-                     />
-                 </div>
-   
-                 <div className=" w-3/4 ms-3">
-                 <div className="flex justify-between">
-                   <h2 className="text-base font-medium  text-gray-900">
-                     {shop.shopName[0].toUpperCase() + shop.shopName.slice(1)}
-                   </h2>
-                   <p> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
-                 </div>
-                   <span className="text-sm  text-gray-600">
-                     {Object.values(shop.address).join(" ")}
-                   </span>
-   
-                   <ul className="flex gap-2 text-sm ms-1 mt-3">
-                     <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
-                       12K Warranty
-                     </li>
-                     <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
-                       Pickup{" "}
-                     </li>
-                     <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
-                       Rental Car
-                     </li>
-                   </ul>
-   
-                   <div className="text-gray-600 ms-2 mt-3">
-                     <h6>
-                       <FontAwesomeIcon icon={faClock} /> Closed Opens 8 AM
-                       Tomorrow
-                     </h6>
-                     <h6>
-                       <FontAwesomeIcon icon={faPhone} /> {shop.phoneNumber}
-                     </h6>
-                     <h6>
-                       <FontAwesomeIcon icon={faBolt} />
-                       Soonest availability Wed, Oct 15 at 8 am
-                     </h6>
-                   </div>
-   
-                   <div className="mt-3 px-1 ">
-                     <button onClick={(event)=>handleAvailability(event,shop)}
-                     className=" w-full btn-primary">
-                       Check Availability
-                     </button>
-                   </div>
-                 </div>
-               </div>
-             ))
-           ) : (
-             <p className="flex justify-center p-4  ps-4">No Shops Found</p>
-           )}
-   
-           </div>      
+          {isLoading && (
+            <ThreeDots height={10} color="#0098d3" wrapperClass=" mt-2" />
+          )}
+          {error && <p>{error}</p>}
+
+          {shops.length !== 0 ? (
+            shops.map((shop) => (
+              <div
+                key={shop._id}
+                onMouseEnter={() =>
+                  handleHover(shop?.location?.coordinates, {
+                    shopName: shop.shopName,
+                    image: shop.image,
+                    address: shop.address,
+                  })
+                }
+                onMouseLeave={() => handleCursorLeave()}
+                onClick={() => navigateShopDetailPage(navigate, shop._id)}
+                className="flex border-b p-4  ps-4 cursor-pointer hover:bg-sky-50"
+              >
+                <div className="w-2/6 h-[228px] rounded  ">
+                  <img
+                    src={shop.image}
+                    alt="shop img"
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+
+                <div className=" w-3/4 ms-3">
+                  <div className="flex justify-between">
+                    <h2 className="text-base font-medium  text-gray-900">
+                      {shop.shopName[0].toUpperCase() + shop.shopName.slice(1)}
+                    </h2>
+                    <p>
+                      {" "}
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        className="text-yellow-400"
+                      />{" "}
+                      4.8 (15)
+                    </p>
+                  </div>
+                  <span className="text-sm  text-gray-600">
+                    {Object.values(shop.address).join(" ")}
+                  </span>
+
+                  <ul className="flex gap-2 text-sm ms-1 mt-3">
+                    <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
+                      12K Warranty
+                    </li>
+                    <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
+                      Pickup{" "}
+                    </li>
+                    <li className="bg-mainclr-100 p-1 px-2 rounded-full hover:cursor-pointer">
+                      Rental Car
+                    </li>
+                  </ul>
+
+                  <div className="text-gray-600 ms-2 mt-3">
+                    <h6>
+                      <FontAwesomeIcon icon={faClock} /> Closed Opens 8 AM
+                      Tomorrow
+                    </h6>
+                    <h6>
+                      <FontAwesomeIcon icon={faPhone} /> {shop.phoneNumber}
+                    </h6>
+                    <h6>
+                      <FontAwesomeIcon icon={faBolt} />
+                      Soonest availability Wed, Oct 15 at 8 am
+                    </h6>
+                  </div>
+
+                  <div className="mt-3 px-1 ">
+                    <button
+                      onClick={(event) => handleAvailability(event, shop)}
+                      className=" w-full btn-primary"
+                    >
+                      Check Availability
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="flex justify-center p-4  ps-4">No Shops Found</p>
+          )}
+        </div>
       </div>
 
       <div className="md:block hidden  w-1/2 sticky top-0 h-screen">
@@ -161,8 +180,6 @@ const Mainbody: React.FC = () => {
         </MapContainer>
       </div>
     </div>
-
-
   );
 };
 

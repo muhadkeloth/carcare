@@ -37,5 +37,16 @@ router.put('/updateprofileinfo', authenticateToken, shopController.updateShopPro
 router.put('/updateprofileWorkTime', authenticateToken, shopController.updateShopProfileWorkTime);
 router.put('/changepassword', authenticateToken, shopController.updateShopProfilepassword);
 
+router.get('/pickupsDetailsByShopId', authenticateToken, shopController.getShopPickups);
+router.patch('/pickup/:id',authenticateToken, shopController.togglePickupStatus);
+
+router.get('/bookingDetailsByShopId', authenticateToken, shopController.getShopBookings);
+router.patch('/booking/:id',authenticateToken, shopController.toggleBookingStatus);
+
+
+
+
+
+
 
 export default router;

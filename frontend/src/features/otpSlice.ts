@@ -1,9 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { OtpState, userdetail } from "../components/utilities/interface";
 
-type userdetail = {username:string;phoneNumber:string;email:string; password?:string;confirmPassword?:string;otp?:string}
-interface OtpState {
-    signupDetails:userdetail | null;
-};
+
 
 const initialState:OtpState = {
     signupDetails:null,

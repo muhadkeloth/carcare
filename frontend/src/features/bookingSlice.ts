@@ -1,16 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Shop } from "../components/utilities/interface";
+import { bookingState, Shop, UserDetails, VehicleDetails } from "../components/utilities/interface";
 
-type bookingDetailsType = {
-    shopdetails?:Shop;
-    shedule?:{date:Date;time:string;};
-    vehicleDetails?:{make:string;model:string;year:string;description?:string;};
-    userDetails?:{firstName:string;lastName:string;email:string;phoneNumber:string;};
-}
 
-interface bookingState {
-    bookingDetails:bookingDetailsType | null,
-}
 const initialState:bookingState = {
     bookingDetails:null,
 }
@@ -32,14 +23,14 @@ const bookingSlice = createSlice({
                 state.bookingDetails = {shedule:{date:action.payload.selectedDate,time:action.payload.selectedTime}}
             };
         },
-        setVehicleDetails(state,action:PayloadAction<{model:string;make:string;year:string;description?:string;}>){
+        setVehicleDetails(state,action:PayloadAction<VehicleDetails>){
             if(state.bookingDetails){
                 state.bookingDetails.vehicleDetails = action.payload;
             }else{
                 state.bookingDetails = {vehicleDetails:action.payload};
             };            
         },
-        setuserdetails(state,action:PayloadAction<{firstName:string;lastName:string;email:string;phoneNumber:string;}>){
+        setuserdetails(state,action:PayloadAction<UserDetails>){
             if(state.bookingDetails){
                 state.bookingDetails.userDetails = action.payload;
             }else{

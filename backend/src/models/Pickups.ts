@@ -3,7 +3,7 @@ import { IBookings } from "../utils/interface";
 
 
 
-const BookingsSchema: Schema<IBookings> = new Schema(
+const PickupsSchema: Schema<IBookings> = new Schema(
     {
         userId:{type:Schema.Types.ObjectId,ref:"User"},
         shopId:{type:Schema.Types.ObjectId,ref:"Shop"},
@@ -24,7 +24,6 @@ const BookingsSchema: Schema<IBookings> = new Schema(
             phoneNumber:{type:String},
         },
         amount:{type:Number},
-        repairWork: {type:String },
         locationdetails:{
             description:{type:String},
             location:[{type:Number}],
@@ -36,6 +35,6 @@ const BookingsSchema: Schema<IBookings> = new Schema(
     { timestamps: true }
 );
 
-const Bookings = mongoose.model<IBookings>("Bookings", BookingsSchema);
+const Pickups = mongoose.model<IBookings>("Pickups", PickupsSchema);
 
-export default Bookings;
+export default Pickups;

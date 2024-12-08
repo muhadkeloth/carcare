@@ -12,6 +12,7 @@ import {  useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { navigateHome } from '../../utilities/navigate/common'
 import { ToastContainer } from 'react-toastify'
+import useFetchUserData from '../reusableComponents/useFetchUserData'
 
 
 
@@ -23,6 +24,10 @@ const BookingSlot:React.FC = () => {
     ? state.estimate.estimateDetails.shopdetails
     : state.bookingdetails.bookingDetails?.shopdetails;
   } );
+  useFetchUserData();
+  
+
+
 
   return (
     <div>

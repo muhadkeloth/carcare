@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { HttpStatusCode, Shop } from '../../utilities/interface';
-import { fetchNearbyShops, fetchShopData } from '../../../services/userService';
+import {  fetchShopData } from '../../../services/userService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { navigateBookingSlot } from '../../utilities/navigate/userNavigator';
 import { useDispatch } from 'react-redux';
@@ -90,91 +90,98 @@ const MainBlock:React.FC = () => {
 
   return (
     <div className="container max-w-6xl mx-auto px-4">
+      <nav className="p-4 bg-white border-b sticky top-0 z-50">
+        <h1 className="text-2xl font-bold">Shop Details</h1>
+      </nav>
 
-  <nav className="p-4 bg-white border-b sticky top-0 z-50">
-    <h1 className="text-2xl font-bold">Shop Details</h1>
-  </nav>
-
-  {/* <div className=" sticky top-16 z-40 p-4 pb-0 flex space-x-6 border-b"> */}
-  <div className="bg-white sticky top-16 z-50 p-4 pb-0 flex space-x-6 border-b">
-    <ul className="flex gap-3 ">
-        <li>
+      <div className="bg-white sticky top-16 z-50 p-4 pb-0 flex space-x-6 border-b">
+        <ul className="flex gap-3 ">
+          <li>
             <button
-            className={`cursor-pointer py-2 ${ activeSection === 'Overview' ? 'font-bold text-mainclr-500' : '' }`}
-            onClick={() => handleScrollToSection('Overview')} >
-            Overview
+              className={`cursor-pointer py-2 ${
+                activeSection === "Overview" ? "font-bold text-mainclr-500" : ""
+              }`}
+              onClick={() => handleScrollToSection("Overview")}
+            >
+              Overview
             </button>
-        </li>
-        <li>
-    <button
-      className={`cursor-pointer py-2 ${ activeSection === 'About' ? 'font-bold text-mainclr-500' : '' }`} 
-        onClick={() => handleScrollToSection('About')} >
-      About
-    </button>
-        </li>
-        <li>
-        <button
-        className={`cursor-pointer py-2 ${activeSection === 'Reviews' ? 'font-bold text-mainclr-500' : '' }`}
-        onClick={() => handleScrollToSection('Reviews')} >
-        Reviews
-        </button>
-        </li>
-    </ul>
-  </div>
+          </li>
+          <li>
+            <button
+              className={`cursor-pointer py-2 ${
+                activeSection === "About" ? "font-bold text-mainclr-500" : ""
+              }`}
+              onClick={() => handleScrollToSection("About")}
+            >
+              About
+            </button>
+          </li>
+          <li>
+            <button
+              className={`cursor-pointer py-2 ${
+                activeSection === "Reviews" ? "font-bold text-mainclr-500" : ""
+              }`}
+              onClick={() => handleScrollToSection("Reviews")}
+            >
+              Reviews
+            </button>
+          </li>
+        </ul>
+      </div>
 
-<div className="flex">
-  <div className="p-6 space-y-12 w-2/3">
-    {/* Overview Section */}
-    <div ref={overviewRef} className="space-y-4">
-        <div className="">
-        <img
-                  src={shop?.image}
-                  alt="shop img"
-                  className="w-fit object-cover rounded"
-                />
+      <div className="flex">
+        <div className="p-6 space-y-12 w-2/3">
+          <div ref={overviewRef} className="space-y-4">
+            <div className="">
+              <img
+                src={shop?.image}
+                alt="shop img"
+                className="w-fit object-cover rounded"
+              />
+            </div>
+            <h2 className="text-xl font-semibold">{shop?.shopName}</h2>
+            <p>
+              discription [added in next week]
+              <br />
+              <br />
+              {shop?.address.city}, {shop?.address.street}
+              <br />
+              {shop?.address.state}, {shop?.address.country}
+              <br />
+              {shop?.address.pincode}
+            </p>
+          </div>
+
+          <div ref={aboutRef} className="space-y-4">
+            <h2 className="text-xl font-semibold">About</h2>
+            <p>
+              This section contains detailed information about the shop,
+              including its history, services, and more.
+            </p>
+          </div>
+
+          <div ref={reviewsRef} className="space-y-4">
+            <h2 className="text-xl font-semibold">Reviews</h2>
+            <p>
+              Here you can read customer reviews and testimonials about the
+              shop.
+            </p>
+          </div>
         </div>
-      <h2 className="text-xl font-semibold">{shop?.shopName}</h2>
-      <p>
-        discription [added in next week]<br/><br/>
-        {shop?.address.city}, {shop?.address.street}<br/>
-        {shop?.address.state}, {shop?.address.country}<br/>
-        {shop?.address.pincode}
 
-      </p>
-    </div>
-
-    {/* About Section */}
-    <div ref={aboutRef} className="space-y-4">
-      <h2 className="text-xl font-semibold">About</h2>
-      <p>
-        This section contains detailed information about the shop, including
-        its history, services, and more.
-      </p>
-    </div>
-
-    {/* Reviews Section */}
-    <div ref={reviewsRef} className="space-y-4">
-      <h2 className="text-xl font-semibold">Reviews</h2>
-      <p>
-        Here you can read customer reviews and testimonials about the shop.
-      </p>
-    </div>
-  </div>
-
-  <div className="w-1/3 ">
-        <div className="border rounded mt-5 px-2 py-5 space-y-3 text-center">
+        <div className="w-1/3 ">
+          <div className="border rounded mt-5 px-2 py-5 space-y-3 text-center">
             <p>Soonest available time:</p>
             <h2 className="font-bold">Wed, Oct 13, 2024 at 8:00 am</h2>
-            {/* <button className="bg-maincol w-full text-white font-semibold rounded p-2">Book Appointment</button> */}
-            <button onClick={handleAvailability} className="btn-primary w-full">Book Appointment</button>
+            <button onClick={handleAvailability} className="btn-primary w-full">
+              Book Appointment
+            </button>
             <h2 className="text-mainclr-500">Check Availability</h2>
+          </div>
         </div>
-  </div>
-
-</div>
-</div>
-
-  )
+      </div>
+    </div>
+  );
 }
 
 export default MainBlock

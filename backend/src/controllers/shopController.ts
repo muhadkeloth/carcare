@@ -9,14 +9,26 @@ import VehicleService from "../services/VehicleService";
 import BaseController from "./BaseController";
 import logger from "../middleware/logger";
 import VehicleRepository from "../repositories/VehicleRepository";
+import BookingService from "../services/BookingService";
+import PickupService from "../services/PickupService";
+import Bookings from "../models/Bookings";
+import Pickups from "../models/Pickups";
+import PickupRepository from "../repositories/PickupRepository";
+import BookingRepository from "../repositories/BookingRepository";
 
 export class ShopController extends BaseController<any> {
   protected vehicleService: VehicleService;
+  protected bookingService: BookingService;
+  protected pickupService: PickupService;
 
   constructor(protected service: ShopService) {
     super(service);
     const vehicleRepository = new VehicleRepository(Vehicle)
     this.vehicleService = new VehicleService(vehicleRepository);
+    const bookingRepository = new BookingRepository(Bookings)
+    this.bookingService = new BookingService(bookingRepository);
+    const pickupRepository = new PickupRepository(Pickups)
+    this.pickupService = new PickupService(pickupRepository);
   }
 
   getAllvehicleDetails = async (req:Request,res:Response,next:NextFunction) => {
@@ -342,6 +354,89 @@ export class ShopController extends BaseController<any> {
     }
   };
 
+  getShopPickups = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const PuckupsData = await this.pickupService.findPickupsByShopId(req.user as string,skip,limit)
+      const totalPickups = (await this.pickupService.findPickupsCountByShopId(req.user as string)) ?? 0;
+      res.status(HttpStatusCode.SUCCESS).json({
+        PuckupsData,
+          totalPages: Math.ceil(totalPickups / limit),
+          currentPage: page,
+        });
+      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error fetch pickup  details: ${err.message}`);
+      next(err);
+    }
+  }
+
+  togglePickupStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    try {
+      if (!id) {
+        logger.warn(`id required`)
+        throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
+      }
+      const updatedPickpDetails = await this.pickupService.togglePickupStatus(id,status);
+      logger.info(`status successfully changed`)
+      res.status(HttpStatusCode.CREATED).json({updatedPickpDetails,message:'status updated successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  };
+
+  getShopBookings = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const bookingData = await this.bookingService.findBookingsByShopId(req.user as string,skip,limit)
+      const totalBookings = (await this.bookingService.findBookingsCountByShopId(req.user as string)) ?? 0;
+      res.status(HttpStatusCode.SUCCESS).json({
+        bookingData,
+          totalPages: Math.ceil(totalBookings / limit),
+          currentPage: page,
+        });
+      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error fetch booking details: ${err.message}`);
+      next(err);
+    }
+  }
+
+  toggleBookingStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    try {
+      if (!id) {
+        logger.warn(`id required`)
+        throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
+      }
+      const updatedBookingDetails = await this.bookingService.toggleBookingStatus(id,status);
+      logger.info(`status successfully changed`)
+      res.status(HttpStatusCode.CREATED).json({updatedBookingDetails,message:'status updated successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  };
 
 
 

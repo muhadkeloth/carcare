@@ -17,8 +17,6 @@ import Error from '../reuseComponents/Error'
 
 
 const User:React.FC = () => {
-
-
   return (
     <Routes>
 

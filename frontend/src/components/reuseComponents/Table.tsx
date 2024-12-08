@@ -1,14 +1,10 @@
 import React from 'react'
+import { TableProps } from '../utilities/interface';
 
 
 
-interface TableProps{
-    headers:{label:string; key: string}[];
-    data:any[];
-    renderActions?:(item:any)=> JSX.Element;
-}
 
-const Table:React.FC<TableProps> = ({headers, data, renderActions}) => {
+const Table:React.FC<TableProps> = ({headers, data, renderActions, onRowClick}) => {
   return (
     <div className="relative overflow-x-auto shadow-md rounded-lg">   
     <table className="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400 ">
@@ -23,7 +19,9 @@ const Table:React.FC<TableProps> = ({headers, data, renderActions}) => {
       <tbody>
         {data && data.length > 0 ? (
             data.map((item,index) => (
-            <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95" >
+            <tr key={index} 
+            onClick={() => onRowClick && onRowClick(item) }
+            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95" >
               {headers.map((header) => (
                  <td key={header.key} className="py-3 px-4">
                  {header.key === 'image' ? (

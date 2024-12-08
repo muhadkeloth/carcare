@@ -53,7 +53,7 @@ useEffect(() => {
         {activeSection === 'Location'  && < Locationfind setActiveSection={setActiveSection} />}
         {activeSection === 'Workshop'  && <VehicleDetails setActiveSection={setActiveSection} />}
         {activeSection === 'RepairService'  && <RepairService setActiveSection={setActiveSection} />}
-        {activeSection === 'Estimate'  && <FindEstimate setActiveSection={setActiveSection} />}   
+        {activeSection === 'Estimate'  && <FindEstimate />}   
       </div>
 
       <Footer />

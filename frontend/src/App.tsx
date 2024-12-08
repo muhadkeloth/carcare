@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Admin from './components/routes/Admin';
 import User from './components/routes/User';
 
-
 const App:React.FC = () => {
   return (
     <BrowserRouter>

@@ -1,21 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { shopProfile, userState } from "../components/utilities/interface";
 
-export type shopProfile = {
-    _id:string;shopName:string;
-    ownerName:string;email:string;
-    phoneNumber:string;image:string;
-    isActive:boolean;location:{type:string;coordinates:[number,number]};
-    address:{
-        street:string;city:string;
-        state:string;country:string;pincode:string;
-    };
-    about?:string;
-    discription?:{title:string;discript:string};
-    workingTime?:{opening:string;closing:string};
-}
-interface userState {
-    shopDetails:shopProfile | null,
-}
+
 const initialState:userState = {
     shopDetails:null,
 }

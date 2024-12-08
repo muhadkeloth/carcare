@@ -70,11 +70,9 @@ const Signup:React.FC = () => {
     }
 
 
-
   return (
     <div>
         <NavLogin showBar={false} />
-
         <ToastContainer />
 
         <div className="flex items-center justify-center mt-2 ">
@@ -112,7 +110,6 @@ const Signup:React.FC = () => {
             />
               <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.emailError}</span>
 
-
           </div>
           <div className="mb-2">
             <label className="block text-gray-700 mb-2" htmlFor="number">
@@ -128,13 +125,11 @@ const Signup:React.FC = () => {
             />
               <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{error?.phoneNumberError}</span>
 
-
           </div>
           <div className="mb-2">
             <label className="text-gray-700 flex justify-between items-center mb-2" htmlFor="password">
                Password 
             </label>
-
             <input 
             type="password" 
             placeholder='••••••••••••'

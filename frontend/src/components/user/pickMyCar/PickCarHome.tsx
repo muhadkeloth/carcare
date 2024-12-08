@@ -13,19 +13,23 @@ import Time from './Time'
 import ContactInfo from './ContactInfo'
 import { useDispatch } from 'react-redux'
 import { clearPickCarDetails } from '../../../features/pickMyCarSlice'
+import { ToastContainer } from 'react-toastify'
+import useFetchUserData from '../reusableComponents/useFetchUserData'
 
 
 const PickCarHome:React.FC = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('Location')
   const dispatch = useDispatch()
+  useFetchUserData();
 
   useEffect(()=>{
     dispatch(clearPickCarDetails());
-  },[]);
+  },[dispatch]);
 
   return (
     <div className='min-h-screen'>
+          <ToastContainer />
     <nav className="flex p-4 border-b justify-between">
       <button>
         <span onClick={()=>navigateHome(navigate, 'user')}

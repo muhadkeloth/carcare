@@ -1,29 +1,22 @@
 import React, { useState } from 'react'
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faIndianRupeeSign, faRupee, faX } from '@fortawesome/free-solid-svg-icons';
-import { RootState } from '../../../store';
-import { useSelector } from 'react-redux';
-import { ToastActive } from '../../utilities/functions';
-import { confirmBooking } from '../../../services/userService';
-import { HttpStatusCode } from '../../utilities/interface';
+import { faIndianRupeeSign, faX } from '@fortawesome/free-solid-svg-icons';
+import { ToastActive } from '../utilities/functions';
+import { confirmBooking } from '../../services/userService';
+import { HttpStatusCode, paymentProps } from '../utilities/interface';
+import { loadStripe } from '@stripe/stripe-js';
 
-const Payment:React.FC<{ isOpen: boolean; closeModal: () => void }> = ({isOpen,closeModal}) => {
+
+export const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISH_KEY);
+
+
+const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, methodofBooking}) => {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    const shopdetails = useSelector((state:RootState)=>{
-        return state.estimate.estimateDetails 
-        ? state.estimate.estimateDetails.shopdetails
-        : state.bookingdetails.bookingDetails?.shopdetails;
-      } );
-      const { shedule, vehicleDetails ,userDetails } = useSelector((state: RootState) => state.bookingdetails.bookingDetails) || {};
-      const { repairWork,locationdetails } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
-    
-
+    const { shopdetails, shedule, vehicleDetails ,userDetails, repairWork, locationdetails} = bookingDetails;
 
     const handlePayment  = async () => {
         if(!stripe || !elements)return;
@@ -47,21 +40,22 @@ const Payment:React.FC<{ isOpen: boolean; closeModal: () => void }> = ({isOpen,c
                 shedule,
                 vehicleDetails,
                 userDetails,
-                amount:repairWork?.priceStart ? repairWork?.priceStart : 50,
-                ...( repairWork && { repairWork }),
+                amount:repairWork?.priceStart || 50,
+                ...( repairWork && { repairWork:repairWork.work }),
                 ...( locationdetails && { locationdetails }),
             }
-            const response = await confirmBooking(token,bookingDetails,'booking payment')
-           
+            const response = await confirmBooking(token,bookingDetails,methodofBooking)
             if(response.status !== HttpStatusCode.SUCCESS)throw new Error('payment failed');
-
             ToastActive('success','payment successfull');
             setLoading(false);
             closeModal()
-        } catch (error) {
+          } catch (error) {
+            console.error('in payment',error)
             ToastActive('error','payment failed');
+            setLoading(false);
+            closeModal()
         }
-    }
+      }
 
   return (
     <div
@@ -81,7 +75,7 @@ const Payment:React.FC<{ isOpen: boolean; closeModal: () => void }> = ({isOpen,c
         </h2>
         <div className="flex mb-4 justify-between">
         <p className="">Payment Amount 
-            <span className='text-xs text-gray-600'>{!repairWork?.priceStart && ' booking charge'}</span>
+            <span className='text-xs text-gray-600'>{!repairWork?.priceStart && `${methodofBooking} charge`}</span>
             </p>
         <p className="font-bold text-green-500">
             <FontAwesomeIcon icon={faIndianRupeeSign} />{' '} 

@@ -8,7 +8,6 @@ const FindWS:React.FC = () => {
     <>
         <Header />
         <Mainbody />
-
         
         <Footer />
     </>

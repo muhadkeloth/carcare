@@ -1,5 +1,4 @@
 import React, {  useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
 import EditProfile from './editcomponents/EditProfile';
 import SidebarShopprofile from './SidebarShopprofile';
 import WorkingTime from './editcomponents/WorkingTime';
@@ -46,13 +45,12 @@ const ShopProfile: React.FC = () => {
 
   return (
     <div className="p-4">
-        {/* <ToastContainer /> */}
 
         <h2 className="text-2xl font-bold ms-1 mt-1 mb-4 pe-1 text-gray-800">
           Profile Management
         </h2>
 
-        {!!isLoading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center">
             <ThreeDots color="#0098D3" />
           </div>

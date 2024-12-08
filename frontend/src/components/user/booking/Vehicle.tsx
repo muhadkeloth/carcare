@@ -1,15 +1,15 @@
 import { faArrowRight, faClock, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react'
-import { DropOffProps } from './dropOff/DropOff'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setVehicleDetails } from '../../../features/bookingSlice';
 import { fetchModeldetail } from '../../../services/userService';
-import { HttpStatusCode } from '../../utilities/interface';
+import { BookingProps, HttpStatusCode } from '../../utilities/interface';
+import { formatDate } from '../../utilities/functions';
 
 
-const Vehicle:React.FC<DropOffProps> = ({setActiveSection}) => {
+const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
   const [make,setMake] = useState('')
   const [year,setYear] = useState('')
   const [model,setModel] = useState('')
@@ -23,15 +23,6 @@ const Vehicle:React.FC<DropOffProps> = ({setActiveSection}) => {
   } );
   const { shedule } = useSelector((state:RootState)=> state.bookingdetails.bookingDetails) || {};
 
-
-  const formatDate = (isoDate: Date | undefined) => {
-    if (!isoDate) return '';
-    const dateObj = new Date(isoDate);
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const year = String(dateObj.getFullYear()).slice(-2); 
-    return `${day}/${month}/${year}`;
-  };
 
   const handlevehicledetails = () => {
     if(make && model && year){

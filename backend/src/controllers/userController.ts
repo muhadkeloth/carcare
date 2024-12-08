@@ -17,7 +17,10 @@ import Vehicle from "../models/Vehicle";
 import { handlePayment } from "./paymentController";
 import BookingService from "../services/BookingService";
 import BookingRepository from "../repositories/BookingRepository";
+import PickupRepository from "../repositories/PickupRepository";
 import Bookings from "../models/Bookings";
+import Pickups from "../models/Pickups";
+import PickupService from "../services/PickupService";
 
 
 
@@ -26,6 +29,7 @@ export default class UserController extends BaseController<IUser> {
   protected shopService: ShopService;
   protected vehicleService: VehicleService;
   protected bookingService: BookingService;
+  protected pickupService: PickupService;
 
   constructor(protected service: UserService) {
     super(service);
@@ -35,14 +39,14 @@ export default class UserController extends BaseController<IUser> {
     this.vehicleService = new VehicleService(vehicleRepository);
     const bookingRepository = new BookingRepository(Bookings)
     this.bookingService = new BookingService(bookingRepository);
-
+    const pickupRepository = new PickupRepository(Pickups)
+    this.pickupService = new PickupService(pickupRepository);
   }
 
   signupOtpGenerate = async (req: Request,res: Response,next: NextFunction) => {
     const { phoneNumber, email } = req.body;
     try {
-      let existingUser = await this.service.findOne({ email });
-      
+      let existingUser = await this.service.findOne({ email });      
       if (existingUser){
         logger.warn('email address already exists')
         throw new AppError("email address already exists",HttpStatusCode.BAD_REQUEST);
@@ -318,29 +322,34 @@ export default class UserController extends BaseController<IUser> {
   };
 
   bookingConfirm = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    const { token, bookingDetails, description } = req.body;
     try {
       if (!req.user){
         logger.warn('password change error, user id not found')
         throw new AppError("password change error, user id not found",HttpStatusCode.BAD_REQUEST);
       }
-      const { token, bookingDetails, description } = req.body;
+      if (!['booking', 'pickup'].includes(description)) {
+        throw new AppError("Invalid description value", HttpStatusCode.BAD_REQUEST);
+      }      
       const bookingdetail = {
         ...bookingDetails,
         userId:req.user,
-        PaymentStatus:'PENDING',
+        paymentStatus:'PENDING',
       }
-      const paymentResult  = await handlePayment(token,bookingDetails.amount,description);
+      const paymentResult  = await handlePayment(token,bookingDetails.amount,`${description} payment`);
+      const bookingservice = description == 'booking' ? this.bookingService : this.pickupService;
       if(paymentResult.success){
-          bookingdetail.PaymentStatus = 'PAID';
-          await this.bookingService.create(bookingdetail);
-          res.status(HttpStatusCode.SUCCESS).json({success:true,message:"Booking confirmed and payment successful."})
+        bookingdetail.paymentStatus = 'PAID';
+        // await this.bookingService.create(bookingdetail);//pickup , booking
+        await bookingservice.create(bookingdetail);
+        res.status(HttpStatusCode.SUCCESS).json({success:true,message:`${description} confirmed and payment successful.`})
       }else{
-          await this.bookingService.create(bookingdetail);
-          res.status(HttpStatusCode.BAD_REQUEST).json({success:false,message:'Payment failed. Booking status set to pending.'})
+        await this.service.create(bookingdetail);
+          res.status(HttpStatusCode.BAD_REQUEST).json({success:false,message:`${description} failed. Booking status set to pending.`})
       }
     } catch (error) {
       const err = error as Error;
-      logger.error(`Error updating shop profile password: ${err.message}`);
+      logger.error(`Error in ${description} confirmation: ${err.message}`);
       next(err);
     }
   }

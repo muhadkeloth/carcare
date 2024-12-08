@@ -1,19 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Shop } from "../components/utilities/interface";
+import { Estimate, estimateState, LocationDetails, Shop } from "../components/utilities/interface";
 
-type estimatetype = {
-    locationdetails?:{
-        description:string;
-        location:[number,number];
-    };
-    vehicleDetails?:{make:string;model:string;year:string;description?:string;};
-    shopdetails?:Shop;
-    repairWork?:{work:string;priceStart:number;priceEnd:number};
-}
 
-interface estimateState {
-    estimateDetails:estimatetype | null,
-}
 const initialState:estimateState = {
     estimateDetails:null,
 }
@@ -21,7 +9,7 @@ const estimateSlice = createSlice({
     name:'estimate',
     initialState,
     reducers:{
-        setEstimateAddress(state,action:PayloadAction<{description:string,location:[number,number]}>){
+        setEstimateAddress(state,action:PayloadAction<LocationDetails>){
             if(state.estimateDetails){
                 state.estimateDetails.locationdetails = action.payload;
             }else{
@@ -35,7 +23,8 @@ const estimateSlice = createSlice({
                 state.estimateDetails = {shopdetails:action.payload};
             }
         },
-        setEstimateWorkDetails(state,action:PayloadAction<{work:string;priceStart:number;priceEnd:number;}>){
+        // setEstimateWorkDetails(state,action:PayloadAction<{work:string;priceStart:number;priceEnd:number;}>){
+        setEstimateWorkDetails(state,action:PayloadAction<Estimate>){
             if(state.estimateDetails){
                 state.estimateDetails.repairWork = action.payload;
             }else{

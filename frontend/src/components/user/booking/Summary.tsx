@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { DropOffProps } from './dropOff/DropOff'
 import { faArrowRight, faCar, faClock, faFile, faIndianRupee, faStar, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
-import Payment from './Payment'
+import Payment, { stripePromise } from '../../reuseComponents/Payment'
 import { Elements } from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
+import { BookingProps } from '../../utilities/interface'
+import { formatDate } from '../../utilities/functions'
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISH_KEY);
 
 
-const Summary:React.FC<DropOffProps> = ({setActiveSection}) => {
+
+const Summary:React.FC<BookingProps> = ({setActiveSection}) => {
   const shopdetails = useSelector((state:RootState)=>{
     return state.estimate.estimateDetails 
     ? state.estimate.estimateDetails.shopdetails
@@ -19,37 +19,17 @@ const Summary:React.FC<DropOffProps> = ({setActiveSection}) => {
   } );
   const { shedule, vehicleDetails ,userDetails } = useSelector((state: RootState) => state.bookingdetails.bookingDetails) || {};
   const { repairWork,locationdetails } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-
-  const formatDate = (isoDate: Date | undefined) => {
-    if (!isoDate) return '';
-    const dateObj = new Date(isoDate);
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); 
-    const year = String(dateObj.getFullYear()).slice(-2); 
-    return `${day}/${month}/${year}`;
-  };
 
   const handleEdit = (path:string) => {
     setActiveSection(path)
   }
 
-
-
-  
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
   
-
-
 
   return (
     <div className="flex flex-col justify-center items-center pt-2  ">
@@ -184,24 +164,39 @@ const Summary:React.FC<DropOffProps> = ({setActiveSection}) => {
           </p>
           <p className="my-3 ">{userDetails?.email}</p>
           <p className="my-3 ">{userDetails?.phoneNumber}</p>
-          <p className="my-3 text-wrap overflow-auto">
+          {locationdetails?.description && locationdetails?.description.length !== 0 && (
+            <p className="my-3 text-wrap overflow-auto">
                 <span className="block text-gray-500 text-sm">address:</span>
                 {locationdetails?.description}
+                {locationdetails?.description.length}
                 </p>
+          )}
         </div>
       </div>
 
       <div className="mt-3 px-1 flex justify-center ">
       <Elements stripe={stripePromise}>
-        <button onClick={openModal} className="btn-primary">
+        <button onClick={()=> setIsModalOpen(true)} className="btn-primary">
           Request Appointment <FontAwesomeIcon icon={faArrowRight} />
         </button>
-      <Payment isOpen={isModalOpen} closeModal={closeModal} />
+      <Payment 
+          isOpen={isModalOpen} 
+          closeModal={closeModal}
+          methodofBooking='booking'
+          bookingDetails={{
+            shopdetails,
+            shedule,
+            vehicleDetails,
+            userDetails,
+            repairWork,
+            locationdetails
+          }} />
       </Elements>
       </div>
 
     </div>
   );
 }
+
 
 export default Summary

@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
-import { estimateProps } from '../estimate/Locationfind'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { setPickCarVehicleDetails } from '../../../features/pickMyCarSlice'
 import { fetchModeldetail } from '../../../services/userService'
-import { HttpStatusCode } from '../../utilities/interface'
+import { BookingProps, HttpStatusCode } from '../../utilities/interface'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { ToastActive } from '../../utilities/functions'
 
-const Vehicle:React.FC<estimateProps> = ({setActiveSection}) => {
+const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
   const [make,setMake] = useState('')
   const [year,setYear] = useState('')
   const [model,setModel] = useState('')
