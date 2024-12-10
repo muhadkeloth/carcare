@@ -26,6 +26,14 @@ export interface IUser extends Document {
     image?:string;
 }
 
+interface Address {
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    pincode: string
+}
+
 export interface IShop extends Document {
     shopName:string;
     ownerName:string;
@@ -35,13 +43,7 @@ export interface IShop extends Document {
     isActive:boolean;
     otp?: string;
     otpExpiry?:Date;
-    address:{
-        street: string;
-        city: string;
-        state: string;
-        country: string;
-        pincode: string;
-    };
+    address:Address;
     location:{
         type:"Point";
         coordinates: [number, number];
@@ -85,22 +87,28 @@ export interface IBookings extends Document {
     shedule:{date:string;time:string};
     vehicleDetails:{make:string,model:string;year:string;description?:string};
     userDetails:{
-        firstName:string;lastName:string;
-        email:string;phoneNumber:string;
+        firstName:string;
+        lastName:string;
+        email:string;
+        phoneNumber:string;
     };
     amount:number;
     repairWork?:string;
     locationdetails?:{
         description:string;
-        location:[number,number];
+        coordinates:[number,number];
     };
-    paymentStatus:'PAID'|'PENDING'|'FAILED' | 'REFUNDED';
-    status: 'PENDING' | 'CONFIRMED' | 'PICKED' | 'CANCELED';
+    paymentStatus:paymentStatus;
+    paymentFailDetails?:{
+        reason:string,
+        actionFrom:'user' | 'shop'
+    };
+    status: pickupStatus;
     createdAt?:Date;
 }
 
-export type paymentStatus = 'PAID'|'PENDING'|'FAILED';
-export type pickupStatus = 'PENDING' | 'CONFIRMED' | 'PICKED' | 'CANCELED';
+export type paymentStatus = 'PAID'|'PENDING'|'FAILED' | 'REFUNDED';
+export type pickupStatus = 'PENDING' | 'CONFIRMED'  | 'COMPLETED' | 'CANCELLED';
 
 
 

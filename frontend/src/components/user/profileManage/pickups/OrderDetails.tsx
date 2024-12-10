@@ -1,22 +1,23 @@
-import React, { useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { BookingDetailsProps } from "../../../utilities/interface";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCar, faClock, faIndianRupee, faPencil, faScrewdriverWrench, faUser, faX, } from "@fortawesome/free-solid-svg-icons";
-import { formatDate, ToastActive } from "../../../utilities/functions";
-import { togglepickupStatus } from "../../../../services/shopService";
-import {  textValidation } from "../../../utilities/validation";
-
-const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [toggleId, setToggleId] = useState("");
-  const [inputDetails, setInputDetails] = useState("");
-  const [reasonError, setReasonError] = useState("");
+import React, { useState } from 'react'
+import { BookingDetailsProps } from '../../../utilities/interface'
+import { formatDate, ToastActive } from '../../../utilities/functions';
+import { textValidation } from '../../../utilities/validation';
+import { cancelpickupStatus } from '../../../../services/userService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCar, faClock, faCreditCard, faIndianRupee, faPencil, faScrewdriverWrench, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 
-  const togglePickupStatus = async (pickupId: string, status: string,reason:string = '') => {
+const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [toggleId, setToggleId] = useState("");
+    const [inputDetails, setInputDetails] = useState("");
+    const [reasonError, setReasonError] = useState("");
+
+
+  const cancelPickupStatus = async (pickupId: string, status: string,reason:string = '') => {
     try {
-      const response = await togglepickupStatus(pickupId, status,reason);
+      const response = await cancelpickupStatus(pickupId, status,reason);
       response.data.updatedPickpDetails &&
         handlesetPickupData &&
         handlesetPickupData(response.data.updatedPickpDetails);
@@ -37,8 +38,9 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
       setReasonError("reason must be at least 4 characters long.");
       return
     }
-    togglePickupStatus(toggleId, "CANCELLED",inputDetails)
+    cancelPickupStatus(toggleId, "CANCELLED",inputDetails)
   }
+
 
   return (
     <div className="space-y-8">
@@ -149,9 +151,16 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                     : "bg-gray-100 text-gray-800"
                 }`}
                   >
-                    {bookingDetails.paymentStatus.charAt(0).toUpperCase() +
-                      bookingDetails.paymentStatus.slice(1)}
+                    {bookingDetails.paymentStatus}
                   </span>
+                  {bookingDetails?.paymentStatus !== 'PAID' && bookingDetails?.status !== 'CANCELLED' && (
+                    <button
+                    // onClick={() =>}
+                    className="btn-primary p-0 px-2"
+                  >
+                    <FontAwesomeIcon icon={faCreditCard} /> Pay now
+                  </button>
+                )}
                 </p>
                 <p>
                   <span className="font-medium">Pickup Status:</span>
@@ -183,31 +192,35 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                   </p>
                     </>
                   )}
-                  {bookingDetails.paymentStatus === 'PAID' && !["COMPLETED", "CANCELLED"].includes(bookingDetails.status) && (
+                  {!["COMPLETED", "CANCELLED"].includes(bookingDetails.status) && (
                     <div className="inline-flex space-x-2 ml-2">
                       <button
-                        onClick={() => 
-                          togglePickupStatus(
-                            bookingDetails._id,
-                            bookingDetails?.status == "PENDING"
-                              ? "CONFIRMED"
-                              : bookingDetails?.status == "CONFIRMED"
-                              ? "COMPLETED"
-                              : ""
-                          )
-                      }
+                        onClick={() => {
+                            setToggleId(bookingDetails._id);
+                            setShowConfirmModal(true);
+                        }}
+                    //     {() => 
+                    //       cancelPickupStatus(
+                    //         bookingDetails._id,
+                    //         bookingDetails?.status == "PENDING"
+                    //           ? "CONFIRMED"
+                    //           : bookingDetails?.status == "CONFIRMED"
+                    //           ? "COMPLETED"
+                    //           : ""
+                    //       )
+                    //   }
                         className="btn-primary p-0 px-2"
                       >
-                        <FontAwesomeIcon icon={faPencil} /> 
-                        {
+                        <FontAwesomeIcon icon={faX} /> cancel
+                        {/* {
                           bookingDetails?.status == "PENDING"
                           ? "CONFIRM"
                           : bookingDetails?.status == "CONFIRMED"
                           ? "complete"
                           : ""
-                        }
+                        } */}
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => {
                           setToggleId(bookingDetails._id);
                           setShowConfirmModal(true);
@@ -215,7 +228,7 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                         className="btn-secondary p-0 px-2"
                       >
                         <FontAwesomeIcon icon={faX} /> cancel
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </p>
@@ -295,7 +308,7 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default OrderDetails;
+export default OrderDetails

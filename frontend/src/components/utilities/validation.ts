@@ -35,3 +35,8 @@ export const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>, maxLeng
     const regex = new RegExp(`^\\d{0,${maxLength}}$`)
     return regex.test(value);
 };
+
+export function textValidation(name:string):returnvalue{
+    const trimmedName = name.trim();
+    return trimmedName.length < 4;
+}

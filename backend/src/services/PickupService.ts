@@ -21,6 +21,15 @@ export default class PickupService extends BaseService<IBookings> {
         return user;
     }
 
+    // async findPickupById(_id:string): Promise<IBookings | null> {
+    //     const pickups =  await this.repository.findPickupsById(_id);
+    //     if(!pickups){
+    //         logger.error('error find pickup details')
+    //         throw new AppError('error find pickup details',HttpStatusCode.BAD_REQUEST);
+    //     } 
+    //     return pickups;
+    // }
+
     async findPickupsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
         const pickups =  await this.repository.findPickupsByShopId(shopId,skip,limit);
         if(!pickups){
@@ -34,15 +43,36 @@ export default class PickupService extends BaseService<IBookings> {
         return await this.repository.findPickupsCountByShopId(shopId);
     }
 
-    async togglePickupStatus(id: string,status:pickupStatus):Promise<IBookings >{
+    async findPickupsByUserId(userId:string,skip:number,limit:number): Promise<IBookings[] | null> {
+        const pickups =  await this.repository.findPickupsByUserId(userId,skip,limit);
+        if(!pickups){
+            logger.error('error find pickup details')
+            throw new AppError('error find pickup details',HttpStatusCode.BAD_REQUEST);
+        } 
+        return pickups;
+    }
+    
+    async findPickupsCountByUserId(userId:string): Promise<number | null> {
+        return await this.repository.findPickupsCountByUserId(userId);
+    }
+
+    async togglePickupStatus(id: string,status:pickupStatus,reason:string,role:'user'|'shop'):Promise<IBookings | null >{
         const pickupdetails = await this.repository.togglePickupStatusById(id);
         if(!pickupdetails){
           logger.error('pickup details not found')
           throw new AppError('pickup details not found',HttpStatusCode.NOT_FOUND);
         } 
         pickupdetails.status = status;
-        return await pickupdetails.save();
-        // return pickupdetails
+        if(pickupdetails.status == 'CANCELLED'){
+            pickupdetails.paymentStatus = 'REFUNDED';
+            pickupdetails.paymentFailDetails = {
+                reason,
+                actionFrom:role,
+            };
+        }
+        // return  await pickupdetails.save();
+        const updatedDetails =  await pickupdetails.save();
+        return await this.repository.findPickupsById({_id:updatedDetails._id})
     }
 
  

@@ -1,5 +1,6 @@
 import React from 'react'
-import { TableProps } from '../utilities/interface';
+import {  TableProps } from '../utilities/interface';
+import { getPaymentStatusColor } from '../utilities/functions';
 
 
 
@@ -23,10 +24,10 @@ const Table:React.FC<TableProps> = ({headers, data, renderActions, onRowClick}) 
             onClick={() => onRowClick && onRowClick(item) }
             className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:opacity-95 dark:hover:opacity-95" >
               {headers.map((header) => (
-                 <td key={header.key} className="py-3 px-4">
+                 <td key={header.key} className={`py-3 px-4 ${header?.className ? getPaymentStatusColor(item[header.key]) : "" }`}>
                  {header.key === 'image' ? (
-                     <img src={item[header.key]} alt="" className="w-16 h-16 object-cover rounded" />
-                    ) : typeof item[header.key] === 'object' ? (
+                     <img src={item[header.key]} alt="" className="w-16 h-16 object-cover rounded " />
+                    )  : typeof item[header.key] === 'object' ? (
                         Object.values(item[header.key]).join(' ')
                     ) : Array.isArray(item[header.key]) ? (
                         item[header.key].join(', ')

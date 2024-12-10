@@ -35,7 +35,15 @@ router.put('/updateprofiledetails', authenticateToken, userController.updateUser
 router.put('/changepassword', authenticateToken, userController.updateUserProfilepassword);
 
 router.post('/bookingConfirm', authenticateToken, userController.bookingConfirm );
-// router.post('/pickUprConfirm', authenticateToken, userController.bookingConfirm );
+
+router.get('/pickupsDetailsByUser', authenticateToken, userController.getUserPickups);
+router.patch('/pickup/:id',authenticateToken, userController.togglePickupStatus);
+
+router.get('/bookingDetailsByUser', authenticateToken, userController.getUserBookings);
+router.patch('/booking/:id',authenticateToken, userController.toggleBookingStatus);
+
+
+
 
 export default router;
 

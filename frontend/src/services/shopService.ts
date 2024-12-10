@@ -191,9 +191,9 @@ export const fetchAllPickupsByShopId = async (page:number):Promise<{status:numbe
     }
 }
 
-export const togglepickupStatus = async (id:string,status:string):Promise<{status:number,data:any}> => {
+export const togglepickupStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
     try {
-        const response = await api.patch(`/shop/pickup/${id}`, {status})
+        const response = await api.patch(`/shop/pickup/${id}`, {status,reason})
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  pickup status');
         return response;
     } catch (error) {
@@ -214,9 +214,9 @@ export const fetchAllBookingsByShopId = async (page:number):Promise<{status:numb
     }
 }
 
-export const toggleBookingStatus = async (id:string,status:string):Promise<{status:number,data:any}> => {
+export const toggleBookingStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
     try {
-        const response = await api.patch(`/shop/booking/${id}`, {status})
+        const response = await api.patch(`/shop/booking/${id}`, {status,reason})
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  booking status');
         return response;
     } catch (error) {

@@ -8,16 +8,35 @@ export default class PickupRepository extends BaseRepository<IBookings>{
         super(pickupModel);
     }
 
-    async findPickupsByShopId(shopId:string,skip:number,limit:number):Promise<IBookings[] | null> {
+    async findPickupsById(data:any):Promise<IBookings | null> {
         return await this.model
-            .find({shopId})
+            .findOne(data)
+            .sort({createdAt: -1})
+            .populate('userId','username email phoneNumber image');
+    }
+
+    async findPickupsByShopId(userId:string,skip:number,limit:number):Promise<IBookings[] | null> {
+        return await this.model
+            .find({userId})
             .sort({createdAt: -1})
             .skip(skip).limit(limit)
             .populate('userId','username email phoneNumber image');
     }
 
-    async findPickupsCountByShopId(shopId:string):Promise<number | null> {
-        return await this.model.countDocuments({shopId})
+    async findPickupsCountByShopId(userId:string):Promise<number | null> {
+        return await this.model.countDocuments({userId})
+    }
+   
+    async findPickupsByUserId(userId:string,skip:number,limit:number):Promise<IBookings[] | null> {
+        return await this.model
+            .find({userId})
+            .sort({createdAt: -1})
+            .skip(skip).limit(limit)
+            .populate('userId','username email phoneNumber image');
+    }
+
+    async findPickupsCountByUserId(userId:string):Promise<number | null> {
+        return await this.model.countDocuments({userId})
     }
 
     async togglePickupStatusById(id:string):Promise<IBookings | null>{

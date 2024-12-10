@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Bounce, toast } from "react-toastify";
-import { Day, Suggestion } from "./interface";
+import { bookingStatus, Day, PaymentStatus, Suggestion } from "./interface";
 import { addDays, endOfMonth, endOfWeek, isAfter, isBefore, isSameDay, isSunday, startOfMonth, startOfWeek } from "date-fns";
 
 
@@ -103,4 +103,15 @@ export const formatDate = (isoDate: Date | undefined | string) => {
   return `${day}/${month}/${year}`;
 };
 
-
+export   const getPaymentStatusColor = (status:bookingStatus|PaymentStatus) => {
+  const colors = {
+    PENDING: ' text-yellow-500 font-semibold',
+    PAID: 'text-green-500 font-semibold inline-flex items-center justify-center',
+    FAILED: ' text-red-500 font-semibold',
+    REFUNDED: ' text-gray-500 font-semibold',
+    CONFIRMED:' text-blue-500 font-semibold',
+    PICKED:' text-green-500 font-semibold',
+    CANCELLED:" text-red-500 font-semibold",
+  };
+  return colors[status] || '';
+};

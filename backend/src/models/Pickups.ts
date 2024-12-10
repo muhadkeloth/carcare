@@ -26,9 +26,13 @@ const PickupsSchema: Schema<IBookings> = new Schema(
         amount:{type:Number},
         locationdetails:{
             description:{type:String},
-            location:[{type:Number}],
+            coordinates:[{type:Number}],
         },
         paymentStatus:{type:String},
+        paymentFailDetails:{
+            reason:{type:String},
+            actionFrom:{type:String}
+        },
         status:{type:String,default:'PENDING'},
         createdAt: { type: Date, default: Date.now },
     },

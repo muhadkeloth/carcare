@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import Table from '../../../reuseComponents/Table';
-import { PickupsDetails } from '../../../utilities/interface';
-import { formatDate, ToastActive } from '../../../utilities/functions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Modal from '../../../reuseComponents/Modal';
-import OrderDetails from './OrderDetails';
-import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import { fetchAllBookingsByShopId } from '../../../../services/shopService';
+import Table from '../../../reuseComponents/Table'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import Modal from '../../../reuseComponents/Modal'
+import OrderDetails from './OrderDetails'
+import { PickupsDetails } from '../../../utilities/interface'
+import { formatDate, ToastActive } from '../../../utilities/functions'
+import { fetchAllBookingsByUser } from '../../../../services/userService'
 
-
-
-const BookingManagement:React.FC = () => {
+const Bookings:React.FC = () => {
   const [bookings, setBookings] = useState<PickupsDetails[]>([]);
   const [tableInputs, setTableInputs] = useState<any[]>([]);
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);
   const [selectedBooking, setSelectedBooking] = useState<PickupsDetails | null>(null);
 
+
   const fetchBookingsByShopId = async(page:number)=>{
     try{
-      const { data } = await fetchAllBookingsByShopId(page);
+      const { data } = await fetchAllBookingsByUser(page);
       if(!data || !data.bookingData) throw new Error('booking details not found')
         setTableInputs(data.bookingData?.map((booking:PickupsDetails) => {
           return {
@@ -71,6 +70,7 @@ const BookingManagement:React.FC = () => {
     fetchBookingsByShopId(currentPage)
 },[currentPage]);
 
+
   return (
     <>
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
@@ -115,7 +115,7 @@ const BookingManagement:React.FC = () => {
         )}
       </Modal>
     </>
-  );
+  )
 }
 
-export default BookingManagement
+export default Bookings

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import SidebarCRUD from '../../reuseComponents/SidebarCRUD'
 import { useNavigate } from 'react-router-dom';
 import { navigateLogout } from '../../utilities/navigate/common';
-import { faKey, faPencil, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faKey, faScrewdriverWrench, faLocationArrow, faPencil, faUser } from '@fortawesome/free-solid-svg-icons';
 import Header from '../reusableComponents/Header';
 import ProfileMain from './ProfileMain';
 import { ToastContainer } from 'react-toastify';
@@ -18,6 +18,8 @@ const ProfileHome:React.FC = () => {
 
     const sections = [
         { key:"profile", label:"Profile", icon: faUser },
+        { key:"bookings", label:"bookings Manage", icon: faScrewdriverWrench },
+        { key:"pickups", label:"pickups Manage", icon: faLocationArrow },
         { key:"editProfile", label:"Edit Profile", icon: faPencil },
         { key:"changePassword", label:"Change Password", icon: faKey },
     ]

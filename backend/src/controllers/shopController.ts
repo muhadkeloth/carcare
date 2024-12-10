@@ -363,10 +363,10 @@ export class ShopController extends BaseController<any> {
         logger.warn(`error to find shop id`);
         throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
       }
-      const PuckupsData = await this.pickupService.findPickupsByShopId(req.user as string,skip,limit)
+      const pickupsData = await this.pickupService.findPickupsByShopId(req.user as string,skip,limit)
       const totalPickups = (await this.pickupService.findPickupsCountByShopId(req.user as string)) ?? 0;
       res.status(HttpStatusCode.SUCCESS).json({
-        PuckupsData,
+        pickupsData,
           totalPages: Math.ceil(totalPickups / limit),
           currentPage: page,
         });
@@ -380,13 +380,17 @@ export class ShopController extends BaseController<any> {
 
   togglePickupStatus = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status,reason } = req.body;
     try {
       if (!id) {
         logger.warn(`id required`)
         throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
       }
-      const updatedPickpDetails = await this.pickupService.togglePickupStatus(id,status);
+      const updatedPickpDetails = await this.pickupService.togglePickupStatus(id,status,reason,'shop');
+      if(!updatedPickpDetails) {
+        logger.warn(`status update error`)
+        throw new AppError("status update error", HttpStatusCode.NOT_FOUND);
+      }
       logger.info(`status successfully changed`)
       res.status(HttpStatusCode.CREATED).json({updatedPickpDetails,message:'status updated successfuly'});
     } catch (error) {
@@ -422,13 +426,17 @@ export class ShopController extends BaseController<any> {
 
   toggleBookingStatus = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status,reason } = req.body;
     try {
       if (!id) {
         logger.warn(`id required`)
         throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
       }
-      const updatedBookingDetails = await this.bookingService.toggleBookingStatus(id,status);
+      const updatedBookingDetails = await this.bookingService.toggleBookingStatus(id,status,reason,'shop');
+      if(!updatedBookingDetails) {
+        logger.warn(`status update error`)
+        throw new AppError("status update error", HttpStatusCode.NOT_FOUND);
+      }
       logger.info(`status successfully changed`)
       res.status(HttpStatusCode.CREATED).json({updatedBookingDetails,message:'status updated successfuly'});
     } catch (error) {

@@ -352,7 +352,6 @@ export enum HttpStatusCode {
   INTERNAL_SERVER_ERROR = 500,
 }
 
-// errorProps to  roleprops
 
 
 
@@ -383,7 +382,7 @@ export interface CRUDbarProps {
 
 
 export interface TableProps{
-  headers:{label:string; key: string}[];
+  headers:{label:string; key: string; className?:string}[];
   data:any[];
   renderActions?:(item:any)=> JSX.Element;
   onRowClick?:(rowData: any) => void;
@@ -416,9 +415,6 @@ export interface TimeSlotProps {
   setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-// export interface estimateProps {
-//   setActiveSection:React.Dispatch<React.SetStateAction<string>>;
-// }
 
 
 
@@ -497,6 +493,7 @@ export interface PickupsDetails extends Omit<BookingDetails,"shopdetails" | 'rep
   paymentStatus:string;
   status:string;
   repairWork?:string;
+  paymentFailDetails?:paymentFailDetails;
 }
 
 
@@ -532,8 +529,8 @@ export interface Location {
 }
 
 
-// export type RepairType = 'oil change' | 'brake service' | 'tire rotation' | 'general maintenance';
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
+export type bookingStatus = 'PENDING' | 'CONFIRMED' | 'PICKED' | 'CANCELLED';
 
 export interface Bookings {
   id: string;
@@ -546,8 +543,10 @@ export interface Bookings {
   date: string;
 }
 
-
-
+interface paymentFailDetails{
+  reason:string;
+  actionFrom:string;
+}
 
 export type Day = {
   date:Date;

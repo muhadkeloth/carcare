@@ -170,7 +170,6 @@ export default class UserController extends BaseController<IUser> {
         logger.warn('shop user not found in backend')
         throw new AppError("shop user not found in backend",HttpStatusCode.NOT_FOUND);
       }
-
       res.status(HttpStatusCode.SUCCESS).json({ shopUser, message: "shop User find successfully" });
     } catch (error) {
         const err = error as Error;
@@ -354,6 +353,97 @@ export default class UserController extends BaseController<IUser> {
     }
   }
 
+  getUserBookings = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const bookingData = await this.bookingService.findBookingsByUserId(req.user as string,skip,limit)
+      const totalBookings = (await this.bookingService.findBookingsCountByUserId(req.user as string)) ?? 0;
+      res.status(HttpStatusCode.SUCCESS).json({
+        bookingData,
+          totalPages: Math.ceil(totalBookings / limit),
+          currentPage: page,
+        });
+      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error fetch booking details: ${err.message}`);
+      next(err);
+    }
+  }
+
+  toggleBookingStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { status,reason } = req.body;
+    try {
+      if (!id) {
+        logger.warn(`id required`)
+        throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
+      }
+      const updatedBookingDetails = await this.bookingService.toggleBookingStatus(id,status,reason,'user');
+      if(!updatedBookingDetails) {
+        logger.warn(`status update error`)
+        throw new AppError("status update error", HttpStatusCode.NOT_FOUND);
+      }
+      logger.info(`status successfully changed`)
+      res.status(HttpStatusCode.CREATED).json({updatedBookingDetails,message:'status updated successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  };
+
+  getUserPickups = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const pickupsData = await this.pickupService.findPickupsByUserId(req.user as string,skip,limit)
+      const totalPickups = (await this.pickupService.findPickupsCountByUserId(req.user as string)) ?? 0;
+      res.status(HttpStatusCode.SUCCESS).json({
+        pickupsData,
+          totalPages: Math.ceil(totalPickups / limit),
+          currentPage: page,
+        });
+      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error fetch pickup  details: ${err.message}`);
+      next(err);
+    }
+  }
+
+  togglePickupStatus = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { status,reason } = req.body;
+    try {
+      if (!id) {
+        logger.warn(`id required`)
+        throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
+      }
+      const updatedPickpDetails = await this.pickupService.togglePickupStatus(id,status,reason,'user');
+      if(!updatedPickpDetails) {
+        logger.warn(`status update error`)
+        throw new AppError("status update error", HttpStatusCode.NOT_FOUND);
+      }
+      logger.info(`status successfully changed`)
+      res.status(HttpStatusCode.CREATED).json({updatedPickpDetails,message:'status updated successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  };
  
 
 

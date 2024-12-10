@@ -27,9 +27,13 @@ const BookingsSchema: Schema<IBookings> = new Schema(
         repairWork: {type:String },
         locationdetails:{
             description:{type:String},
-            location:[{type:Number}],
+            coordinates:[{type:Number}],
         },
         paymentStatus:{type:String},
+        paymentFailDetails:{
+            reason:{type:String},
+            actionFrom:{type:String}
+        },
         status:{type:String,default:'PENDING'},
         createdAt: { type: Date, default: Date.now },
     },

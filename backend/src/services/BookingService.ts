@@ -25,8 +25,8 @@ export default class BookingService extends BaseService<IBookings> {
       async findBookingsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
         const bookings =  await this.repository.findBookingByShopId(shopId,skip,limit);
         if(!bookings){
-            logger.error('error find pickup details')
-            throw new AppError('error find pickup details',HttpStatusCode.BAD_REQUEST);
+            logger.error('error find booking details details')
+            throw new AppError('error find booking details details',HttpStatusCode.BAD_REQUEST);
         } 
         return bookings;
     }
@@ -35,15 +35,42 @@ export default class BookingService extends BaseService<IBookings> {
         return await this.repository.findBookingCountByShopId(shopId);
     }
 
-    async toggleBookingStatus(id: string,status:pickupStatus):Promise<IBookings >{
+      async findBookingsByUserId(userId:string,skip:number,limit:number): Promise<IBookings[] | null> {
+        const bookings =  await this.repository.findBookingByUserId(userId,skip,limit);
+        if(!bookings){
+            logger.error('error find  details')
+            throw new AppError('error find  details',HttpStatusCode.BAD_REQUEST);
+        } 
+        return bookings;
+    }
+    
+    async findBookingsCountByUserId(userId:string): Promise<number | null> {
+        return await this.repository.findBookingCountByUserId(userId);
+    }
+
+    async toggleBookingStatus(id: string,status:pickupStatus,reason:string,role:'user'|'shop'):Promise<IBookings |null >{
         const bookingdetails = await this.repository.toggleBookingStatusById(id);
         if(!bookingdetails){
-          logger.error('pickup details not found')
-          throw new AppError('pickup details not found',HttpStatusCode.NOT_FOUND);
+          logger.error(' details not found')
+          throw new AppError(' details not found',HttpStatusCode.NOT_FOUND);
         } 
         bookingdetails.status = status;
-        return await bookingdetails.save();
-        // return pickupdetails
+        if(bookingdetails.status == 'CANCELLED'){
+            if(bookingdetails.paymentStatus == 'PAID'){
+                bookingdetails.paymentStatus = 'REFUNDED';
+            }else{
+                bookingdetails.paymentStatus = 'FAILED';
+            }
+            bookingdetails.paymentFailDetails = {
+                reason,
+                actionFrom:role
+            };
+        }
+        // return  await pickupdetails.save();
+        const updatedDetails =  await bookingdetails.save();
+        return await this.repository.findBookingsById({_id:updatedDetails._id})
+        // bookingdetails.status = status;
+        // return await bookingdetails.save();
     }
 
 

@@ -150,9 +150,9 @@ const Summary:React.FC<BookingProps> = ({setActiveSection}) => {
 
 
 {/* ******************* */}
-      <div className="border rounded-lg h-96  max-w-xl md:w-2/3 mb-4 ">
+      {/* <div className="border rounded-lg h-96  max-w-xl md:w-2/3 mb-4 ">
           <MapComponent />
-      </div>
+      </div> */}
 {/* ******************* */}
 
 

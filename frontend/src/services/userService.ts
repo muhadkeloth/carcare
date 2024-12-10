@@ -115,3 +115,49 @@ export const confirmBooking = async (token:any,bookingDetails:any,description:st
 }
 
 
+
+export const fetchAllBookingsByUser = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/bookingDetailsByUser?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find booking details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const cancelBookingStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/booking/${id}`, {status,reason})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  booking status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllPickupsByUser = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/pickupsDetailsByUser?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find pickup details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const cancelpickupStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/pickup/${id}`, {status,reason})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  pickup status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
