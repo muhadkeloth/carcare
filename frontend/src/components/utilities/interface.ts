@@ -441,8 +441,8 @@ export interface Vehicle {
 export interface Estimate {
   _id?:string;
   work:string;
-  priceStart:number |null ;
-  priceEnd:number |null;
+  priceStart?:number |null ;
+  priceEnd?:number |null;
 }
 
 
@@ -478,16 +478,17 @@ export interface Shop extends BaseShop {
     vehicleModelIds:string;
 }[];
 estimate?:Estimate[];
-  location?: {
-    type:string;
-    coordinates:[number,number];
-  }; //check
+  location?: Location; //check
+  about?:string;
+  discription?:{title:string,discript:string};
+  workingTime?:{opening:string,closing:string};
 }
 
 
 
 export interface PickupsDetails extends Omit<BookingDetails,"shopdetails" | 'repairWork'> { //chagne name to pickup and booking
   _id:string;
+  shopId?:string | Shop;
   userId:ProfileDoc;
   amount:number;
   paymentStatus:string;
@@ -569,7 +570,8 @@ export interface paymentProps {
 }
 
 interface BookingDetails extends bookingDetailsType {
-  repairWork?:Estimate | null;
+  _id?:string;
+  repairWork?:Estimate | null ;
   locationdetails?:LocationDetails;
 }
 
@@ -635,7 +637,7 @@ export interface PickCarState {
 export interface shopProfile extends BaseShop {
   _id:string;
   isActive:boolean;
-  location:Location;
+  location?:Location;
   address:Address;
   about?:string;
   discription?:{title:string;discript:string};

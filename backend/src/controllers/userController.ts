@@ -320,38 +320,77 @@ export default class UserController extends BaseController<IUser> {
     }
   };
 
-  bookingConfirm = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+  // bookingConfirm = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+  //   const { token, bookingDetails, description } = req.body;
+  //   try {
+  //     if (!req.user){
+  //       logger.warn('password change error, user id not found')
+  //       throw new AppError("password change error, user id not found",HttpStatusCode.BAD_REQUEST);
+  //     }
+  //     if (!['booking', 'pickup'].includes(description)) {
+  //       throw new AppError("Invalid description value", HttpStatusCode.BAD_REQUEST);
+  //     }      
+  //     const bookingdetail = {
+  //       ...bookingDetails,
+  //       userId:req.user,
+  //       paymentStatus:'PENDING',
+  //     }
+  //     const paymentResult  = await handlePayment(token,bookingDetails.amount,`${description} payment`);
+  //     const bookingservice = description == 'booking' ? this.bookingService : this.pickupService;
+  //     if(paymentResult.success){
+  //       bookingdetail.paymentStatus = 'PAID';
+  //       await bookingservice.create(bookingdetail);
+  //       res.status(HttpStatusCode.SUCCESS).json({success:true,message:`${description} confirmed and payment successful.`})
+  //     }else{
+  //       await this.service.create(bookingdetail);
+  //         res.status(HttpStatusCode.BAD_REQUEST).json({success:false,message:`${description} failed. Booking status set to pending.`})
+  //     }
+  //   } catch (error) {
+  //     const err = error as Error;
+  //     logger.error(`Error in ${description} confirmation: ${err.message}`);
+  //     next(err);
+  //   }
+  // }
+
+  // 
+  bookingConfirm = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { token, bookingDetails, description } = req.body;
     try {
-      if (!req.user){
-        logger.warn('password change error, user id not found')
-        throw new AppError("password change error, user id not found",HttpStatusCode.BAD_REQUEST);
-      }
+      if (!req.user) {
+        logger.warn('Booking confirmation error: User ID not found');
+        throw new AppError("Booking confirmation error: User ID not found", HttpStatusCode.BAD_REQUEST);
+      }  
       if (!['booking', 'pickup'].includes(description)) {
         throw new AppError("Invalid description value", HttpStatusCode.BAD_REQUEST);
-      }      
-      const bookingdetail = {
+      }  
+      let bookingdetail = {
         ...bookingDetails,
-        userId:req.user,
-        paymentStatus:'PENDING',
-      }
-      const paymentResult  = await handlePayment(token,bookingDetails.amount,`${description} payment`);
-      const bookingservice = description == 'booking' ? this.bookingService : this.pickupService;
-      if(paymentResult.success){
+        userId: req.user,
+        paymentStatus: 'PENDING',
+      };   
+      const paymentResult = await handlePayment(token, bookingDetails.amount, `${description} payment`);
+      const bookingservice = description === 'booking' ? this.bookingService : this.pickupService;
+      if (paymentResult.success) {
         bookingdetail.paymentStatus = 'PAID';
-        // await this.bookingService.create(bookingdetail);//pickup , booking
-        await bookingservice.create(bookingdetail);
-        res.status(HttpStatusCode.SUCCESS).json({success:true,message:`${description} confirmed and payment successful.`})
-      }else{
-        await this.service.create(bookingdetail);
-          res.status(HttpStatusCode.BAD_REQUEST).json({success:false,message:`${description} failed. Booking status set to pending.`})
+        if(bookingdetail._id){
+          await bookingservice.updatePaymentStatus(bookingdetail._id, bookingdetail); 
+        }else{
+          await bookingservice.create(bookingdetail);
+        }
+         res.status(HttpStatusCode.SUCCESS).json({ success: true, message: `${description} confirmed and payment successful.` });
+      } else {
+        if (!bookingDetails._id) {
+          await bookingservice.create(bookingdetail);
+        }
+         res.status(HttpStatusCode.BAD_REQUEST).json({ success: false, message: `${description} failed. Booking status set to pending.` });
       }
     } catch (error) {
       const err = error as Error;
       logger.error(`Error in ${description} confirmation: ${err.message}`);
       next(err);
     }
-  }
+  };
+  // 
 
   getUserBookings = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
     const page = parseInt(req.query.page as string) || 1;

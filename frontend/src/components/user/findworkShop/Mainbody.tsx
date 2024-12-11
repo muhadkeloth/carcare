@@ -12,6 +12,7 @@ import Navbar from "./Navbar";
 import { useDispatch } from "react-redux";
 import { clearbookingdetails, setShopdetails } from "../../../features/bookingSlice";
 import { clearestimateDetails } from "../../../features/estimateSlice";
+import { setShopUser } from "../../../features/shopSlice";
 
 const Mainbody: React.FC = () => {
   const [hoveredLocation, setHoveredLocation] = useState<[number, number]|null>(null);
@@ -30,6 +31,7 @@ const Mainbody: React.FC = () => {
         setHoveredLocation([latitude,longitude]);        
         const shopsData = await fetchNearbyShops(latitude, longitude);
         setShops(shopsData);
+        console.log('shopsData',shopsData)
       });
     } catch (error) {
       const errorMessage = (error as Error).message;
@@ -55,6 +57,11 @@ const Mainbody: React.FC = () => {
     event.stopPropagation(); 
     dispatch(setShopdetails(shop))
     navigateBookingSlot(navigate);
+  }
+
+  const handleShopDetails = (shop:Shop) => {
+    dispatch(setShopUser(shop));
+    navigateShopDetailPage(navigate, shop._id)
   }
 
   useEffect(() => {
@@ -92,7 +99,7 @@ const Mainbody: React.FC = () => {
                   })
                 }
                 onMouseLeave={() => handleCursorLeave()}
-                onClick={() => navigateShopDetailPage(navigate, shop._id)}
+                onClick={() => handleShopDetails(shop)}
                 className="flex border-b p-4  ps-4 cursor-pointer hover:bg-sky-50"
               >
                 <div className="w-2/6 h-[228px] rounded  ">

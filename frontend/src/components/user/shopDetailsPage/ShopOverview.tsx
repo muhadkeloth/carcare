@@ -1,8 +1,11 @@
 import { faAward, faCar, faShield, faStar, faUser, faWrench } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 const ShopOverview:React.FC = () => {
+  const {about, discription, image, shopName} = useSelector((state:RootState) => state.shop.shopDetails) || {};
 
     const stats = [
         { 
@@ -55,8 +58,9 @@ const ShopOverview:React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="aspect-video w-full">
           <img
-            src="https://images.unsplash.com/photo-1613214150384-277d56f2edd4?auto=format&fit=crop&w=1600&q=80"
-            alt="PV Garagesz Workshop"
+            // src="https://images.unsplash.com/photo-1613214150384-277d56f2edd4?auto=format&fit=crop&w=1600&q=80"
+            src={image}
+            alt={shopName}
             className="w-full h-full object-cover"
           />
         </div>
@@ -80,18 +84,20 @@ const ShopOverview:React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900">About Us</h2>
-            <p className="text-gray-600 leading-relaxed">
-              Welcome to PV Garagesz, your trusted automotive care partner. We are a full-service 
+            <h2 className="text-2xl font-bold text-gray-900">{ discription?.title }</h2>
+            <p className="text-gray-600 leading-relaxed">{ discription?.discript }
+              {/* Welcome to PV Garagesz, your trusted automotive care partner. We are a full-service 
               auto repair shop committed to providing professional car care services with state-of-the-art 
               equipment and certified technicians. Our team specializes in servicing multiple car brands 
-              including Nissan, Honda, Chevy, and Toyota.
+              including Nissan, Honda, Chevy, and Toyota. */}
             </p>
+            <h2 className="text-2xl font-bold text-gray-900">About Us</h2>
             <p className="text-gray-600 leading-relaxed">
-              With over a decade of experience, we've built our reputation on quality workmanship, 
+              { about?.length !== 0 ? about : '' }
+              {/* With over a decade of experience, we've built our reputation on quality workmanship, 
               honest pricing, and exceptional customer service. Our facility is equipped with the 
               latest diagnostic tools and equipment to handle everything from routine maintenance 
-              to complex repairs.
+              to complex repairs. */}
             </p>
           </div>
         </div>

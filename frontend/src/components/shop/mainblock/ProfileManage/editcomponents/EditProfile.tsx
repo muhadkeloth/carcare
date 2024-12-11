@@ -18,7 +18,7 @@ const EditProfile: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<
     [number, number] | null
   >(
-    shopUserDetails?.location.coordinates
+    shopUserDetails?.location?.coordinates
       ? [
           shopUserDetails.location.coordinates[0],
           shopUserDetails.location.coordinates[1],
@@ -98,7 +98,7 @@ const EditProfile: React.FC = () => {
       JSON.stringify(editedShopUser) !== JSON.stringify(shopUserDetails);
     const locationChanged =
       JSON.stringify(selectedLocation) !==
-      JSON.stringify(shopUserDetails?.location.coordinates);
+      JSON.stringify(shopUserDetails?.location?.coordinates);
     if (!changesMade && !locationChanged) {
       ToastActive("info", "No changes applied.");
       return;

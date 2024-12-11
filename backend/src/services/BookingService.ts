@@ -14,13 +14,33 @@ export default class BookingService extends BaseService<IBookings> {
 
     // ******************************************
     async create(data: IBookings): Promise<IBookings> {
-        const user =  await this.repository.create(data);
-        if(!user){
+        const booking =  await this.repository.create(data);
+        if(!booking){
             logger.error('error in create')
             throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
         } 
-        return user;
+        return booking;
       }
+
+      async updatePaymentStatus(_id:string,data: IBookings): Promise<IBookings> {
+        const booking =  await this.repository.findBookingsById({_id});
+        if(!booking){
+            logger.error('error in create')
+            throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
+        } 
+        booking.paymentStatus = data.paymentStatus;
+        return await booking.save();
+        // const updatedBooking = await this.repository.update(id,data);
+        // if(!updatedBooking){
+        //     logger.error('error in create')
+        //     throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
+        // }
+        // return updatedBooking;
+    }
+
+
+
+
 
       async findBookingsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
         const bookings =  await this.repository.findBookingByShopId(shopId,skip,limit);

@@ -115,3 +115,25 @@ export   const getPaymentStatusColor = (status:bookingStatus|PaymentStatus) => {
   };
   return colors[status] || '';
 };
+
+export const formatPhoneNumber = (phone:string) => {
+  return `${phone.slice(0,3)}-${phone.slice(3,6)}-${phone.slice(6)}`;
+}
+
+export const formatTime = (time: string) => {
+  const hours = parseInt(time.slice(0, 2));
+  const suffix = hours < 12 ? 'AM' : 'PM';
+  const formattedHours = hours > 12 ? hours - 12 : hours;
+  const formattedTime = `${formattedHours}:${time.slice(3)} ${suffix}`;
+  return formattedTime;
+};
+
+export const getNextAvailableDate = ():string => {
+  const today = new Date();
+  const nextAvailableDate = new Date(today);
+  do{
+    nextAvailableDate.setDate(nextAvailableDate.getDate() + 1);
+  } while (nextAvailableDate.getDate() === 6 || nextAvailableDate.getDate() === 0);
+  
+  return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric',year:'numeric'})
+}

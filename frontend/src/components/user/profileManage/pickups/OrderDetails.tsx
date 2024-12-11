@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import { BookingDetailsProps } from '../../../utilities/interface'
+import { BookingDetailsProps, Shop } from '../../../utilities/interface'
 import { formatDate, ToastActive } from '../../../utilities/functions';
 import { textValidation } from '../../../utilities/validation';
 import { cancelpickupStatus } from '../../../../services/userService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faClock, faCreditCard, faIndianRupee, faPencil, faScrewdriverWrench, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faClock, faCreditCard, faIndianRupee, faScrewdriverWrench, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { Elements } from '@stripe/react-stripe-js';
+import Payment, { stripePromise } from '../../../reuseComponents/Payment';
 
 
 const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
@@ -13,6 +15,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
     const [toggleId, setToggleId] = useState("");
     const [inputDetails, setInputDetails] = useState("");
     const [reasonError, setReasonError] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   const cancelPickupStatus = async (pickupId: string, status: string,reason:string = '') => {
@@ -40,6 +43,10 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
     }
     cancelPickupStatus(toggleId, "CANCELLED",inputDetails)
   }
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
 
   return (
@@ -89,25 +96,25 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
 
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex items-center space-x-2 mb-4">
-          {bookingDetails?.userId?.image ? (
-                <img src={bookingDetails?.userId?.image} alt="user img" className=" w-8 h-8 rounded-full" />
+          {typeof bookingDetails?.shopId !== 'string' && bookingDetails?.shopId?.image ? (
+                <img src={bookingDetails?.shopId?.image} alt="user img" className=" w-8 h-8 rounded-full" />
               ):(
                 <FontAwesomeIcon icon={faUser} />
               )}{" "}
-            <h3 className="text-lg font-semibold">Customer Details</h3>
+            <h3 className="text-lg font-semibold">Shop Details</h3>
           </div>
           <div className="space-y-2 mb-2">
             <p>
               <span className="font-medium">Name:</span>{" "}
-              {bookingDetails?.userId?.username}{" "}
+              {typeof bookingDetails?.shopId !== 'string' && bookingDetails?.shopId?.shopName}{" "}
             </p>
             <p>
               <span className="font-medium">Email:</span>{" "}
-              {bookingDetails?.userId?.email}
+              {typeof bookingDetails?.shopId !== 'string' && bookingDetails?.shopId?.email}
             </p>
           </div>
           <div className="space-y-2 ">
-            <p className="font-medium text-gray-500">Address</p>
+            <p className="font-medium text-gray-500">User Address</p>
             <p>
               <span className="font-medium">Name:</span>{" "}
               {bookingDetails?.userDetails?.firstName}{" "}
@@ -154,13 +161,42 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
                     {bookingDetails.paymentStatus}
                   </span>
                   {bookingDetails?.paymentStatus !== 'PAID' && bookingDetails?.status !== 'CANCELLED' && (
-                    <button
-                    // onClick={() =>}
-                    className="btn-primary p-0 px-2"
-                  >
-                    <FontAwesomeIcon icon={faCreditCard} /> Pay now
-                  </button>
-                )}
+                  //   <button
+                  //   onClick={() =>}
+                  //   className="btn-primary p-0 px-2"
+                  // >
+                  //   <FontAwesomeIcon icon={faCreditCard} /> Pay now
+                  // </button>
+                  // <div className="mt-3 px-1 flex justify-center ">
+      <Elements stripe={stripePromise}>
+        <button onClick={()=> setIsModalOpen(true)} className="p-0 px-2 btn-primary">
+        <FontAwesomeIcon icon={faCreditCard} /> Pay now
+        </button>
+      <Payment 
+          isOpen={isModalOpen} 
+          closeModal={closeModal}
+          methodofBooking='pickup'
+          // bookingDetails={bookingDetails}
+          bookingDetails={{
+            _id:bookingDetails._id,
+            shopdetails:bookingDetails?.shopId as Shop,
+            shedule:bookingDetails?.shedule,
+            vehicleDetails:bookingDetails?.vehicleDetails,
+            userDetails:bookingDetails?.userDetails,
+            locationdetails:bookingDetails?.locationdetails,
+          }}
+          // bookingDetails={{
+          //   shopdetails,
+          //   shedule,
+          //   vehicleDetails,
+          //   userDetails,
+          //   repairWork,
+          //   locationdetails
+          // }}
+           />
+      </Elements>
+      // </div>
+                 )} 
                 </p>
                 <p>
                   <span className="font-medium">Pickup Status:</span>
@@ -209,7 +245,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
                     //           : ""
                     //       )
                     //   }
-                        className="btn-primary p-0 px-2"
+                        className="btn-secondary p-0 px-2"
                       >
                         <FontAwesomeIcon icon={faX} /> cancel
                         {/* {

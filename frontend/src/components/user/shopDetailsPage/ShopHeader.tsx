@@ -1,6 +1,9 @@
 import { faClock, faEnvelope, faMapPin, faPhone, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
+import { formatPhoneNumber, formatTime } from '../../utilities/functions';
 
 
 interface ShopHeaderProps {
@@ -10,18 +13,21 @@ interface ShopHeaderProps {
 
 
 const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }) => {
+    const { address , shopName, phoneNumber, email, workingTime} = useSelector((state:RootState) => state.shop.shopDetails) || {}
     const tabs = [
         { id: 'overview', label: 'Overview' },
         { id: 'services', label: 'Services' },
         { id: 'reviews', label: 'Reviews' }
       ];
 
+
+
   return (
-    <div className="bg-white shadow-sm sticky top-0 z-50">
+    <div className="bg-white shadow-sm sticky top-0 z-40">
     <div className="container max-w-7xl mx-auto px-4">
       <div className="py-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">PV Garagesz</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{shopName && shopName[0]?.toUpperCase() + shopName?.slice(1)}</h1>
           <div className="flex items-center gap-2">
             <FontAwesomeIcon icon={faStar} className='text-yellow-400 ' />
             <span className="font-semibold">4.8</span>
@@ -31,19 +37,21 @@ const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="flex items-center gap-2 text-gray-600">
             <FontAwesomeIcon icon={faMapPin}  />
-            <span>Payyannur Taluk, Kerala</span>
+            <span>{address?.city.length !== 0 ? address?.city : address?.state }</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600">
             <FontAwesomeIcon icon={faClock} className='text-mainclr-500' />
-            <span>10:00 AM - 6:00 PM</span>
+            {/* <span>10:00 AM - 6:00 PM</span> */}
+            <span>{formatTime(workingTime?.opening || '')} - {formatTime(workingTime?.closing || '')}
+              </span>
           </div>
           <div className="flex items-center gap-2 text-gray-600">
             <FontAwesomeIcon icon={faPhone} className='text-mainclr-500' />
-            <span>345-315-3453</span>
+            <span>{formatPhoneNumber(phoneNumber || '')}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600">
             <FontAwesomeIcon icon={faEnvelope} className='text-mainclr-500' />
-            <span>hydypu@cyclelove.cc</span>
+            <span>{ email }</span>
           </div>
         </div>
       </div>

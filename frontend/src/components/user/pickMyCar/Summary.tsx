@@ -18,8 +18,6 @@ const Summary:React.FC<BookingProps> = ({setActiveSection}) => {
     };
 
 
-
-
     const handleEdit = (path:string) => {
         setActiveSection(path)
       }

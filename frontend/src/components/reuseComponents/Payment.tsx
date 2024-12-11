@@ -16,7 +16,7 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { shopdetails, shedule, vehicleDetails ,userDetails, repairWork, locationdetails} = bookingDetails;
+    const { _id, shopdetails, shedule, vehicleDetails ,userDetails, repairWork, locationdetails} = bookingDetails;
 
     const handlePayment  = async () => {
         if(!stripe || !elements)return;
@@ -41,6 +41,7 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
                 vehicleDetails,
                 userDetails,
                 amount:repairWork?.priceStart || 50,
+                ...( _id && {_id}),
                 ...( repairWork && { repairWork:repairWork.work }),
                 ...( locationdetails && { locationdetails }),
             }

@@ -13,12 +13,28 @@ export default class PickupService extends BaseService<IBookings> {
     
 
     async create(data: IBookings): Promise<IBookings> {
-        const user =  await this.repository.create(data);
-        if(!user){
+        const pickups =  await this.repository.create(data);
+        if(!pickups){
             logger.error('error in create')
             throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
         } 
-        return user;
+        return pickups;
+    }
+    
+    async updatePaymentStatus(_id:string,data: IBookings): Promise<IBookings> {
+        const pickups =  await this.repository.findPickupsById({_id});
+        if(!pickups){
+            logger.error('error in create')
+            throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
+        } 
+        pickups.paymentStatus = data.paymentStatus;
+        return await pickups.save();
+        // const updatedPickup = await this.repository.update(id,data);
+        // if(!updatedPickup){
+        //     logger.error('error in create')
+        //     throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
+        // }
+        // return updatedPickup;
     }
 
     // async findPickupById(_id:string): Promise<IBookings | null> {

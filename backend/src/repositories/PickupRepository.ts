@@ -32,6 +32,7 @@ export default class PickupRepository extends BaseRepository<IBookings>{
             .find({userId})
             .sort({createdAt: -1})
             .skip(skip).limit(limit)
+            .populate('shopId','-password')
             .populate('userId','username email phoneNumber image');
     }
 
