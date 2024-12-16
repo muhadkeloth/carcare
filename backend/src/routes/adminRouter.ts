@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import upload from '../middleware/upload';
-import { authenticateToken } from '../middleware/auth';
+// import { authenticateToken } from '../middleware/auth';
 import AdminController from '../controllers/adminController';
 import AdminService from '../services/AdminService';
 import AdminRepository from '../repositories/AdminRepository';
 import User from '../models/User';
+import { authenticateTokenOfAdmin } from '../middleware/auth';
 
 
 const router = Router();
@@ -19,17 +20,22 @@ router.post('/otpgenerate', adminController.otpgenerate);
 router.post('/otpvalidation', adminController.otpvalidation);
 router.post('/resetPassword', adminController.resetPassword);
 
-router.get('/users',authenticateToken, adminController.userDetails);
-router.patch('/user/:id',authenticateToken, adminController.toggleStatus);
+// router.get('/users',authenticateToken, adminController.userDetails);
+router.get('/users',authenticateTokenOfAdmin, adminController.userDetails);
+router.patch('/user/:id',authenticateTokenOfAdmin, adminController.toggleStatus);
 
-router.get('/shopdetails', authenticateToken, adminController.shopdetails);
-router.post('/addShop',authenticateToken, upload.single('image'), adminController.addShop);
-router.patch('/shopstatus/:id',authenticateToken, adminController.toggleShopStatus);
+router.get('/shopdetails', authenticateTokenOfAdmin, adminController.shopdetails);
+router.post('/addShop',authenticateTokenOfAdmin, upload.single('image'), adminController.addShop);
+router.patch('/shopstatus/:id',authenticateTokenOfAdmin, adminController.toggleShopStatus);
 
-router.get('/vehicledetails', authenticateToken, adminController.getvehicleDetails);
-router.post('/addvehicle', authenticateToken, adminController.addVehicleDetails);
-router.put('/editvehicle', authenticateToken, adminController.editVehicleDetails);
-router.delete('/deletevehicle/:brand', authenticateToken, adminController.deleteVehicleDetails);
+router.get('/vehicledetails', authenticateTokenOfAdmin, adminController.getvehicleDetails);
+router.post('/addvehicle', authenticateTokenOfAdmin, adminController.addVehicleDetails);
+router.put('/editvehicle', authenticateTokenOfAdmin, adminController.editVehicleDetails);
+router.delete('/deletevehicle/:brand', authenticateTokenOfAdmin, adminController.deleteVehicleDetails);
+
+router.get('/dashStatistics',authenticateTokenOfAdmin, adminController.dashStatistics);
+router.get('/barChartFilter',authenticateTokenOfAdmin, adminController.barChartFilter);
+router.get('/lineChartFilter',authenticateTokenOfAdmin, adminController.lineChartFilter);
 
 
 export default router;

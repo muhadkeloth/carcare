@@ -12,10 +12,18 @@ import logger from "../middleware/logger";
 import VehicleService from "../services/VehicleService";
 import VehicleRepository from "../repositories/VehicleRepository";
 import Vehicle from "../models/Vehicle";
+import BookingService from "../services/BookingService";
+import PickupService from "../services/PickupService";
+import BookingRepository from "../repositories/BookingRepository";
+import PickupRepository from "../repositories/PickupRepository";
+import Bookings from "../models/Bookings";
+import Pickups from "../models/Pickups";
 
 export default class AdminController extends BaseController<IUser> {
   protected shopService: ShopService;
   protected vehicleService: VehicleService;
+  protected bookingService: BookingService;
+  protected pickupService: PickupService;
 
   constructor(protected service: AdminService) {
     super(service);
@@ -23,6 +31,10 @@ export default class AdminController extends BaseController<IUser> {
     this.shopService = new ShopService(shopRepository);
     const vehicleRepository = new VehicleRepository(Vehicle)
     this.vehicleService = new VehicleService(vehicleRepository);
+    const bookingRepository = new BookingRepository(Bookings)
+    this.bookingService = new BookingService(bookingRepository);
+    const pickupRepository = new PickupRepository(Pickups)
+    this.pickupService = new PickupService(pickupRepository);
   }
 
     userDetails = async (req: Request, res: Response, next: NextFunction) => {
@@ -205,6 +217,100 @@ export default class AdminController extends BaseController<IUser> {
         next(err);
     }
   };
+
+  // 
+  dashStatistics = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const [
+        bookingsCountforChart,
+        pickupsCountforChart,
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+        bookingsRatingCountforChart,
+        pickupsRatingCountforChart,
+        UpComingbookings,
+        UpComingpickups,
+        totalbookingsbyStatus,
+        totalpickupsbyStatus,
+        totalbookingRevenue,
+        totalpickupRevenue
+      ] = await Promise.all([
+        this.bookingService.getCompletedBookings(),
+        this.pickupService.getCompletedPickups(),
+        this.bookingService.getPricesBooking(),
+        this.pickupService.getPricesPickups(),
+        this.bookingService.getRatingBooking(),
+        this.pickupService.getRatingPickups(),
+        this.bookingService.getUpComingBooking(),
+        this.pickupService.getUpComingPickups(),
+        this.bookingService.getTotalBookingByStatus(),
+        this.pickupService.getTotalPickupsByStatus(),
+        this.bookingService.getTotalBookingRevenue(),
+        this.pickupService.getTotalPickupRevenue(),
+      ])
+
+      res.status(HttpStatusCode.SUCCESS).json({message:"successsfully fetch dash statistics",
+        bookingsCountforChart,
+        pickupsCountforChart,
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+        bookingsRatingCountforChart,
+        pickupsRatingCountforChart,
+        UpComingbookings,
+        UpComingpickups,
+        totalbookingsbyStatus,
+        totalpickupsbyStatus,
+        totalbookingRevenue,
+        totalpickupRevenue
+      })
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  barChartFilter = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const period = ['monthly','yearly','weekly'].includes(req.query.period as string) ? (req.query.period as 'monthly' | 'yearly' | 'weekly') : 'monthly';
+      const [
+        bookingsCountforChart,
+        pickupsCountforChart,
+      ] = await Promise.all([
+        this.bookingService.getCompletedBookings(),
+        this.pickupService.getCompletedPickups(),
+      ])
+      res.status(HttpStatusCode.SUCCESS).json({message:"successsfully filtered bar chart",
+        bookingsCountforChart,
+        pickupsCountforChart,
+      })      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+ 
+  lineChartFilter = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const period = ['monthly','yearly','weekly'].includes(req.query.period as string) ? (req.query.period as 'monthly' | 'yearly' | 'weekly') : 'monthly';
+      const [
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+      ] = await Promise.all([
+        this.bookingService.getPricesBooking(),
+        this.pickupService.getPricesPickups(),
+      ])
+      res.status(HttpStatusCode.SUCCESS).json({message:"successsfully filtered line chart",
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+      })      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
 
 
 

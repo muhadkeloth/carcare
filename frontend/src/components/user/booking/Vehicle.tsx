@@ -130,7 +130,18 @@ const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
                    <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
                      {shopdetails?.shopName && shopdetails?.shopName[0].toUpperCase() + shopdetails?.shopName.slice(1)}
                    </h2>
-                   <p className='text-gray-500 text-sm'> <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15)</p>
+                   <p className='text-gray-500 text-sm'> 
+                   {shopdetails?.rating && (
+                        <>
+                        <FontAwesomeIcon
+                        icon={faStar}
+                        className="text-yellow-400"
+                        />{" "}
+                      {(shopdetails.rating.ratingSum / shopdetails.rating.count).toFixed(1)} ({shopdetails.rating.count})
+                        </>
+                      )}
+                    {/* <FontAwesomeIcon icon={faStar} className="text-yellow-400" /> 4.8 (15) */}
+                    </p>
                  </div>
                    <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
                      {shopdetails?.address && Object.values(shopdetails?.address).join(" ")}

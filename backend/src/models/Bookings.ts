@@ -34,6 +34,7 @@ const BookingsSchema: Schema<IBookings> = new Schema(
             reason:{type:String},
             actionFrom:{type:String}
         },
+        review:{rating:{type:Number},feedback:{type:String}},
         status:{type:String,default:'PENDING'},
         createdAt: { type: Date, default: Date.now },
     },

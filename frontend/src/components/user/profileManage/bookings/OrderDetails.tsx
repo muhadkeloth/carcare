@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { BookingDetailsProps, Estimate, Shop } from '../../../utilities/interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faClock, faCreditCard, faIndianRupee, faScrewdriverWrench, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faClock, faComment, faCreditCard, faIndianRupee, faScrewdriverWrench, faStar, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, ToastActive } from '../../../utilities/functions';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { textValidation } from '../../../utilities/validation';
-import { cancelBookingStatus } from '../../../../services/userService';
+import { cancelBookingStatus, updateFeedback } from '../../../../services/userService';
 import { Elements } from '@stripe/react-stripe-js';
 import Payment, { stripePromise } from '../../../reuseComponents/Payment';
 
@@ -16,8 +16,10 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
     const [inputDetails, setInputDetails] = useState("");
     const [reasonError, setReasonError] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    console.log('bookingDetails',bookingDetails)
+    const [rating,setRating] = useState(0);
+    const [showFeedbackModel,setShowFeedbackModel] = useState(false)
+    const [feedbackInput, setFeedbackInput] = useState('')
+    const [feedbackError,setFeedbackError] =useState({rating:'',feedback:''})
 
 
     const togglePickupStatus = async(bookingId:string,status:string,reason:string = '') => {
@@ -43,8 +45,34 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
         setReasonError("reason must be at least 4 characters long.");
         return
       }
-      togglePickupStatus(toggleId, "CANCELLED",inputDetails)
+      togglePickupStatus(toggleId, "CANCELED",inputDetails)
     };
+
+    const handleFeedbackSubmit = async() => {
+      setFeedbackError({rating:'',feedback:''});
+      if(feedbackInput.trim().length < 4){
+        setFeedbackError({...feedbackError,feedback:'please add valuable feedback'});
+        return 
+      }
+      if(!rating){
+        setFeedbackError({...feedbackError,rating:'please select Rating'});
+        return 
+      }
+      setRating(0);
+      try {
+        const response = await updateFeedback(toggleId,rating,feedbackInput.trim(),'booking');
+        response.data.updatedPickpDetails &&
+          handlesetPickupData &&
+          handlesetPickupData(response.data.updatedPickpDetails);
+        ToastActive("success", "status changed successfully");
+      } catch (error) {
+        const errorMessage = (error as Error).message;
+        ToastActive("error", errorMessage);
+      }finally {
+        setToggleId("");
+        setShowFeedbackModel(false);
+      }
+    }
 
     const closeModal = () => {
       setIsModalOpen(false);
@@ -170,7 +198,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                 >
                   {bookingDetails.paymentStatus}
                 </span>
-                {bookingDetails?.paymentStatus !== 'PAID' && bookingDetails?.status !== 'CANCELLED' && (
+                {bookingDetails?.paymentStatus !== 'PAID' && bookingDetails?.status !== 'CANCELED' && (
                   //   <button
                   //   // onClick={() =>}
                   //   className="btn-primary p-0 px-2"
@@ -218,17 +246,17 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                   ? "bg-yellow-100 text-yellow-800"
                   : bookingDetails.status === "CONFIRMED"
                   ? "bg-blue-100 text-blue-800"
-                  : bookingDetails.status === "CANCELLED"
+                  : bookingDetails.status === "CANCELED"
                   ? "bg-red-100 text-red-800"
                   : "bg-gray-100 text-gray-800"
               }`}
                 >
                   {bookingDetails.status}
                 </span>
-                {bookingDetails?.status == 'CANCELLED' &&  bookingDetails?.paymentFailDetails && (
+                {bookingDetails?.status == 'CANCELED' &&  bookingDetails?.paymentFailDetails && (
                   <>
                   <p>
-                  <span className="font-medium ">Cancelled By: </span> 
+                  <span className="font-medium ">Canceled By: </span> 
                   {bookingDetails.paymentFailDetails.actionFrom == 'shop' ? 'workshop' : 'user'}
                 </p>
                   <p>
@@ -237,7 +265,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                 </p>
                   </>
                 )}
-                { !["COMPLETED", "CANCELLED"].includes(bookingDetails.status) && (
+                { !["COMPLETED", "CANCELED"].includes(bookingDetails.status) && (
                   <div className="inline-flex space-x-2 ml-2">                    
                     <button
                       onClick={() => {
@@ -250,6 +278,41 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                     </button>
                   </div>
                 )}
+                {bookingDetails.status === "COMPLETED" &&
+                  !bookingDetails.review ? (
+                    <div className="inline-flex space-x-2 ml-2">
+                      <button
+                        onClick={() => {
+                          setToggleId(bookingDetails._id);
+                          setShowFeedbackModel(true);
+                        }}
+                        className="mt-2 bg-yellow-400 text-white py-1 rounded  px-2 hover:bg-yellow-600 "
+                      >
+                        <FontAwesomeIcon icon={faComment} /> write feedback
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className='py-1'>
+                        <span className="font-medium ">Rating: </span>
+                        {typeof bookingDetails?.review?.rating === 'number' && [...Array(5)].map((star) => (
+                          <FontAwesomeIcon
+                            key={star}
+                            icon={faStar}
+                            className={`cursor-pointer text-1xl  mr-1 ${
+                              star <= (bookingDetails?.review?.rating as number)
+                                ? "text-yellow-500"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </p>
+                      <p>
+                        <span className="font-medium ">Feedback: </span>
+                        {bookingDetails.review?.feedback}                        
+                      </p>
+                    </>
+                  )}
               </p>
             </>
           )}
@@ -329,6 +392,72 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
         </div>
       </div>
     )}
+    {showFeedbackModel && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+            <h3 className="flex justify-between text-lg font-bold mb-4">
+              Provide Feedback for the Shop
+              <FontAwesomeIcon
+                icon={faX}
+                className="cursor-pointer"
+                onClick={() => {
+                  setShowFeedbackModel(false);
+                  setToggleId("");
+                }}
+              />
+            </h3>
+
+            <label className="block text-gray-700 mb-2" htmlFor="feedback">
+              Feedback:
+            </label>
+            <textarea
+              id="feedback"
+              placeholder="Enter your feedback"
+              value={feedbackInput}
+              onChange={(e) => setFeedbackInput(e.target.value)}
+              className="border border-gray-300 rounded w-full p-2 mb-3"
+            ></textarea>
+            <span className="block text-red-600 opacity-80 font-light text-end pe-2">
+              {feedbackError.feedback}
+            </span>
+           
+
+            <label className="flex gap-2 text-gray-700 mb-2" htmlFor="rating">
+              Rating:
+              <div className="flex items-center mb-3">
+                {[...Array(5)].map((star) => (
+                  <FontAwesomeIcon
+                    key={star}
+                    icon={faStar}
+                    className={`cursor-pointer text-2xl mr-1 ${
+                      star <= rating ? "text-yellow-500" : "text-gray-300"
+                    }`}
+                    onClick={() => setRating(star)}
+                  />
+                ))}
+              </div>
+            <span className="block text-red-600 opacity-80 font-light text-end pe-2">
+              {feedbackError.rating}
+            </span>
+            </label>
+
+            <div className="flex items-center justify-end">
+              <button
+                className="btn-secondary mr-2"
+                onClick={() => {
+                  setShowFeedbackModel(false);
+                  setToggleId("");
+                }}
+              >
+                Cancel
+              </button>
+              <button className="btn-primary" onClick={handleFeedbackSubmit}>
+                Submit Feedback
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
   </div>
   )
 }

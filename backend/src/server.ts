@@ -9,6 +9,7 @@ import path from 'path';
 import { errorHandler } from './middleware/errorHandler';
 import { loggerhttp } from './middleware/logger';
 import { pinoHttp } from 'pino-http';
+import initializeCrons from './crons';
 
 
 dotenv.config();
@@ -23,7 +24,10 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-app.use(pinoHttp({logger:loggerhttp}))
+app.use(pinoHttp({logger:loggerhttp}));
+
+// cronJob initialization
+initializeCrons();
 
 app.use('/public',express.static(path.join(__dirname,'../public')))
 

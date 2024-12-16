@@ -161,3 +161,25 @@ export const cancelpickupStatus = async (id:string,status:string,reason:string):
         throw new Error(err?.response?.data?.message);
     }
 }
+
+export const updateFeedback = async (id:string,rating:number,feedback:string,bookingModel:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/feedback/${id}`, {rating,feedback,bookingModel})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to update feedback and rating');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchShopReviews = async(id:string|undefined):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/reviewsByshop/${id}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch reviews');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}

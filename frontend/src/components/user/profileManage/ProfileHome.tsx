@@ -39,7 +39,7 @@ const ProfileHome:React.FC = () => {
         <div className="md:w-1/6">
           <div className="bg-mainclr-500 rounded-e-md  flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full">
             <SidebarCRUD
-              title="Shop Panel"
+              title="User Panel"
               sections={sections}
               activeSection={activeSection}
               handleActiveSection={handleActiveSection}

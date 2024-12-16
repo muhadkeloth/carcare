@@ -18,6 +18,7 @@ const Mainbody: React.FC = () => {
   const [hoveredLocation, setHoveredLocation] = useState<[number, number]|null>(null);
   const [hoveredDetails,setHoveredDetails] = useState<{shopName:string;image:string;address:any}|null>(null); 
   const [shops, setShops] = useState<Shop[]>([]);
+  const [coordinates, setCoordinates] = useState<[number,number][]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch()
@@ -26,13 +27,33 @@ const Mainbody: React.FC = () => {
   const fetchShops = async () => {
     try {
       setIsLoading(true)
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
-        setHoveredLocation([latitude,longitude]);        
-        const shopsData = await fetchNearbyShops(latitude, longitude);
+      const searchParams = new URLSearchParams(location.search);
+      const lat = searchParams.get("lat");
+      const lng = searchParams.get("lng");
+      if(lat && lng){
+        const latitude = parseFloat(lat)
+        const longitude = parseFloat(lng)
+        setHoveredLocation([latitude,longitude])
+        const shopsData = await fetchNearbyShops(latitude,longitude);
         setShops(shopsData);
-        console.log('shopsData',shopsData)
-      });
+        const extractedCoordinates: [number, number][] = shopsData
+        .filter((shop) => Array.isArray(shop.location?.coordinates))
+        .map((shop) => shop.location?.coordinates as [number, number]);
+      setCoordinates(extractedCoordinates);
+      }else{
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+          setHoveredLocation([latitude,longitude]);        
+          const shopsData = await fetchNearbyShops(latitude, longitude);
+          setShops(shopsData);
+          const extractedCoordinates:[number, number][] = shopsData
+          .filter((shop) => Array.isArray(shop.location?.coordinates))
+          .map((shop) => shop.location?.coordinates as [number,number]);
+          setCoordinates(extractedCoordinates)
+          console.log('extractedCoordinates',extractedCoordinates)
+          console.log('shopsData',shopsData)
+        });
+      }
     } catch (error) {
       const errorMessage = (error as Error).message;
       console.error("error fetching nearby shops:", error);
@@ -42,6 +63,30 @@ const Mainbody: React.FC = () => {
       setIsLoading(false);
     }
   };
+  // const fetchShops = async () => {
+  //   try {
+  //     setIsLoading(true)
+  //     navigator.geolocation.getCurrentPosition(async (position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       setHoveredLocation([latitude,longitude]);        
+  //       const shopsData = await fetchNearbyShops(latitude, longitude);
+  //       setShops(shopsData);
+  //       const extractedCoordinates:[number, number][] = shopsData
+  //         .filter((shop) => Array.isArray(shop.location?.coordinates))
+  //         .map((shop) => shop.location?.coordinates as [number,number]);
+  //       setCoordinates(extractedCoordinates)
+  //       console.log('extractedCoordinates',extractedCoordinates)
+  //       console.log('shopsData',shopsData)
+  //     });
+  //   } catch (error) {
+  //     const errorMessage = (error as Error).message;
+  //     console.error("error fetching nearby shops:", error);
+  //     setShops([]);
+  //     setError(errorMessage);
+  //   }finally{
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleHover = (location:[number,number]|undefined,details:{image:string;shopName:string;address:any}) => {
     setHoveredLocation(location ||null);
@@ -116,12 +161,15 @@ const Mainbody: React.FC = () => {
                       {shop.shopName[0].toUpperCase() + shop.shopName.slice(1)}
                     </h2>
                     <p>
-                      {" "}
-                      <FontAwesomeIcon
+                      {shop?.rating && (
+                        <>
+                        <FontAwesomeIcon
                         icon={faStar}
                         className="text-yellow-400"
-                      />{" "}
-                      4.8 (15)
+                        />{" "}
+                      {(shop.rating.ratingSum / shop.rating.count).toFixed(1)} ({shop.rating.count})
+                        </>
+                      )}
                     </p>
                   </div>
                   <span className="text-sm  text-gray-600">
@@ -182,7 +230,7 @@ const Mainbody: React.FC = () => {
             hoverLocation={hoveredLocation}
             hoverDetails={hoveredDetails}
             // onLocationChange={setSelectedLocation}
-            // initialPosition={shopUserDetails?.location.coordinates? [shopUserDetails.location.coordinates[0],shopUserDetails.location.coordinates[1]] : undefined}
+            initialPosition={coordinates}
           />
         </MapContainer>
       </div>

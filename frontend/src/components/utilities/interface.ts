@@ -353,13 +353,17 @@ export enum HttpStatusCode {
 }
 
 
-
+export interface HoverDetails {
+  image:string;
+  shopName:string;
+  address:any
+}
 
 export interface LocationPickerProps {
     onLocationChange?:(location:[number,number]) => void;
-    initialPosition?:[number,number]| null;
+    initialPosition?:[number,number][]| null;
     hoverLocation?:[number,number]| null;
-    hoverDetails?:{image:string;shopName:string;address:any}|null;
+    hoverDetails?: HoverDetails | null;
 }
 
 export interface SidebarProps {
@@ -469,6 +473,11 @@ interface Address {
     location: string;
   }
 
+  interface Rating {
+    ratingSum:number;
+    count:number;
+  }
+
 export interface Shop extends BaseShop {
   _id:string;
   isActive:boolean;
@@ -480,10 +489,16 @@ export interface Shop extends BaseShop {
 estimate?:Estimate[];
   location?: Location; //check
   about?:string;
+  rating?:Rating;
   discription?:{title:string,discript:string};
   workingTime?:{opening:string,closing:string};
 }
 
+interface Review{
+  rating:number;
+  feedback?:string;
+
+}
 
 
 export interface PickupsDetails extends Omit<BookingDetails,"shopdetails" | 'repairWork'> { //chagne name to pickup and booking
@@ -494,6 +509,7 @@ export interface PickupsDetails extends Omit<BookingDetails,"shopdetails" | 'rep
   paymentStatus:string;
   status:string;
   repairWork?:string;
+  review?:Review;
   paymentFailDetails?:paymentFailDetails;
 }
 
@@ -531,7 +547,7 @@ export interface Location {
 
 
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
-export type bookingStatus = 'PENDING' | 'CONFIRMED' | 'PICKED' | 'CANCELLED';
+export type bookingStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELED';
 
 export interface Bookings {
   id: string;
@@ -575,7 +591,27 @@ interface BookingDetails extends bookingDetailsType {
   locationdetails?:LocationDetails;
 }
 
+export interface Reviews {
+  review:Review;
+  userId:{
+    username:string;
+    image:string;
+  };
+  updatedAt:Date;
+}
 
+export type Period = 'monthly'|'yearly'|'weekly';
+
+export interface RatingData{
+  rating:number;
+  count:number;
+}
+
+export interface StatusAnalytics {
+  COMPLETED:number;
+  CANCELED:number;
+  PENDING:number
+}
 
 
 // ********************************************
@@ -640,9 +676,11 @@ export interface shopProfile extends BaseShop {
   location?:Location;
   address:Address;
   about?:string;
+  rating?:Rating;
   discription?:{title:string;discript:string};
   workingTime?:{opening:string;closing:string};
 }
+
 export interface userState {
   shopDetails:shopProfile | null,
 }

@@ -10,9 +10,18 @@ const checkToken = (navigate:any):boolean | null => {
 }
 
 
-export const navigateFindWorkShop = (navigate:any):void => {
-    if(checkToken(navigate)) navigate('/findworkshop')
+export const navigateFindWorkShop = (navigate:any,coordinates?:[number,number]):void => {
+    if(checkToken(navigate)){
+      if(coordinates){
+        navigate(`/findworkshop?lat=${coordinates[0]}&lng=${coordinates[1]}`)
+      }else{
+        navigate('/findworkshop')
+      }
+    }
   }
+// export const navigateFindWorkShop = (navigate:any):void => {
+//     if(checkToken(navigate)) navigate('/findworkshop')
+//   }
 
 
 export const navigateShopDetailPage = (navigate:any,id:string):void => {

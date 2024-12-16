@@ -37,6 +37,7 @@ const ShopSchema:Schema = new Schema(
             priceStart:{type:Number,required:true},
             priceEnd:{type:Number,required:true}
         }],
+        rating:{ratingSum:{type:Number},count:{type:Number}},
         about:{type:String },
         discription:{title:{type:String},discript:{type:String}},
         workingTime:{opening:{type:String,default:'09:00'},closing:{type:String,default:'17:00'}},

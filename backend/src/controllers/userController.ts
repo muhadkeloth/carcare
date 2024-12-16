@@ -21,6 +21,7 @@ import PickupRepository from "../repositories/PickupRepository";
 import Bookings from "../models/Bookings";
 import Pickups from "../models/Pickups";
 import PickupService from "../services/PickupService";
+import { sendCancelEmail, sendPickupConfirmEmail } from "../utils/emailService";
 
 
 
@@ -483,9 +484,101 @@ export default class UserController extends BaseController<IUser> {
       next(err);
     }
   };
+
+  updateFeedback = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { rating,feedback, bookingModel } = req.body;
+    try {
+      if (!id) {
+        logger.warn(`id required`)
+        throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
+      }
+      const bookingservice = bookingModel === 'booking' ? this.bookingService : this.pickupService;
+      const updatedPickpDetails = await bookingservice.updatefeedbackbyUser(id,rating,feedback);
+      if(!updatedPickpDetails) {
+        logger.warn(`feedback update error`)
+        throw new AppError("feedback update error", HttpStatusCode.NOT_FOUND);
+      }
+      logger.info(`feedback successfully updated`)
+      const updatedRating = await this.shopService.updateRating(updatedPickpDetails.shopId,rating)
+      if(!updatedRating) {
+        logger.warn(`rating  update to shop error`)
+        throw new AppError("rating  update to shop error", HttpStatusCode.NOT_FOUND);
+      }
+      res.status(HttpStatusCode.CREATED).json({updatedPickpDetails,message:'feedback updated successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  };
+
+  fetchShopReviews = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        logger.warn(`id required`)
+        throw new AppError("ID is required", HttpStatusCode.NOT_FOUND);
+      }
+      const allReviewsByBookings = await this.bookingService.getReviewsByShopId(id)
+      const allReviewsByPickups = await this.pickupService.getReviewsByShopId(id)
+      const allReviews = [...allReviewsByBookings,...allReviewsByPickups];
+      console.log('allReviewsByBookings',allReviewsByBookings)
+      res.status(HttpStatusCode.SUCCESS).json({allReviews,message:'reviews fetch successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  // 
+  // gpt = async(req:Request,res:Response,next:NextFunction) => {
+      // const {brand,model,year,task} = req.query;
+      // try {
+        // await sendCancelEmail({
+        //   email:'jemuqoha@logsmarter.net',
+        //   username:'hello thing',
+        //   time:'9:30 AM',
+        //   date:'2024-12-17T18:30:00.000Z',
+        // },'Booking')
+        // await sendCancelEmail({
+        //   email:'jemuqoha@logsmarter.net',
+        //   username:'hello pick thing',
+        //   time:'10:30 AM',
+        //   date:'2024-12-17T18:30:00.000Z',
+        // },'Pickup')
+        // await sendPickupConfirmEmail({
+        //   email:'jemuqoha@logsmarter.net',
+        //   username:'things  ',
+        //   address:'Payyanur, Kerala, 670307, India',
+        //   time:'11:30 AM',
+        //   date:'2024-12-17T18:30:00.000Z'
+        // })
+        // const prompt = `Provide an average cost estimate for ${task} for a ${brand} ${model} (${year}) in India.`;
+        // const prompt1 = `
+        // Based on the following data, provide an average cost for ${task} for a ${brand} ${model} (${year}) in india.`
+        // console.log('prompt',prompt)
+        // const response = await openai.chat.completions.create({
+          // model: 'gpt-3.5-turbo',
+          // model: 'text-davinci-003',
+          // model: 'gpt-3.5-turbo',
+          // messages:[{role: "user",content: "Hello!"}],
+          // messages:[{role: "system",content: "You are a helpful assistant."},{role: "user",content: "Hello!"}],
+          // messages: [{role:'system',content:'you are a car repair cost estimator'},{ role:'user', content: prompt }],
+          // max_tokens:400,
+        // })
+        // const estimate = response.choices[0]?.text.trim();
+        // console.log('response',response)
+        // res.json({estimate})
+  //     } catch (error) {
+  //       const err = error as Error;
+  //       console.error('some',err)
+  //       next(err)
+  //     }
+  // }
+
  
-
-
 
 
 

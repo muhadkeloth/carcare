@@ -446,6 +446,113 @@ export class ShopController extends BaseController<any> {
     }
   };
 
+  dashStatistics = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const shopId = req.user as string;
+      const [
+        bookingsCountforChart,
+        pickupsCountforChart,
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+        bookingsRatingCountforChart,
+        pickupsRatingCountforChart,
+        UpComingbookings,
+        UpComingpickups,
+        totalbookingsbyStatus,
+        totalpickupsbyStatus,
+        totalbookingRevenue,
+        totalpickupRevenue
+      ] = await Promise.all([
+        this.bookingService.getCompletedBookings(shopId),
+        this.pickupService.getCompletedPickups(shopId),
+        this.bookingService.getPricesBooking(shopId),
+        this.pickupService.getPricesPickups(shopId),
+        this.bookingService.getRatingBooking(shopId),
+        this.pickupService.getRatingPickups(shopId),
+        this.bookingService.getUpComingBooking(shopId),
+        this.pickupService.getUpComingPickups(shopId),
+        this.bookingService.getTotalBookingByStatus(shopId),
+        this.pickupService.getTotalPickupsByStatus(shopId),
+        this.bookingService.getTotalBookingRevenue(shopId),
+        this.pickupService.getTotalPickupRevenue(shopId),
+      ])
+      res.status(HttpStatusCode.SUCCESS).json({message:"successsfully fetch dash statistics",
+        bookingsCountforChart,
+        pickupsCountforChart,
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+        bookingsRatingCountforChart,
+        pickupsRatingCountforChart,
+        UpComingbookings,
+        UpComingpickups,
+        totalbookingsbyStatus,
+        totalpickupsbyStatus,
+        totalbookingRevenue,
+        totalpickupRevenue
+      })
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  barChartFilter = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const shopId = req.user as string;
+      const period = ['monthly','yearly','weekly'].includes(req.query.period as string) ? (req.query.period as 'monthly' | 'yearly' | 'weekly') : 'monthly';
+      const [
+        bookingsCountforChart,
+        pickupsCountforChart,
+      ] = await Promise.all([
+        this.bookingService.getCompletedBookings(shopId,period),
+        this.pickupService.getCompletedPickups(shopId,period),
+      ])
+      res.status(HttpStatusCode.SUCCESS).json({message:"successsfully filtered bar chart",
+        bookingsCountforChart,
+        pickupsCountforChart,
+      })      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+ 
+  lineChartFilter = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const shopId = req.user as string;
+      const period = ['monthly','yearly','weekly'].includes(req.query.period as string) ? (req.query.period as 'monthly' | 'yearly' | 'weekly') : 'monthly';
+      const [
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+      ] = await Promise.all([
+        this.bookingService.getPricesBooking(shopId,period),
+        this.pickupService.getPricesPickups(shopId,period),
+      ])
+      res.status(HttpStatusCode.SUCCESS).json({message:"successsfully filtered line chart",
+        bookingsPriceCountforChart,
+        pickupsPriceCountforChart,
+      })      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
 
 
 

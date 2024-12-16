@@ -121,3 +121,36 @@ export const deleteVehicle = async (brand:string):Promise<{status:number}> => {
     }
 }
 
+export const fetchStatistics = async ():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/admin/dashStatistics/`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch statistics');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchfilterCountCart = async (period:'monthly'|'yearly'|'weekly'):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/admin/barChartFilter?period=${period}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch bar chart filter');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchfilterPriceCart = async (period:'monthly'|'yearly'|'weekly'):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/admin/lineChartFilter?period=${period}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch line chart filter');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+

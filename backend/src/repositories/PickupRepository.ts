@@ -15,9 +15,9 @@ export default class PickupRepository extends BaseRepository<IBookings>{
             .populate('userId','username email phoneNumber image');
     }
 
-    async findPickupsByShopId(userId:string,skip:number,limit:number):Promise<IBookings[] | null> {
+    async findPickupsByShopId(shopId:string,skip:number,limit:number):Promise<IBookings[] | null> {
         return await this.model
-            .find({userId})
+            .find({shopId})
             .sort({createdAt: -1})
             .skip(skip).limit(limit)
             .populate('userId','username email phoneNumber image');
@@ -40,8 +40,80 @@ export default class PickupRepository extends BaseRepository<IBookings>{
         return await this.model.countDocuments({userId})
     }
 
-    async togglePickupStatusById(id:string):Promise<IBookings | null>{
+    async findPickupById(id:string):Promise<IBookings | null>{
         return await this.model.findById(id);   
+    }
+
+    async findPickupsByFilter(filter:object):Promise<IBookings[] | null>{
+        return await this.model.find(filter).populate('userId')
+    }
+
+    async findReviwesByShopId(shopId:string):Promise<Partial<IBookings[] | null>>{
+        return await this.model.find({shopId,review:{$exists:true}})
+            .select("review ueserId updatedAt")
+            .populate('userId',"username image")
+    }
+
+    async findPickupsCountForChart (filter:any):Promise<any[] | null> {
+        return await this.model.aggregate([
+            { $match:filter },
+            { $group: { _id:{ $dateToString: { format:"%Y-%m",date:"$createdAt"}},count:{$sum:1}}},
+            { $sort:{_id:1}}
+        ])
+    }
+    
+    async findPickupsPriceCountForChart (filter:any):Promise<any[] | null> {
+        return await this.model.aggregate([
+            { $match:filter },
+            { $group: { _id:{ $dateToString: { format:"%Y-%m",date:"$createdAt"}},total:{$sum:"%amount"}}},
+            { $sort:{_id:1}}
+        ])
+    }
+    
+    async findPickupsRatingCountForChart (filter:any):Promise<any[] | null> {
+        return await this.model.aggregate([
+            { $match:filter },
+            { $group: { _id: "$review.rating",count:{$sum:1}}},
+            { $project:{rating:"$_id", count:1,_id:0}}
+        ])
+    }
+    
+    async findUpComingPickups (filter:any,now:Date,nextWeek:Date):Promise<any[] | null> {
+        return await this.model.aggregate([
+            {
+                $match:filter
+            },{
+                $project:{
+                    sheduleDate:{$toDate:"$shedule.date"},
+                    userDetails:1,
+                    shedule:1,
+
+                }
+            },{
+                $match:{
+                    sheduleDate:{
+                        $gte:now,
+                        $lt: nextWeek
+                    }
+                }
+            },{
+                $limit:10
+            }
+        ]);
+    }
+    
+    async findTotalPickupsByStatus (filter:any):Promise<any[] | null> {
+        return await this.model.aggregate([
+            { $match: filter },
+            { $group: { _id:"$status", count:{$sum:1} }}
+        ]);
+    }
+   
+    async findTotalPickupRevenue (filter:any):Promise<any[] | null> {
+        return await this.model.aggregate([
+            { $match: filter },
+            { $group: { _id:null, totalAmount:{$sum:"$amount"} }}
+        ]);
     }
 
             

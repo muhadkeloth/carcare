@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Bounce, toast } from "react-toastify";
-import { bookingStatus, Day, PaymentStatus, Suggestion } from "./interface";
+import { bookingStatus, Day, PaymentStatus, RatingData, Suggestion } from "./interface";
 import { addDays, endOfMonth, endOfWeek, isAfter, isBefore, isSameDay, isSunday, startOfMonth, startOfWeek } from "date-fns";
 
 
@@ -110,8 +110,8 @@ export   const getPaymentStatusColor = (status:bookingStatus|PaymentStatus) => {
     FAILED: ' text-red-500 font-semibold',
     REFUNDED: ' text-gray-500 font-semibold',
     CONFIRMED:' text-blue-500 font-semibold',
-    PICKED:' text-green-500 font-semibold',
-    CANCELLED:" text-red-500 font-semibold",
+    COMPLETED:' text-green-500 font-semibold',
+    CANCELED:" text-red-500 font-semibold",
   };
   return colors[status] || '';
 };
@@ -137,3 +137,76 @@ export const getNextAvailableDate = ():string => {
   
   return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric',year:'numeric'})
 }
+
+export const generateCountsforChart = (period:'monthly'|'yearly'|'weekly', data:any[]) => {
+  const counts = [];
+  const now = new Date();
+
+  let startDate,endDate,incrementFn,formatKey;
+  if (period === 'yearly') {
+    startDate = new Date(now.getFullYear() - 5, 0, 1);              
+    endDate = new Date(now.getFullYear() + 1, 0, 1);                
+    incrementFn = (date:Date) => date.setFullYear(date.getFullYear() + 1); 
+    formatKey = (date:Date) => `${date.getFullYear()}`;
+  } else if (period === 'weekly') {
+    startDate = new Date();
+    startDate.setDate(now.getDate() - 7 * 6);                       
+    endDate = new Date();
+    endDate.setDate(now.getDate() + 7);                             
+    incrementFn = (date:Date) => date.setDate(date.getDate() + 7);       
+    formatKey = (date:Date) => {
+      const startOfWeek = new Date(date);
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); 
+      return `${startOfWeek.getFullYear()}-W${Math.ceil((startOfWeek.getDate() + 6) / 7)}`;
+    };
+  } else {
+    startDate = new Date(now.getFullYear(), now.getMonth() - 6, 1); 
+    endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);   
+    incrementFn = (date:Date) => date.setMonth(date.getMonth() + 1);     
+    formatKey = (date:Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  } 
+
+  const date = new Date(startDate);
+
+  while (date < endDate) {
+    const key = formatKey(date);
+    const item = data.find((d) => d._id === key);
+    const count = item?.count ? 'count' : 'total'
+    counts.push({ _id: key, [count]: item ? (item?.count || item?.total || 0) : 0 });
+    incrementFn(date);
+  }
+
+  return counts;
+}; 
+
+export const mergeRatingCounts = (bookings:RatingData[],pickups:RatingData[]):RatingData[]=> {
+  const ratingsMap = new Map<number,number>();
+  bookings.forEach(({rating,count})=>{
+    ratingsMap.set(rating,(ratingsMap.get(rating) || 0) + count);
+  })
+  pickups.forEach(({rating,count})=>{
+    ratingsMap.set(rating,(ratingsMap.get(rating) || 0) + count);
+  })
+  // if need add star;
+  return Array.from(ratingsMap.entries()).map(([rating,count])=>({rating,count}));
+}
+
+export const findtotalRating = (ratings:RatingData[]):string =>{
+  const totalRating = ratings.reduce((sum,{rating,count})=> sum+rating*count,0)
+  const totalResponses = ratings.reduce((sum,{count})=> sum+count,0)
+  const totalPossibleRating = totalResponses * 5;
+  if(totalPossibleRating === 0)return '0.00%';
+  return `${((totalRating/totalPossibleRating)*100).toFixed(2)}%`;
+}
+
+export const formatToIndianNumbering = (number:number):string => {
+  const numString = number.toString();
+  const lastThreeDigits = numString.slice(-3);
+  const otherDigits = numString.slice(0, -3);
+  const formatted =
+    otherDigits.length > 0
+      ? otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThreeDigits
+      : lastThreeDigits;
+  return formatted;
+};
+

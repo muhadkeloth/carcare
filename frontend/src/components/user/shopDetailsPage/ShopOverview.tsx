@@ -5,13 +5,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
 const ShopOverview:React.FC = () => {
-  const {about, discription, image, shopName} = useSelector((state:RootState) => state.shop.shopDetails) || {};
+  const {about, discription, rating, image, shopName} = useSelector((state:RootState) => state.shop.shopDetails) || {};
 
     const stats = [
         { 
           icon: faStar, 
           label: 'Rating', 
-          value: '4.8/5', 
+          value: `${rating?.ratingSum?( rating?.ratingSum/rating.count).toFixed(1) : '-'}/5`, 
           bgColor: 'bg-blue-50',
           iconColor: 'text-blue-600' 
         },

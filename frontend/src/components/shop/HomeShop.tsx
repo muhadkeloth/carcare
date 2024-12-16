@@ -51,7 +51,7 @@ const ShopHome: React.FC = () => {
 
       <div className="flex flex-col md:flex-row min-h-screen">
         <div className="md:w-1/6 ">
-          <div className="bg-mainclr-500 rounded-e-md flex-col items-start py-4 ps-4 text-white space-y-4 hidden md:flex  table-fixed h-full ">
+          <div className="bg-mainclr-500 rounded-e-md flex-col items-start py-4 ps-4 text-white space-y-4  hidden md:flex  table-fixed h-screen sticky top-0">
             <SidebarCRUD
               title="Shop Panel"
               sections={sections}

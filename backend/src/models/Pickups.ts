@@ -28,6 +28,7 @@ const PickupsSchema: Schema<IBookings> = new Schema(
             description:{type:String},
             coordinates:[{type:Number}],
         },
+        review:{rating:{type:Number},feedback:{type:String}},
         paymentStatus:{type:String},
         paymentFailDetails:{
             reason:{type:String},

@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth';
+// import { authenticateToken } from '../middleware/auth';
+import { authenticateTokenOfShop } from '../middleware/auth';
 import upload from '../middleware/upload';
 import { ShopController } from '../controllers/shopController';
 import ShopService from '../services/ShopService';
@@ -19,29 +20,33 @@ router.post('/otpgenerate', shopController.otpgenerate);
 router.post('/otpvalidation', shopController.otpvalidation);
 router.post('/resetPassword', shopController.resetPassword);
 
-router.get('/allvehicledetails', authenticateToken, shopController.getAllvehicleDetails);
-router.get('/vehicledetails', authenticateToken, shopController.getvehicleDetails);
-router.post('/addvehicle', authenticateToken, shopController.addVehicleDetails);
-router.put('/editvehicle', authenticateToken, shopController.editVehicleDetails);
-router.delete('/deletevehicle/:brand', authenticateToken, shopController.deleteVehicleDetails);
+// router.get('/allvehicledetails', authenticateToken, shopController.getAllvehicleDetails);
+router.get('/allvehicledetails', authenticateTokenOfShop, shopController.getAllvehicleDetails);
+router.get('/vehicledetails', authenticateTokenOfShop, shopController.getvehicleDetails);
+router.post('/addvehicle', authenticateTokenOfShop, shopController.addVehicleDetails);
+router.put('/editvehicle', authenticateTokenOfShop, shopController.editVehicleDetails);
+router.delete('/deletevehicle/:brand', authenticateTokenOfShop, shopController.deleteVehicleDetails);
 
-router.get('/allEstimatedetails', authenticateToken, shopController.getEstimateDetails);
-router.post('/addestimate', authenticateToken, shopController.createEstimate);
-router.put('/editestimate', authenticateToken, shopController.editEstimateDetails);
-router.delete('/deleteestimate/:work', authenticateToken, shopController.deleteEstimateDetails);
+router.get('/allEstimatedetails', authenticateTokenOfShop, shopController.getEstimateDetails);
+router.post('/addestimate', authenticateTokenOfShop, shopController.createEstimate);
+router.put('/editestimate', authenticateTokenOfShop, shopController.editEstimateDetails);
+router.delete('/deleteestimate/:work', authenticateTokenOfShop, shopController.deleteEstimateDetails);
 
-router.get('/shopdetails', authenticateToken, shopController.shopDetails);
-router.put('/uploadprofileimage', authenticateToken, upload.single('image'), shopController.uploadShopProfileImg);
-router.put('/updateprofiledetails', authenticateToken, shopController.updateShopProfileDetails);
-router.put('/updateprofileinfo', authenticateToken, shopController.updateShopProfileInfo);
-router.put('/updateprofileWorkTime', authenticateToken, shopController.updateShopProfileWorkTime);
-router.put('/changepassword', authenticateToken, shopController.updateShopProfilepassword);
+router.get('/shopdetails', authenticateTokenOfShop, shopController.shopDetails);
+router.put('/uploadprofileimage', authenticateTokenOfShop, upload.single('image'), shopController.uploadShopProfileImg);
+router.put('/updateprofiledetails', authenticateTokenOfShop, shopController.updateShopProfileDetails);
+router.put('/updateprofileinfo', authenticateTokenOfShop, shopController.updateShopProfileInfo);
+router.put('/updateprofileWorkTime', authenticateTokenOfShop, shopController.updateShopProfileWorkTime);
+router.put('/changepassword', authenticateTokenOfShop, shopController.updateShopProfilepassword);
 
-router.get('/pickupsDetailsByShopId', authenticateToken, shopController.getShopPickups);
-router.patch('/pickup/:id',authenticateToken, shopController.togglePickupStatus);
+router.get('/pickupsDetailsByShopId', authenticateTokenOfShop, shopController.getShopPickups);
+router.patch('/pickup/:id',authenticateTokenOfShop, shopController.togglePickupStatus);
 
-router.get('/bookingDetailsByShopId', authenticateToken, shopController.getShopBookings);
-router.patch('/booking/:id',authenticateToken, shopController.toggleBookingStatus);
+router.get('/bookingDetailsByShopId', authenticateTokenOfShop, shopController.getShopBookings);
+router.patch('/booking/:id',authenticateTokenOfShop, shopController.toggleBookingStatus);
+router.get('/dashStatistics',authenticateTokenOfShop, shopController.dashStatistics);
+router.get('/barChartFilter',authenticateTokenOfShop, shopController.barChartFilter);
+router.get('/lineChartFilter',authenticateTokenOfShop, shopController.lineChartFilter);
 
 
 

@@ -20,17 +20,18 @@ const Location:React.FC<BookingProps> = ({setActiveSection}) => {
 
     const debounceFetchSuggestions = useCallback(
         debounce(async (userInput:string) => {
+            setSuggestions([])
             setIsLoading(true);
             const suggestions = await fetchSuggestions(userInput);
             setIsLoading(false);
             setSuggestions(suggestions);
-        },300),[]
+        },500),[]
     );
 
     const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const userInput = e.target.value;
+    const userInput = e.target.value.trimStart();
     setInput(userInput);
-    if (userInput.trim() === '') {
+    if (userInput === '') {
       setSuggestions([]);
       return;
     }

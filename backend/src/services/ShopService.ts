@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import { AppError } from "../middleware/errorHandler";
 import logger from "../middleware/logger";
 import ShopRepository from "../repositories/ShopRepository";
@@ -222,6 +222,21 @@ export default class ShopService extends BaseService<IShop> {
 
          async findFilterShopByPincode(pincode:string):Promise<IShop[] | null>{
             return await this.repository.findByPincode(pincode);
+        }
+
+        async updateRating(_id:any,rating:number):Promise<IShop | null>{
+            const shopdoc = await this.repository.findOne({_id})
+            if(!shopdoc){
+                logger.warn("Shop not found");
+                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
+            }
+            if(!shopdoc?.rating || !shopdoc?.rating?.ratingSum){
+                shopdoc.rating = {ratingSum:rating,count:1};
+            }else{
+                shopdoc.rating.ratingSum += rating;
+                shopdoc.rating.count++;
+            }
+            return await shopdoc.save()
         }
     
         // async findCountVehicles():Promise<number | null>{

@@ -224,3 +224,36 @@ export const toggleBookingStatus = async (id:string,status:string,reason:string)
         throw new Error(err?.response?.data?.message);
     }
 }
+
+export const fetchStatistics = async ():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/dashStatistics/`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch statistics');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchfilterCountCart = async (period:'monthly'|'yearly'|'weekly'):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/barChartFilter?period=${period}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch bar chart filter');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchfilterPriceCart = async (period:'monthly'|'yearly'|'weekly'):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/lineChartFilter?period=${period}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch line chart filter');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}

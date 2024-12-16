@@ -37,7 +37,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
         setReasonError("reason must be at least 4 characters long.");
         return
       }
-      togglePickupStatus(toggleId, "CANCELLED",inputDetails)
+      togglePickupStatus(toggleId, "CANCELED",inputDetails)
     }
 
     
@@ -174,17 +174,17 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                     ? "bg-yellow-100 text-yellow-800"
                     : bookingDetails.status === "CONFIRMED"
                     ? "bg-blue-100 text-blue-800"
-                    : bookingDetails.status === "CANCELLED"
+                    : bookingDetails.status === "CANCELED"
                     ? "bg-red-100 text-red-800"
                     : "bg-gray-100 text-gray-800"
                 }`}
                   >
                     {bookingDetails.status}
                   </span>
-                  {bookingDetails?.status == 'CANCELLED' &&  bookingDetails?.paymentFailDetails && (
+                  {bookingDetails?.status == 'CANCELED' &&  bookingDetails?.paymentFailDetails && (
                     <>
                     <p>
-                    <span className="font-medium ">Cancelled By: </span> 
+                    <span className="font-medium ">Canceled By: </span> 
                     {bookingDetails.paymentFailDetails.actionFrom == 'shop' ? 'workshop' : 'user'}
                   </p>
                     <p>
@@ -193,7 +193,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                   </p>
                     </>
                   )}
-                  {bookingDetails.paymentStatus === 'PAID' && !["COMPLETED", "CANCELLED"].includes(bookingDetails.status) && (
+                  {bookingDetails.paymentStatus === 'PAID' && !["COMPLETED", "CANCELED"].includes(bookingDetails.status) && (
                     <div className="inline-flex space-x-2 ml-2">
                       <button
                         onClick={() =>

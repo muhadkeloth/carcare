@@ -27,6 +27,10 @@ const ShopManagement: React.FC = () => {
   const [isLoading,setIsLoading] = useState(false)
 
 
+  useEffect(()=>{
+    console.log('selectedLocation',selectedLocation)
+  })
+
   const fetchShops = async (page:number) => {
     try {
       const shopsData = await fetchAllShop(page);

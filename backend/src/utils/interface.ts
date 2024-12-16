@@ -59,6 +59,7 @@ export interface IShop extends Document {
         priceStart:number;
         priceEnd:number;
     }[];
+    rating?:{ratingSum:number;count:number};
     about?:string;
     discription:{title:string;discript:string};
     workingTime?:{opening:string;closing:string};
@@ -103,12 +104,13 @@ export interface IBookings extends Document {
         reason:string,
         actionFrom:'user' | 'shop'
     };
+    review?:{rating:number;feedback:string};
     status: pickupStatus;
     createdAt?:Date;
 }
 
 export type paymentStatus = 'PAID'|'PENDING'|'FAILED' | 'REFUNDED';
-export type pickupStatus = 'PENDING' | 'CONFIRMED'  | 'COMPLETED' | 'CANCELLED';
+export type pickupStatus = 'PENDING' | 'CONFIRMED'  | 'COMPLETED' | 'CANCELED';
 
 
 

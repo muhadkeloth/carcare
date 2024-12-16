@@ -265,7 +265,8 @@ const EditProfile: React.FC = () => {
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               <LocationPicker
                 onLocationChange={setSelectedLocation}
-                initialPosition={selectedLocation}
+                // initialPosition={selectedLocation}
+                initialPosition={selectedLocation ? [selectedLocation] : selectedLocation}
               />
             </MapContainer>
           </div>

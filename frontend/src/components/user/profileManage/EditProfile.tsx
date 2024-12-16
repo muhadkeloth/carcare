@@ -4,10 +4,10 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { ThreeDots } from 'react-loader-spinner'
-import { setUser, userProfile } from '../../../features/userSlice'
+import { setUser } from '../../../features/userSlice'
 import { emailValidation, handleInputValue, nameValidation, phoneNumberValidation } from '../../utilities/validation'
 import { ToastActive } from '../../utilities/functions'
-import { HttpStatusCode } from '../../utilities/interface'
+import { HttpStatusCode, userProfile } from '../../utilities/interface'
 import { fetchUserUpdateProfileDetails, fetchUserUploadProfileImage } from '../../../services/userService'
 
 const EditProfile:React.FC = () => {

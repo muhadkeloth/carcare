@@ -124,12 +124,21 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
                     shopdetails?.shopName.slice(1)}
               </h2>
               <p className="text-gray-500 text-sm">
-                {" "}
+              {shopdetails?.rating && (
+                        <>
+                        <FontAwesomeIcon
+                        icon={faStar}
+                        className="text-yellow-400"
+                        />{" "}
+                      {(shopdetails.rating.ratingSum / shopdetails.rating.count).toFixed(1)} ({shopdetails.rating.count})
+                        </>
+                      )}
+                {/* {" "}
                 <FontAwesomeIcon
                   icon={faStar}
                   className="text-yellow-400"
                 />{" "}
-                4.8 (15)
+                4.8 (15) */}
               </p>
             </div>
             <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">

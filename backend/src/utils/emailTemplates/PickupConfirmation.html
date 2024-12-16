@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; }
+        .header { background-color: #0098D3; color: white; padding: 10px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { margin: 20px 0; font-size: 16px; }
+        .content div { text-align: center;  }
+        .footer { text-align: center;padding: 20px;background-color: #f0f0f0; font-size: 12px; margin-top: 30px;border-radius: 0 0 8px 8px; }
+        .footer p a {  font-size: 14px; font-weight: bold; color: #0098D3;}
+        .button-success { display: inline-block; background-color: #007CB3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+        .button-cancel { display: inline-block; background-color: #9ca3af; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Pickup Reminder</h1>
+        </div>
+        <img src="https://res.cloudinary.com/drhtxuege/image/upload/v1733305326/Car_Care_meta_logo_hznzon.png" alt="carcare logo" style="display: block; margin: 0 auto; width: 140px; height: auto; margin-bottom: 5px; ">
+        <div class="content">
+            <p>Hi {{user_name}},</p>
+            <p>We wanted to remind you that your vehicle pickup is scheduled for:</p>
+            <p><strong>Pickup Details:</strong></p>
+            <ul>
+                <li><strong>Time:</strong> {{pickup_Time}}</li>
+                <li><strong>Date:</strong> {{pickup_date}}</li>
+                <li><strong>Location:</strong> {{user_Address}}</li>
+            </ul>
+            <p>Please be ready for the pickup! Our team will be at your location to assist you. If you have any concerns, feel free to contact us.</p>
+            <div class=""  style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+                <a href={{booking_details_url}} target="_blank" class="button-success">Workshop Details</a>
+                <a href={{booking_details_url}} target="_blank" class="button-cancel">Cancel Pickup</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>If you have any questions or need further assistance, feel free to reach out to us.</p>
+            <p>Thank you for choosing <a href={{homepage}} target="_blank" >CarCare</a>.</p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
