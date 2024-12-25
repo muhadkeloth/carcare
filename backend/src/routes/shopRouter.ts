@@ -1,6 +1,5 @@
 import { Router } from 'express';
-// import { authenticateToken } from '../middleware/auth';
-import { authenticateTokenOfShop } from '../middleware/auth';
+import { authenticateToken, roleBasedAccess } from '../middleware/auth';
 import upload from '../middleware/upload';
 import { ShopController } from '../controllers/shopController';
 import ShopService from '../services/ShopService';
@@ -20,35 +19,43 @@ router.post('/otpgenerate', shopController.otpgenerate);
 router.post('/otpvalidation', shopController.otpvalidation);
 router.post('/resetPassword', shopController.resetPassword);
 
-// router.get('/allvehicledetails', authenticateToken, shopController.getAllvehicleDetails);
-router.get('/allvehicledetails', authenticateTokenOfShop, shopController.getAllvehicleDetails);
-router.get('/vehicledetails', authenticateTokenOfShop, shopController.getvehicleDetails);
-router.post('/addvehicle', authenticateTokenOfShop, shopController.addVehicleDetails);
-router.put('/editvehicle', authenticateTokenOfShop, shopController.editVehicleDetails);
-router.delete('/deletevehicle/:brand', authenticateTokenOfShop, shopController.deleteVehicleDetails);
+router.use(authenticateToken);
+router.use(roleBasedAccess(['shop']));
 
-router.get('/allEstimatedetails', authenticateTokenOfShop, shopController.getEstimateDetails);
-router.post('/addestimate', authenticateTokenOfShop, shopController.createEstimate);
-router.put('/editestimate', authenticateTokenOfShop, shopController.editEstimateDetails);
-router.delete('/deleteestimate/:work', authenticateTokenOfShop, shopController.deleteEstimateDetails);
+// router.get('/allvehicledetails',authenticateTokenOfShop, shopController.getAllvehicleDetails);
+router.get('/allvehicledetails', shopController.getAllvehicleDetails);
+router.get('/vehicledetails', shopController.getvehicleDetails);
+router.post('/addvehicle', shopController.addVehicleDetails);
+router.put('/editvehicle', shopController.editVehicleDetails);
+router.delete('/deletevehicle/:brand', shopController.deleteVehicleDetails);
 
-router.get('/shopdetails', authenticateTokenOfShop, shopController.shopDetails);
-router.put('/uploadprofileimage', authenticateTokenOfShop, upload.single('image'), shopController.uploadShopProfileImg);
-router.put('/updateprofiledetails', authenticateTokenOfShop, shopController.updateShopProfileDetails);
-router.put('/updateprofileinfo', authenticateTokenOfShop, shopController.updateShopProfileInfo);
-router.put('/updateprofileWorkTime', authenticateTokenOfShop, shopController.updateShopProfileWorkTime);
-router.put('/changepassword', authenticateTokenOfShop, shopController.updateShopProfilepassword);
+router.get('/allEstimatedetails', shopController.getEstimateDetails);
+router.post('/addestimate', shopController.createEstimate);
+router.put('/editestimate', shopController.editEstimateDetails);
+router.delete('/deleteestimate/:work', shopController.deleteEstimateDetails);
 
-router.get('/pickupsDetailsByShopId', authenticateTokenOfShop, shopController.getShopPickups);
-router.patch('/pickup/:id',authenticateTokenOfShop, shopController.togglePickupStatus);
+router.get('/shopdetails', shopController.shopDetails);
+router.put('/uploadprofileimage', upload.single('image'), shopController.uploadShopProfileImg);
+router.put('/updateprofiledetails', shopController.updateShopProfileDetails);
+router.put('/updateprofileinfo', shopController.updateShopProfileInfo);
+router.put('/updateprofileWorkTime', shopController.updateShopProfileWorkTime);
+router.put('/changepassword', shopController.updateShopProfilepassword);
 
-router.get('/bookingDetailsByShopId', authenticateTokenOfShop, shopController.getShopBookings);
-router.patch('/booking/:id',authenticateTokenOfShop, shopController.toggleBookingStatus);
-router.get('/dashStatistics',authenticateTokenOfShop, shopController.dashStatistics);
-router.get('/barChartFilter',authenticateTokenOfShop, shopController.barChartFilter);
-router.get('/lineChartFilter',authenticateTokenOfShop, shopController.lineChartFilter);
+router.get('/pickupsDetailsByShopId', shopController.getShopPickups);
+router.patch('/pickup/:id', shopController.togglePickupStatus);
 
+router.get('/bookingDetailsByShopId', shopController.getShopBookings);
+router.patch('/booking/:id', shopController.toggleBookingStatus);
+router.get('/dashStatistics', shopController.dashStatistics);
+router.get('/barChartFilter', shopController.barChartFilter);
+router.get('/lineChartFilter', shopController.lineChartFilter);
 
+// chat
+router.get('/createChatRoom/:shopId', shopController.newChatRoomByUser);
+router.get('/chatHistory', shopController.fetchChatHistory);
+router.get('/fetchMessages/:chatId', shopController.fetchMessagesbyChatId);
+router.post('/saveImageMessage',upload.single('image'), shopController.saveImageMessage);
+router.post('/saveMessage', shopController.saveMessage);
 
 
 

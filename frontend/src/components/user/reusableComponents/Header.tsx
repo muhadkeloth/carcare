@@ -8,7 +8,7 @@ import { fetchUserData } from '../../../services/userService';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../../features/userSlice';
 import { RootState } from '../../../store';
-import { navigateEstimate, navigateFindWorkShop, navigatePickMyCar } from '../../utilities/navigate/userNavigator';
+import { navigateChatHistory, navigateEstimate, navigateFindWorkShop, navigatePickMyCar } from '../../utilities/navigate/userNavigator';
 import { HttpStatusCode } from '../../utilities/interface';
 
 
@@ -178,8 +178,9 @@ const Header:React.FC = () => {
             </li>
             <li>
               <button
+              onClick={() => navigateChatHistory(navigate)}
                 className={`block py-2 px-3 ${
-                  location == "/chatWithUs"
+                  location == "/chats"
                     ? "text-mainclr-700 md:dark:text-mainclr-500"
                     : "text-gray-900 dark:text-white"
                 } hover:text-mainclr-700 md:p-0 `}

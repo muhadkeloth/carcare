@@ -19,10 +19,6 @@ export const navigateFindWorkShop = (navigate:any,coordinates?:[number,number]):
       }
     }
   }
-// export const navigateFindWorkShop = (navigate:any):void => {
-//     if(checkToken(navigate)) navigate('/findworkshop')
-//   }
-
 
 export const navigateShopDetailPage = (navigate:any,id:string):void => {
     if(checkToken(navigate)) navigate('/workshopdetails',{ state:{id} })
@@ -39,4 +35,8 @@ export const navigateEstimate = (navigate:any):void => {
 
 export const navigatePickMyCar = (navigate:any):void => {
   if(checkToken(navigate)) navigate('/pickMyCar')
+}
+
+export const navigateChatHistory = (navigate:any):void => {
+  if(checkToken(navigate)) navigate('/chats')
 }

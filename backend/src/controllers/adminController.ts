@@ -80,7 +80,6 @@ export default class AdminController extends BaseController<IUser> {
       const parseAddress = JSON.parse(address);
       const parsedLocation = JSON.parse(location);
       const otp = randomPassword(8);
-      console.log('some thing');
       
       let existingUser = await this.shopService.findOne({ email });
       if (existingUser){
@@ -308,6 +307,32 @@ export default class AdminController extends BaseController<IUser> {
     } catch (error) {
       const err = error as Error;
       logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  brokeragedetails = async(req:Request,res:Response,next:NextFunction) => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    const {action} = req.params;
+    try {
+      if(!action){
+        logger.warn(`error to action required`);
+        throw new AppError("error to action required", HttpStatusCode.BAD_REQUEST);
+      }
+      const bookingservice = action === 'booking' ? this.bookingService : this.pickupService;
+      const brokerageData = await bookingservice.findBrokerage(skip,limit)
+      const totalBrokerage = (await bookingservice.findBrockerageCount()) ?? 0;
+      res.status(HttpStatusCode.SUCCESS).json({
+        brokerageData,
+          totalPages: Math.ceil(totalBrokerage / limit),
+          currentPage: page,
+        });
+      
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error fetch brockerage details: ${err.message}`);
       next(err);
     }
   }

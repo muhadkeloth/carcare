@@ -13,6 +13,7 @@ import Estimate from '../user/estimate/Estimate'
 import ProfileHome from '../user/profileManage/ProfileHome'
 import PickCarHome from '../user/pickMyCar/PickCarHome'
 import Error from '../reuseComponents/Error'
+import ChatHistory from '../user/Chat/ChatHistory'
 
 
 
@@ -37,6 +38,8 @@ const User:React.FC = () => {
       <Route path='getEstimate' element={<Estimate  />} />
       
       <Route path='pickMyCar' element={<PickCarHome  />} />
+      
+      <Route path='chats' element={<ChatHistory  />} />
 
       <Route path='*' element={ <Error role='user' /> } />
 

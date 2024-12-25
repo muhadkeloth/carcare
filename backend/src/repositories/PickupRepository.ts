@@ -15,6 +15,19 @@ export default class PickupRepository extends BaseRepository<IBookings>{
             .populate('userId','username email phoneNumber image');
     }
 
+    async findBrokerage(filter:any,skip:number,limit:number):Promise<IBookings[] | null> {
+        return await this.model
+            .find(filter)
+            .sort({createdAt: -1})
+            .skip(skip).limit(limit)
+            .populate('userId','username email phoneNumber image')
+            .populate('shopId','shopName email image');
+    }
+
+    async findBrockerageCount(filter:any):Promise<number | null> {
+        return await this.model.countDocuments(filter)
+    }
+
     async findPickupsByShopId(shopId:string,skip:number,limit:number):Promise<IBookings[] | null> {
         return await this.model
             .find({shopId})

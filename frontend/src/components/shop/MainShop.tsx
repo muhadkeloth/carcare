@@ -6,6 +6,7 @@ import VehicleManagement from './mainblock/VehicleManage/VehicleManagement';
 import EstimateMangement from './mainblock/EstimateManage/EstimateMangement';
 import BookingManagement from './mainblock/BookingManage/BookingManagement';
 import PickupManagement from './mainblock/PickupManage/PickupManagement';
+import ChatHistory from './mainblock/Chats/ChatHistory';
 
 
 
@@ -18,6 +19,7 @@ const ShopMain: React.FC<SectionMainProps> = ({ activeSection }) => {
         {activeSection === 'EstimateManage' && <EstimateMangement />}
         {activeSection === 'BookingManage' && <BookingManagement />}
         {activeSection === 'PickupManage' && <PickupManagement />}
+        {activeSection === 'ChatHistory' && <ChatHistory />}
         {activeSection === 'ProfileEdit' && <ShopProfile />}
     </div>
   )

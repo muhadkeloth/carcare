@@ -154,3 +154,16 @@ export const fetchfilterPriceCart = async (period:'monthly'|'yearly'|'weekly'):P
     }
 }
 
+export const fetchBrokerageTable = async(page:number,action:string):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/admin/brokerageDetails/${action}?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find brokerage details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+

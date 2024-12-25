@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SidebarCRUD from '../../reuseComponents/SidebarCRUD'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate,  } from 'react-router-dom';
 import { navigateLogout } from '../../utilities/navigate/common';
 import { faKey, faScrewdriverWrench, faLocationArrow, faPencil, faUser } from '@fortawesome/free-solid-svg-icons';
 import Header from '../reusableComponents/Header';
@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 const ProfileHome:React.FC = () => {
     const [showMenu,setShowMenu] = useState(false);
     const [activeSection, setActiveSection] = useState('profile');
+    const location = useLocation();
     const navigate = useNavigate()
 
     const handleLogout = () => {
@@ -28,6 +29,14 @@ const ProfileHome:React.FC = () => {
         setActiveSection(key);
         setShowMenu(!showMenu)
     }
+
+    useEffect(()=>{
+      const queryParmas = new URLSearchParams(location.search);
+      const menuKey = queryParmas.get('menu');
+      if(menuKey){
+        setActiveSection(menuKey)
+      }
+    },[location.search])
 
 
   return (

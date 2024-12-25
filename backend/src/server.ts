@@ -7,13 +7,16 @@ import shopRouter from './routes/shopRouter';
 import adminRouter from './routes/adminRouter';
 import path from 'path';
 import { errorHandler } from './middleware/errorHandler';
-import { loggerhttp } from './middleware/logger';
+import logger, { loggerhttp } from './middleware/logger';
 import { pinoHttp } from 'pino-http';
 import initializeCrons from './crons';
+import { initializeSocket } from './socket/socketManager';
+import { createServer } from 'http';
 
 
 dotenv.config();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
+const SOCKETPORT = process.env.SOCKETPORT || 3030;
 const app = express();
 
 app.use(cors({
@@ -32,8 +35,8 @@ initializeCrons();
 app.use('/public',express.static(path.join(__dirname,'../public')))
 
 mongoose.connect(process.env.MONGODB_URI || '')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('connectiong mongo error: ',err));
+  .then(() => logger.warn('MongoDB connected'))
+  .catch(err => logger.error('connectiong mongo error: ',err));
 
 
 app.use('/admin',adminRouter)
@@ -43,9 +46,12 @@ app.use('/',userRouter)
 app.use(errorHandler)
 
 
+const socketServer = createServer().listen(SOCKETPORT,()=>{
+  logger.warn(`Socket.IO server running on port ${SOCKETPORT}`)
+})
+initializeSocket(socketServer);
 
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => logger.warn(`Server running on port ${PORT}`));
 
 
 

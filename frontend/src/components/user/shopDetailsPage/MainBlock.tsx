@@ -222,7 +222,6 @@ const MainBlock: React.FC = () => {
   }, []);
 
   return (
-    <div>
       <div className="min-h-screen bg-gray-50">
               <ShopHeader activeSection={activeSection} onSectionChange={scrollToSection} />
               <div className="container max-w-7xl mx-auto px-4 py-8">
@@ -238,7 +237,6 @@ const MainBlock: React.FC = () => {
                 </div>
               </div>
       </div>
-    </div>
   );
 };
 

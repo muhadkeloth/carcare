@@ -43,6 +43,19 @@ export default class BookingService extends BaseService<IBookings> {
 
 
 
+      async findBrokerage(skip:number,limit:number): Promise<IBookings[] | null> {
+        const bookings =  await this.repository.findBrokerage({status:'COMPLETED'},skip,limit);
+        if(!bookings){
+            logger.error('error find booking details for brokerage')
+            throw new AppError('error find booking details for brokerage',HttpStatusCode.BAD_REQUEST);
+        } 
+        return bookings;
+    }
+    
+    async findBrockerageCount(): Promise<number | null> {
+        return await this.repository.findBrockerageCount({status:'COMPLETED'});
+    }
+
       async findBookingsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
         const bookings =  await this.repository.findBookingByShopId(shopId,skip,limit);
         if(!bookings){

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import NavLogin from '../authenticate/NavLogin'
 import AdminMain from './MainAdmin'
-import { faCar, faChartBar, faStore, faUserCog } from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faCar, faChartBar, faChartLine, faStore, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { navigateLogin, navigateLogout } from '../utilities/navigate/common'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
@@ -25,6 +25,8 @@ const AdminDash: React.FC = () => {
       { key: "UserManage", label: "User Management", icon: faUserCog },
       { key: "VehicleManage", label: "Vehicle Management", icon: faCar },
       { key: "ShopManage", label: "Shop Management", icon: faStore },
+      { key: "BookingBrockerage", label: "Booking Brokerage", icon: faBuilding },
+      { key: "PickupBrockerage", label: "Pickup Brokerage", icon: faChartLine },
     ];
 
 

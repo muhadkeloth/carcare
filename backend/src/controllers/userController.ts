@@ -20,8 +20,14 @@ import BookingRepository from "../repositories/BookingRepository";
 import PickupRepository from "../repositories/PickupRepository";
 import Bookings from "../models/Bookings";
 import Pickups from "../models/Pickups";
+import Chat from "../models/Chat";
+import Message from "../models/Message";
 import PickupService from "../services/PickupService";
 import { sendCancelEmail, sendPickupConfirmEmail } from "../utils/emailService";
+import ChatRepository from "../repositories/ChatRepository";
+import ChatService from "../services/ChatService";
+import MessageRepository from "../repositories/MessageRepository";
+import MessageService from "../services/MessageService";
 
 
 
@@ -31,6 +37,8 @@ export default class UserController extends BaseController<IUser> {
   protected vehicleService: VehicleService;
   protected bookingService: BookingService;
   protected pickupService: PickupService;
+  protected chatService: ChatService;
+  protected messageService: MessageService;
 
   constructor(protected service: UserService) {
     super(service);
@@ -42,6 +50,10 @@ export default class UserController extends BaseController<IUser> {
     this.bookingService = new BookingService(bookingRepository);
     const pickupRepository = new PickupRepository(Pickups)
     this.pickupService = new PickupService(pickupRepository);
+    const chatRepository = new ChatRepository(Chat)
+    this.chatService = new ChatService(chatRepository);
+    const messageRepository = new MessageRepository(Message)
+    this.messageService = new MessageService(messageRepository);
   }
 
   signupOtpGenerate = async (req: Request,res: Response,next: NextFunction) => {
@@ -531,6 +543,93 @@ export default class UserController extends BaseController<IUser> {
       next(err);
     }
   }
+
+  newChatRoomByUser = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const {shopId} = req.params;
+      // const userId = req.query.userId;
+      const chatRooms = await this.chatService.createNewRoom(req.user as string,shopId)
+      // const chatRooms = await this.chatService.createNewRoom(userId as string,shopId)
+      if(!chatRooms){
+        logger.warn(`error to create chat room`);
+        throw new AppError("error to create chat room", HttpStatusCode.BAD_REQUEST);
+      }
+      res.status(HttpStatusCode.CREATED).json({chatRooms,message:'created chat rooms'})
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  fetchChatHistory = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const chatRooms = await this.chatService.findAllChatsbyId({userId:req.user as string})
+      
+      res.status(HttpStatusCode.SUCCESS).json({chatRooms,message:'fetch successfully all chat rooms'})
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  fetchMessagesbyChatId = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+      const { chatId } = req.params;
+      const allMessages = await this.messageService.fetchAllMessagesByChatId(chatId)
+      
+      res.status(HttpStatusCode.SUCCESS).json({allMessages,message:'fetch successfully all messages'})
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`fetch message error ${err.message}`);
+      next(err);
+    }
+  }
+
+  saveImageMessage = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      if (!req.file){
+        logger.warn('file required.')
+        throw new AppError("upload user image file not found",HttpStatusCode.BAD_REQUEST);
+      }
+      res.status(HttpStatusCode.SUCCESS).json({image:req.file.path,message:'save message image successfully '})
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+  saveMessage = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const { chatId, message,imagePath } = req.body;
+      const savedMessage = await this.messageService.saveMessageByChatId(chatId,req.user as string,message,imagePath)      
+      res.status(HttpStatusCode.SUCCESS).json({savedMessage,message:'save message successfully '})
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+
 
   // 
   // gpt = async(req:Request,res:Response,next:NextFunction) => {

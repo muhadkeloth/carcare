@@ -47,6 +47,19 @@ export default class PickupService extends BaseService<IBookings> {
     //     return pickups;
     // }
 
+    async findBrokerage(skip:number,limit:number): Promise<IBookings[] | null> {
+        const pickups =  await this.repository.findBrokerage({status:'COMPLETED'},skip,limit);
+        if(!pickups){
+            logger.error('error find pickup details for brokerage')
+            throw new AppError('error find pickup details for brokerage',HttpStatusCode.BAD_REQUEST);
+        } 
+        return pickups;
+    }
+
+    async findBrockerageCount(): Promise<number | null> {
+        return await this.repository.findBrockerageCount({status:'COMPLETED'});
+    }
+
     async findPickupsByShopId(shopId:string,skip:number,limit:number): Promise<IBookings[] | null> {
         const pickups =  await this.repository.findPickupsByShopId(shopId,skip,limit);
         if(!pickups){

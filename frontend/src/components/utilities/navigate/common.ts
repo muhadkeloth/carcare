@@ -1,3 +1,4 @@
+import { clearShopUser } from "../../../features/shopSlice";
 import { clearUser } from "../../../features/userSlice";
 import store from "../../../store";
 
@@ -44,6 +45,10 @@ export const navigateProfile = (navigate:any):void => {
 
 export const navigateLogout = (navigate:any,role:string):void => {
   localStorage.removeItem(`${role}_token`);
-  store.dispatch(clearUser())
+  if(role === 'user'){
+    store.dispatch(clearUser())
+  }else if(role === 'shop'){
+    store.dispatch(clearShopUser())
+  }
   navigateLogin(navigate, role)
 }

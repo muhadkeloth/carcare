@@ -16,6 +16,19 @@ export default class BookingRepository extends BaseRepository<IBookings>{
     }
 
 
+    async findBrokerage(filter:any,skip:number,limit:number):Promise<IBookings[] | null> {
+        return await this.model
+            .find(filter)
+            .sort({createdAt: -1})
+            .skip(skip).limit(limit)
+            .populate('userId','username email phoneNumber image')
+            .populate('shopId','shopName email image');
+    }
+
+    async findBrockerageCount(filter:any):Promise<number | null> {
+        return await this.model.countDocuments(filter)
+    }
+
     async findBookingByShopId(shopId:string,skip:number,limit:number):Promise<IBookings[] | null> {
         return await this.model
             .find({shopId})
@@ -118,10 +131,7 @@ export default class BookingRepository extends BaseRepository<IBookings>{
     }
 
 
-    // async updateById(Id: string, updateData: IBookings){
-    //    return  await this.model.findByIdAndUpdate(Id, updateData, { new: true });
-    // }
-            
+   
  
 
 }

@@ -5,6 +5,7 @@ import shopReducer from '../features/shopSlice.ts';
 import bookingdetailsReducer from '../features/bookingSlice.ts';
 import estimateReducer from '../features/estimateSlice.ts';
 import pickCarReducer from '../features/pickMyCarSlice.ts';
+import chatReducer from '../features/chatSlice.ts';
 
 
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
         bookingdetails:bookingdetailsReducer,
         estimate:estimateReducer,
         pickMyCar:pickCarReducer,
+        chat:chatReducer,
     }
 })
 

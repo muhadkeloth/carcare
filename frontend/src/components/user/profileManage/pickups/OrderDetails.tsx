@@ -200,13 +200,6 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
                   </span>
                   {bookingDetails?.paymentStatus !== "PAID" &&
                     bookingDetails?.status !== "CANCELED" && (
-                      //   <button
-                      //   onClick={() =>}
-                      //   className="btn-primary p-0 px-2"
-                      // >
-                      //   <FontAwesomeIcon icon={faCreditCard} /> Pay now
-                      // </button>
-                      // <div className="mt-3 px-1 flex justify-center ">
                       <Elements stripe={stripePromise}>
                         <button
                           onClick={() => setIsModalOpen(true)}
@@ -218,7 +211,6 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
                           isOpen={isModalOpen}
                           closeModal={closeModal}
                           methodofBooking="pickup"
-                          // bookingDetails={bookingDetails}
                           bookingDetails={{
                             _id: bookingDetails._id,
                             shopdetails: bookingDetails?.shopId as Shop,
@@ -227,17 +219,8 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
                             userDetails: bookingDetails?.userDetails,
                             locationdetails: bookingDetails?.locationdetails,
                           }}
-                          // bookingDetails={{
-                          //   shopdetails,
-                          //   shedule,
-                          //   vehicleDetails,
-                          //   userDetails,
-                          //   repairWork,
-                          //   locationdetails
-                          // }}
                         />
                       </Elements>
-                      // </div>
                     )}
                 </p>
                 <p>
@@ -304,23 +287,28 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
                     </div>
                   ) : (
                     <>
-                      <p className='py-1'>
+                      <p className="py-1">
                         <span className="font-medium ">Rating: </span>
-                        {typeof bookingDetails?.review?.rating === 'number' && [...Array(5)].map((star) => (
-                          <FontAwesomeIcon
-                            key={star}
-                            icon={faStar}
-                            className={`cursor-pointer text-1xl  mr-1 ${
-                              star <= (bookingDetails?.review?.rating as number)
-                                ? "text-yellow-500"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
+                        {typeof bookingDetails?.review?.rating === "number" &&
+                          [...Array(5)].map((_, star) => {
+                            star++;
+                            return (
+                              <FontAwesomeIcon
+                                key={star}
+                                icon={faStar}
+                                className={`cursor-pointer text-1xl  mr-1 ${
+                                  star <=
+                                  (bookingDetails?.review?.rating as number)
+                                    ? "text-yellow-500"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            );
+                          })}
                       </p>
                       <p>
                         <span className="font-medium ">Feedback: </span>
-                        {bookingDetails.review?.feedback}                        
+                        {bookingDetails.review?.feedback}
                       </p>
                     </>
                   )}
@@ -436,25 +424,27 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
             <span className="block text-red-600 opacity-80 font-light text-end pe-2">
               {feedbackError.feedback}
             </span>
-           
 
             <label className="flex gap-2 text-gray-700 mb-2" htmlFor="rating">
               Rating:
               <div className="flex items-center mb-3">
-                {[...Array(5)].map((star) => (
-                  <FontAwesomeIcon
-                    key={star}
-                    icon={faStar}
-                    className={`cursor-pointer text-2xl mr-1 ${
-                      star <= rating ? "text-yellow-500" : "text-gray-300"
-                    }`}
-                    onClick={() => setRating(star)}
-                  />
-                ))}
+                {[...Array(5)].map((_, star) => {
+                  star++;
+                  return (
+                    <FontAwesomeIcon
+                      key={star}
+                      icon={faStar}
+                      className={`cursor-pointer text-2xl mr-1 ${
+                        star <= rating ? "text-yellow-500" : "text-gray-300"
+                      }`}
+                      onClick={() => setRating(star)}
+                    />
+                  );
+                })}
               </div>
-            <span className="block text-red-600 opacity-80 font-light text-end pe-2">
-              {feedbackError.rating}
-            </span>
+              <span className="block text-red-600 opacity-80 font-light text-end pe-2">
+                {feedbackError.rating}
+              </span>
             </label>
 
             <div className="flex items-center justify-end">

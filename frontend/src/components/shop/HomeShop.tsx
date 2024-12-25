@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { navigateLogin, navigateLogout } from "../utilities/navigate/common";
 import { useNavigate } from "react-router-dom";
 import NavLogin from "../authenticate/NavLogin";
-import {faCalculator,faCar,faChartBar,faLocationArrow,faScrewdriverWrench,faUserCog,} from "@fortawesome/free-solid-svg-icons";
+import {faCalculator,faCar,faChartBar,faLocationArrow,faMessage,faScrewdriverWrench,faUserCog,} from "@fortawesome/free-solid-svg-icons";
 import ShopMain from "./MainShop";
 import SidebarCRUD from "../reuseComponents/SidebarCRUD";
 import { ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setShopUser } from "../../features/shopSlice";
+import { fetchShopUserDetails } from "../../services/shopService";
 
 const ShopHome: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [activeSection, setActiveSection] = useState("Dash");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     navigateLogout(navigate, "shop");
@@ -22,6 +26,7 @@ const ShopHome: React.FC = () => {
     { key: "EstimateManage", label: "Estimate", icon: faCalculator },
     { key: "BookingManage", label: "Bookings", icon: faScrewdriverWrench },
     { key: "PickupManage", label: "Pickups", icon: faLocationArrow },
+    { key: "ChatHistory", label: "Chats", icon: faMessage },
     { key: "ProfileEdit", label: "Profile", icon: faUserCog },
   ];
 
@@ -31,13 +36,27 @@ const ShopHome: React.FC = () => {
   };
 
   const toggleMenu = () => setShowMenu((prev) => !prev);
-
-  useEffect(() => {
-    const token = localStorage.getItem("shop_token");
-    if (!token) {
-      navigateLogin(navigate, "shop");
-    }
-  }, [navigate]);
+  
+    const getShopData = useCallback(async () => {
+        try {
+          console.log('in shop data fetch')
+          const response = await fetchShopUserDetails()
+          if(!response || !response.data) throw new Error('canot find shop user details');
+                dispatch(setShopUser(response.data.shopUser))
+        } catch (error) {
+          console.error('Failed to fetch userdata:', error);
+        }
+      },[dispatch])
+  
+      
+      useEffect(() => {
+        console.log('in token')
+        const token = localStorage.getItem("shop_token");
+        if (!token) {
+          navigateLogin(navigate, "shop");
+        }
+        getShopData()
+  }, [navigate,activeSection]);
 
   return (
     <div className="flex flex-col">

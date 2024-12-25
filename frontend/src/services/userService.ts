@@ -67,7 +67,6 @@ export const fetchModeldetail = async (_id:string,make:string):Promise<{status:n
 
 export const fetchUserUploadProfileImage = async (formData:FormData):Promise<{status:number;data:any}> => {
     try {
-        console.log('fomr ',formData);
         const response = await api.put('/uploadprofileimage',formData);
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error when uploading user profile image');
         return {status:response.status,data:response.data};
@@ -177,6 +176,50 @@ export const fetchShopReviews = async(id:string|undefined):Promise<{status:numbe
     try {
         const response = await api.get(`/reviewsByshop/${id}`)
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch reviews');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get('/chatHistory');
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch chathistory');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllMessages = async(chatRoomId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/fetchMessages/${chatRoomId}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const saveImageMessage = async(formData:FormData):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.post('/saveImageMessage',formData);   
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save image messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const saveMessage = async(chatId:string,message:string,imagePath:string|null):Promise<{status:number,data:any}> => {
+    try {
+           const response = await api.post(`/saveMessage`,{chatId,message,imagePath});
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save messages');
         return response;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>

@@ -53,7 +53,7 @@ export const sendPickupConfirmEmail = async(userDetails:{email:string;username:s
     .replace('{{pickup_Time}}',userDetails.time)
     .replace('{{pickup_date}}',formatDate(userDetails.date))
     .replace('{{user_Address}}',userDetails?.address || '')
-    .replace(/{{booking_details_url}}/g,`${url}/profile`)
+    .replace(/{{booking_details_url}}/g,`${url}/profile?menu=bookings`)
     .replace('{{homepage}}',url)
     
     const mailOptions = {
@@ -83,7 +83,7 @@ export const sendCancelEmail = async(userDetails:{email:string;username:string;t
     .replace(/{{bookingModel}}/g,bookingModel)
     .replace('{{time}}',userDetails.time)
     .replace('{{date}}',formatDate(userDetails.date))
-    .replace('{{profile_link}}',`${url}/profile`)
+    .replace('{{profile_link}}',`${url}/profile?menu=bookings`)
     .replace('{{homepage}}',url)
     
     const mailOptions = {

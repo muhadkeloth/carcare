@@ -72,6 +72,20 @@ export interface IVehicle extends Document {
     createdAt?:Date;
 }
 
+export interface IChat extends Document {
+    userId:Types.ObjectId;
+    shopId:Types.ObjectId;
+    createdAt?:Date;
+}
+
+export interface IMessage extends Document {
+    chatId:Types.ObjectId;
+    senderId:Types.ObjectId;
+    message:string;
+    image?:string;
+    createdAt?:Date;
+}
+
 export interface IEstimate extends Document {
     work:string;
     details:[{
@@ -115,4 +129,5 @@ export type pickupStatus = 'PENDING' | 'CONFIRMED'  | 'COMPLETED' | 'CANCELED';
 
 
 
-export interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }
+export interface AuthenticatedRequest extends Request { user?: string;userRole?:string }
+// export interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }
