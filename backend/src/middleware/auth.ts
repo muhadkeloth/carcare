@@ -60,14 +60,26 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
 }
 
 export const roleBasedAccess = (allowedRoles: string[]) => {
-    return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-      const role = req.userRole ?? '';
-      if (!allowedRoles.includes(role)) {
-        return next(new AppError('Access Denied: Insufficient permissions', HttpStatusCode.FORBIDDEN));
-      }
-      next();
-    };
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if (!req.userRole) {
+      return next(
+        new AppError(
+          "Access Denied: User role missing in request",
+          HttpStatusCode.FORBIDDEN
+        )
+      );
+    }
+    if (!allowedRoles.includes(req.userRole)) {
+      return next(
+        new AppError(
+          "Access Denied: Insufficient permissions",
+          HttpStatusCode.FORBIDDEN
+        )
+      );
+    }
+    next();
   };
+};
   
 
 

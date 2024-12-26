@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setActiveChat, setOnlineUsers } from '../../../features/chatSlice';
 import { getOnlineUsers, leaveRoom, onNotification } from '../../../services/socketService';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface ChatSidebarProps {
     isOpen:boolean;
@@ -20,6 +21,8 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
   const [unreadCounts, setUnreadCounts] = useState<{[key:string]:number}>({})
   const {chats,activeChat,onlineUsers} = useSelector((state:RootState)=>state.chat);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getOnlineUsers((users) => {
@@ -39,6 +42,21 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
       }
       });
   },[activeChat])
+
+    useEffect(() => {
+      const searchParams = new URLSearchParams(location.search);
+      const roomId = searchParams.get('roomId');
+      if(roomId && !activeChat) {
+        const room = chats.find((chat) => chat._id ===roomId);
+        if(room){
+          dispatch(setActiveChat(roomId));
+          onSelectUser({
+            name:room.shopId.shopName,
+            isOnline:isUserOnline(room.userId._id)
+          })
+        }
+      }
+    },[chats])
 
   const handleRoom = (room:any) => {
     if(activeChat) leaveRoom(activeChat);

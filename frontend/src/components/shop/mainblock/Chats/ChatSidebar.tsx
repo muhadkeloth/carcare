@@ -8,6 +8,7 @@ import { RootState } from '../../../../store';
 import { setActiveChat, setOnlineUsers } from '../../../../features/chatSlice';
 import { CurrentUser } from './ChatHistory';
 import { getOnlineUsers, leaveRoom, onNotification } from '../../../../services/socketService';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 interface ChatSidebarProps {
@@ -21,6 +22,8 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
   const [unreadCounts, setUnreadCounts] = useState<{[key:string]:number}>({})
   const {chats,activeChat,onlineUsers} = useSelector((state:RootState)=>state.chat);    
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -40,6 +43,18 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
         }
       });
     },[activeChat])
+
+    useEffect(() => {
+      if(activeChat) {
+        const room = chats.find((chat) => chat._id === activeChat);
+        if(room){
+          onSelectUser({
+            name:room.userId.username,
+            isOnline:isUserOnline(room.userId._id)
+          })
+        }
+      }
+    },[])
 
     const handleRoom = (room:any) => {
       if(activeChat) leaveRoom(activeChat);
@@ -87,7 +102,7 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
           onClick={() => handleRoom(chat)}
         >
           <div className="relative">
-            {chat.userId.image ? (
+            {chat?.userId?.image && chat?.userId?._id ? (
               <img
                 src={chat.userId.image}
                 alt={chat.userId.username}
@@ -96,7 +111,7 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
             ) : (
             <FontAwesomeIcon className="w-12 h-12 rounded-full object-cover" icon={faCircleUser} />
             )}
-            {isUserOnline(chat.userId._id) && (
+            {isUserOnline(chat?.userId?._id) && (
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
             )}
           </div>

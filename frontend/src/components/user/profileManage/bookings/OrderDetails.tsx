@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { BookingDetailsProps, Estimate, Shop } from '../../../utilities/interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faClock, faComment, faCreditCard, faIndianRupee, faScrewdriverWrench, faStar, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faClock, faComment, faCreditCard, faIndianRupee, faMessage, faScrewdriverWrench, faStar, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, ToastActive } from '../../../utilities/functions';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { textValidation } from '../../../utilities/validation';
-import { cancelBookingStatus, updateFeedback } from '../../../../services/userService';
+import { cancelBookingStatus, findChatRoom, updateFeedback } from '../../../../services/userService';
 import { Elements } from '@stripe/react-stripe-js';
 import Payment, { stripePromise } from '../../../reuseComponents/Payment';
+import { useNavigate } from 'react-router-dom';
+import { navigateChatRoom } from '../../../utilities/navigate/userNavigator';
 
 
 const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetPickupData }) => {
@@ -20,7 +22,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
     const [showFeedbackModel,setShowFeedbackModel] = useState(false)
     const [feedbackInput, setFeedbackInput] = useState('')
     const [feedbackError,setFeedbackError] =useState({rating:'',feedback:''})
-
+    const navigate = useNavigate()
 
     const togglePickupStatus = async(bookingId:string,status:string,reason:string = '') => {
         try{
@@ -71,6 +73,14 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
       }finally {
         setToggleId("");
         setShowFeedbackModel(false);
+      }
+    }
+
+    const handleChat = async () => {
+      if(typeof bookingDetails?.shopId !== "string"){
+        const response = await findChatRoom(bookingDetails?.shopId?._id || '');
+        if(!response) throw new Error('error to create room')
+        navigateChatRoom(navigate,response.data.chatRooms._id)
       }
     }
 
@@ -126,18 +136,23 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
         </div>
 
         <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="flex items-center space-x-2 mb-4">
-            {typeof bookingDetails?.shopId !== "string" &&
-            bookingDetails?.shopId?.image ? (
-              <img
-                src={bookingDetails?.shopId?.image}
-                alt="user img"
-                className=" w-8 h-8 rounded-full"
-              />
-            ) : (
-              <FontAwesomeIcon icon={faUser} />
-            )}{" "}
-            <h3 className="text-lg font-semibold">Shop Details</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              {typeof bookingDetails?.shopId !== "string" &&
+              bookingDetails?.shopId?.image ? (
+                <img
+                  src={bookingDetails?.shopId?.image}
+                  alt="user img"
+                  className=" w-8 h-8 rounded-full"
+                />
+              ) : (
+                <FontAwesomeIcon icon={faUser} />
+              )}{" "}
+              <h3 className="text-lg font-semibold">Shop Details</h3>
+            </div>
+            <button onClick={handleChat} className="btn-primary p-2">
+              <FontAwesomeIcon icon={faMessage} /> Contact us
+              </button>
           </div>
           <div className="space-y-2 mb-2">
             <p>
@@ -287,45 +302,46 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                       </button>
                     </div>
                   )}
-                  {bookingDetails.status === "COMPLETED" &&
-                  !bookingDetails.review ? (
-                    <div className="inline-flex space-x-2 ml-2">
-                      <button
-                        onClick={() => {
-                          setToggleId(bookingDetails._id);
-                          setShowFeedbackModel(true);
-                        }}
-                        className="mt-2 bg-yellow-400 text-white py-1 rounded  px-2 hover:bg-yellow-600 "
-                      >
-                        <FontAwesomeIcon icon={faComment} /> write feedback
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <p className="py-1">
-                        <span className="font-medium ">Rating: </span>
-                        {typeof bookingDetails?.review?.rating === "number" &&
-                          [...Array(5)].map((_,star) => {
-                            star++;
-                            return (
-                              <FontAwesomeIcon
-                                key={star}
-                                icon={faStar}
-                                className={`cursor-pointer text-1xl  mr-1 ${
-                                  star <=
-                                  (bookingDetails?.review?.rating as number)
-                                    ? "text-yellow-500"
-                                    : "text-gray-300"
-                                }`}
-                              />
-                            );
-                          })}
-                      </p>
-                      <p>
-                        <span className="font-medium ">Feedback: </span>
-                        {bookingDetails.review?.feedback}
-                      </p>
-                    </>
+                  {bookingDetails.status === "COMPLETED" && (
+                    !bookingDetails.review ? (
+                      <div className="inline-flex space-x-2 ml-2">
+                        <button
+                          onClick={() => {
+                            setToggleId(bookingDetails._id);
+                            setShowFeedbackModel(true);
+                          }}
+                          className="mt-2 bg-yellow-400 text-white py-1 rounded  px-2 hover:bg-yellow-600 "
+                        >
+                          <FontAwesomeIcon icon={faComment} /> write feedback
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="py-1">
+                          <span className="font-medium ">Rating: </span>
+                          {typeof bookingDetails?.review?.rating === "number" &&
+                            [...Array(5)].map((_, star) => {
+                              star++;
+                              return (
+                                <FontAwesomeIcon
+                                  key={star}
+                                  icon={faStar}
+                                  className={`cursor-pointer text-1xl  mr-1 ${
+                                    star <=
+                                    (bookingDetails?.review?.rating as number)
+                                      ? "text-yellow-500"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              );
+                            })}
+                        </p>
+                        <p>
+                          <span className="font-medium ">Feedback: </span>
+                          {bookingDetails.review?.feedback}
+                        </p>
+                      </>
+                    )
                   )}
                 </p>
               </>

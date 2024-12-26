@@ -25,8 +25,9 @@ export default class ChatService extends BaseService<IChat> {
                 throw new AppError('error in create new chat rooms',HttpStatusCode.BAD_REQUEST);    
             }
             return CreatedNewRoom
-        } 
-        return existingChatroom;
+        } else{
+            return existingChatroom;
+        }
     }
 
     async findAllChatsbyId(filter:any): Promise<IChat[]> {

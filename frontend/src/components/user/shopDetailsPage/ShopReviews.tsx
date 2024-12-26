@@ -22,7 +22,6 @@ const ShopReviews:React.FC = () => {
       try {
         setIsloading(true);
         const response = await fetchShopReviews(_id)
-        console.log('response',response.data.allReviews)
         setReviews(response.data.allReviews || []);
       } catch (error) {
         ToastActive('error','error to fetch reviews ')

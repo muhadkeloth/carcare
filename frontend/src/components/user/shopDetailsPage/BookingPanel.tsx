@@ -1,12 +1,13 @@
-import { faArrowRight, faCalendar, faClock, faMapPin, faPhone } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faCalendar, faClock, faMapPin, faMessage, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { formatPhoneNumber, formatTime, getNextAvailableDate } from '../../utilities/functions'
-import { navigateBookingSlot } from '../../utilities/navigate/userNavigator'
+import { navigateBookingSlot, navigateChatRoom } from '../../utilities/navigate/userNavigator'
 import { useNavigate } from 'react-router-dom'
 import { setShopdetails } from '../../../features/bookingSlice'
+import { findChatRoom } from '../../../services/userService'
 
 const BookingPanel:React.FC = () => {
   const shopDetails = useSelector((state:RootState) => state.shop.shopDetails );
@@ -18,6 +19,13 @@ const BookingPanel:React.FC = () => {
     dispatch(setShopdetails(shopDetails))
     navigateBookingSlot(navigate);
   }
+
+      const handleChat = async () => {
+          const response = await findChatRoom(shopDetails?._id || '');
+          if(!response) throw new Error('error to create room')
+          console.log('response',response.data.chatRooms);
+          navigateChatRoom(navigate,response.data.chatRooms._id)
+      }
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 sticky top-28">
@@ -62,9 +70,9 @@ const BookingPanel:React.FC = () => {
       Book Appointment  <FontAwesomeIcon icon={faArrowRight}  />
     </button>
     
-    <button onClick={handleAvailability}
+    <button onClick={handleChat}
     className="w-full text-mainclr-600 py-3 px-4 rounded-lg font-medium mt-3 hover:bg-mainclr-50 transition-colors">
-      Check Other Availability
+      <FontAwesomeIcon icon={faMessage} /> Chat With Us
     </button>
 
     <p className="text-sm text-gray-500 text-center mt-4">

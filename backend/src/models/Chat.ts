@@ -6,10 +6,12 @@ const chatSchema: Schema<IChat> = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required:true,
     },
     shopId: {
       type: Schema.Types.ObjectId,
       ref: "Shop",
+      required:true,
     },
   },
   {

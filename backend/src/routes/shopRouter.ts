@@ -51,7 +51,7 @@ router.get('/barChartFilter', shopController.barChartFilter);
 router.get('/lineChartFilter', shopController.lineChartFilter);
 
 // chat
-router.get('/createChatRoom/:shopId', shopController.newChatRoomByUser);
+router.get('/createChatRoom/:userId', shopController.newChatRoomByUser);
 router.get('/chatHistory', shopController.fetchChatHistory);
 router.get('/fetchMessages/:chatId', shopController.fetchMessagesbyChatId);
 router.post('/saveImageMessage',upload.single('image'), shopController.saveImageMessage);

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { navigateLogin, navigateLogout } from "../utilities/navigate/common";
-import { useNavigate } from "react-router-dom";
+import { navigateLogin, navigateLogout, navigateToSection } from "../utilities/navigate/common";
+import { useLocation, useNavigate } from "react-router-dom";
 import NavLogin from "../authenticate/NavLogin";
 import {faCalculator,faCar,faChartBar,faLocationArrow,faMessage,faScrewdriverWrench,faUserCog,} from "@fortawesome/free-solid-svg-icons";
 import ShopMain from "./MainShop";
@@ -14,6 +14,7 @@ const ShopHome: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [activeSection, setActiveSection] = useState("Dash");
   const navigate = useNavigate();
+  const location = useLocation()
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -31,7 +32,7 @@ const ShopHome: React.FC = () => {
   ];
 
   const handleActiveSection = (section: string) => {
-    setActiveSection(section);
+    navigateToSection(navigate,section,'shop')
     setShowMenu(!showMenu);
   };
 
@@ -39,7 +40,6 @@ const ShopHome: React.FC = () => {
   
     const getShopData = useCallback(async () => {
         try {
-          console.log('in shop data fetch')
           const response = await fetchShopUserDetails()
           if(!response || !response.data) throw new Error('canot find shop user details');
                 dispatch(setShopUser(response.data.shopUser))
@@ -50,13 +50,21 @@ const ShopHome: React.FC = () => {
   
       
       useEffect(() => {
-        console.log('in token')
         const token = localStorage.getItem("shop_token");
         if (!token) {
           navigateLogin(navigate, "shop");
         }
         getShopData()
   }, [navigate,activeSection]);
+
+      useEffect(() => {
+        const queryParmas = new URLSearchParams(location.search);
+        const menuKey = queryParmas.get("menu");
+        if (menuKey) {
+          setActiveSection(menuKey);
+        }
+      }, [location.search]);
+
 
   return (
     <div className="flex flex-col">

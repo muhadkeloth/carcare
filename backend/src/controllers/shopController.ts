@@ -573,6 +573,10 @@ export class ShopController extends BaseController<any> {
       }
       const {userId} = req.params;
       // const userId = req.query.userId;
+      if(!userId){
+        logger.warn(`error to create chat room`);
+        throw new AppError("error to create chat room", HttpStatusCode.BAD_REQUEST);
+      }
       const chatRooms = await this.chatService.createNewRoom(userId,req.user as string)
       // const chatRooms = await this.chatService.createNewRoom(userId as string,shopId)
       if(!chatRooms){

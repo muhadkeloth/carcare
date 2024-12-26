@@ -183,6 +183,17 @@ export const fetchShopReviews = async(id:string|undefined):Promise<{status:numbe
     }
 }
 
+export const findChatRoom = async(shopId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/createChatRoom/${shopId}`);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to fetch create chat room');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
     try {
         const response = await api.get('/chatHistory');

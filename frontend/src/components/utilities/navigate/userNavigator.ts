@@ -40,3 +40,7 @@ export const navigatePickMyCar = (navigate:any):void => {
 export const navigateChatHistory = (navigate:any):void => {
   if(checkToken(navigate)) navigate('/chats')
 }
+
+export const navigateChatRoom = (navigate:any,roomId:string|null =  null):void => {
+  if(checkToken(navigate)) navigate(`/chats?roomId=${roomId}`)
+}

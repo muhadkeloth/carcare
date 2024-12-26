@@ -2,12 +2,14 @@ import React, { useState } from 'react'
 import { BookingDetailsProps, Shop } from '../../../utilities/interface'
 import { formatDate, ToastActive } from '../../../utilities/functions';
 import { textValidation } from '../../../utilities/validation';
-import { cancelpickupStatus, updateFeedback } from '../../../../services/userService';
+import { cancelpickupStatus, findChatRoom, updateFeedback } from '../../../../services/userService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCar, faClock, faComment, faCreditCard, faIndianRupee, faScrewdriverWrench, faStar, faUser, faX } from '@fortawesome/free-solid-svg-icons';
+import { faCar, faClock, faComment, faCreditCard, faIndianRupee, faMessage, faScrewdriverWrench, faStar, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { Elements } from '@stripe/react-stripe-js';
 import Payment, { stripePromise } from '../../../reuseComponents/Payment';
+import { navigateChatRoom } from '../../../utilities/navigate/userNavigator';
+import { useNavigate } from 'react-router-dom';
 
 
 const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
@@ -20,7 +22,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
     const [showFeedbackModel,setShowFeedbackModel] = useState(false)
     const [feedbackInput, setFeedbackInput] = useState('')
     const [feedbackError,setFeedbackError] =useState({rating:'',feedback:''})
-
+    const navigate = useNavigate();
 
   const cancelPickupStatus = async (pickupId: string, status: string,reason:string = '') => {
     try {
@@ -74,6 +76,15 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
     }
   }
 
+     const handleChat = async () => {
+       if(typeof bookingDetails?.shopId !== "string"){
+         const response = await findChatRoom(bookingDetails?.shopId?._id || '');
+         if(!response) throw new Error('error to create room')
+         console.log('response',response.data.chatRooms);
+         navigateChatRoom(navigate,response.data.chatRooms._id)
+       }
+     }
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -125,18 +136,23 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPic
         </div>
 
         <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="flex items-center space-x-2 mb-4">
-            {typeof bookingDetails?.shopId !== "string" &&
-            bookingDetails?.shopId?.image ? (
-              <img
-                src={bookingDetails?.shopId?.image}
-                alt="user img"
-                className=" w-8 h-8 rounded-full"
-              />
-            ) : (
-              <FontAwesomeIcon icon={faUser} />
-            )}{" "}
-            <h3 className="text-lg font-semibold">Shop Details</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              {typeof bookingDetails?.shopId !== "string" &&
+              bookingDetails?.shopId?.image ? (
+                <img
+                  src={bookingDetails?.shopId?.image}
+                  alt="user img"
+                  className=" w-8 h-8 rounded-full"
+                />
+              ) : (
+                <FontAwesomeIcon icon={faUser} />
+              )}{" "}
+              <h3 className="text-lg font-semibold">Shop Details</h3>
+            </div>
+            <button onClick={handleChat} className="btn-primary p-2">
+              <FontAwesomeIcon icon={faMessage} /> Contact us
+            </button>
           </div>
           <div className="space-y-2 mb-2">
             <p>

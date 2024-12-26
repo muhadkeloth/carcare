@@ -260,7 +260,17 @@ export const fetchfilterPriceCart = async (period:'monthly'|'yearly'|'weekly'):P
     }
 }
 
-// 
+export const findChatRoom = async(userId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/createChatRoom/${userId}`);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to fetch create chat room');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
     try {
         const response = await api.get('/shop/chatHistory');
@@ -285,10 +295,6 @@ export const fetchAllMessages = async(chatRoomId:string):Promise<{status:number,
 
 export const saveImageMessage = async(formData:FormData):Promise<{status:number,data:any}> => {
     try {
-        // for (let pair of formData.entries()) {
-        //   console.log("bbb shop");
-        //   console.log(pair[0] + ":", pair[1]);
-        // }
         const response = await api.post('/shop/saveImageMessage',formData);   
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save image messages');
         return response;

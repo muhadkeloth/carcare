@@ -12,15 +12,36 @@ import ChatHistory from './mainblock/Chats/ChatHistory';
 
 
 const ShopMain: React.FC<SectionMainProps> = ({ activeSection }) => {
+
+  const renderSection = () => {
+    switch (activeSection){
+      case 'VehicleManage':
+        return <VehicleManagement />;
+      case 'EstimateManage':
+        return <EstimateMangement />;
+      case 'BookingManage':
+        return <BookingManagement />;
+      case 'PickupManage':
+        return <PickupManagement />;
+      case 'ChatHistory':
+        return <ChatHistory />;
+      case 'ProfileEdit':
+        return <ShopProfile />;
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
     <div className="flex-1 p-1 sm:p-2 bg-gray-100 ">
-        {activeSection === 'Dash' && <Dashboard />}
+       {renderSection()}
+        {/* {activeSection === 'Dash' && <Dashboard />}
         {activeSection === 'VehicleManage' && <VehicleManagement />}
         {activeSection === 'EstimateManage' && <EstimateMangement />}
         {activeSection === 'BookingManage' && <BookingManagement />}
         {activeSection === 'PickupManage' && <PickupManagement />}
         {activeSection === 'ChatHistory' && <ChatHistory />}
-        {activeSection === 'ProfileEdit' && <ShopProfile />}
+        {activeSection === 'ProfileEdit' && <ShopProfile />} */}
     </div>
   )
 }

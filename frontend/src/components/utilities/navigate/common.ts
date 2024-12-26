@@ -43,6 +43,14 @@ export const navigateProfile = (navigate:any):void => {
   }
 }
 
+export const navigateToSection = (navigate:any,section:string,role:string):void => {
+  if(role == 'shop' && localStorage.getItem("shop_token")){
+      navigate(`/shop?menu=${section}`)
+  }else if(role == 'admin' && localStorage.getItem("admin_token")){
+      navigate(`/admin?menu=${section}`)
+  }
+}
+
 export const navigateLogout = (navigate:any,role:string):void => {
   localStorage.removeItem(`${role}_token`);
   if(role === 'user'){

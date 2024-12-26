@@ -2,17 +2,22 @@ import React, { useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { BookingDetailsProps } from "../../../utilities/interface";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCar, faClock, faIndianRupee, faPencil, faScrewdriverWrench, faUser, faX, } from "@fortawesome/free-solid-svg-icons";
+import { faCar, faClock, faIndianRupee, faMessage, faPencil, faScrewdriverWrench, faUser, faX, } from "@fortawesome/free-solid-svg-icons";
 import { formatDate, ToastActive } from "../../../utilities/functions";
-import { togglepickupStatus } from "../../../../services/shopService";
+import { findChatRoom, togglepickupStatus } from "../../../../services/shopService";
 import {  textValidation } from "../../../utilities/validation";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setActiveChat } from "../../../../features/chatSlice";
+import { navigateToSection } from "../../../utilities/navigate/common";
 
 const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [toggleId, setToggleId] = useState("");
   const [inputDetails, setInputDetails] = useState("");
   const [reasonError, setReasonError] = useState("");
-
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
 
   const togglePickupStatus = async (pickupId: string, status: string,reason:string = '') => {
     try {
@@ -39,6 +44,13 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
     }
     togglePickupStatus(toggleId, "CANCELED",inputDetails)
   }
+
+  const handleChat = async () => {
+    const response = await findChatRoom(bookingDetails?.userId?._id || "");
+    if (!response) throw new Error("error to create room");
+    dispatch(setActiveChat(response.data.chatRooms._id));
+    navigateToSection(navigate,'ChatHistory','shop');
+  };
 
   return (
     <div className="space-y-8">
@@ -86,13 +98,22 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
         </div>
 
         <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="flex items-center space-x-2 mb-4">
-          {bookingDetails?.userId?.image ? (
-                <img src={bookingDetails?.userId?.image} alt="user img" className=" w-8 h-8 rounded-full" />
-              ):(
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              {bookingDetails?.userId?.image ? (
+                <img
+                  src={bookingDetails?.userId?.image}
+                  alt="user img"
+                  className=" w-8 h-8 rounded-full"
+                />
+              ) : (
                 <FontAwesomeIcon icon={faUser} />
               )}{" "}
-            <h3 className="text-lg font-semibold">Customer Details</h3>
+              <h3 className="text-lg font-semibold">Customer Details</h3>
+            </div>
+            <button onClick={handleChat} className="btn-primary p-2">
+              <FontAwesomeIcon icon={faMessage} /> Contact 
+            </button>
           </div>
           <div className="space-y-2 mb-2">
             <p>
@@ -132,8 +153,9 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
             {bookingDetails?.paymentStatus && (
               <>
                 <p>
-                  <span className="font-medium ">Amount: </span> 
-                  <FontAwesomeIcon icon={faIndianRupee} /> {bookingDetails.amount.toFixed(2)}
+                  <span className="font-medium ">Amount: </span>
+                  <FontAwesomeIcon icon={faIndianRupee} />{" "}
+                  {bookingDetails.amount.toFixed(2)}
                 </p>
                 <p>
                   <span className="font-medium">Payment Status:</span>
@@ -171,53 +193,58 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                   >
                     {bookingDetails.status}
                   </span>
-                  {bookingDetails?.status == 'CANCELED' &&  bookingDetails?.paymentFailDetails && (
-                    <>
-                    <p>
-                    <span className="font-medium ">Canceled By: </span> 
-                    {bookingDetails.paymentFailDetails.actionFrom == 'shop' ? 'workshop' : 'user'}
-                  </p>
-                    <p>
-                    <span className="font-medium ">Reason: </span> 
-                    {bookingDetails.paymentFailDetails.reason}
-                  </p>
-                    </>
-                  )}
-                  {bookingDetails.paymentStatus === 'PAID' && !["COMPLETED", "CANCELED"].includes(bookingDetails.status) && (
-                    <div className="inline-flex space-x-2 ml-2">
-                      <button
-                        onClick={() => 
-                          togglePickupStatus(
-                            bookingDetails._id,
-                            bookingDetails?.status == "PENDING"
-                              ? "CONFIRMED"
-                              : bookingDetails?.status == "CONFIRMED"
-                              ? "COMPLETED"
-                              : ""
-                          )
-                      }
-                        className="btn-primary p-0 px-2"
-                      >
-                        <FontAwesomeIcon icon={faPencil} /> 
-                        {
-                          bookingDetails?.status == "PENDING"
-                          ? "CONFIRM"
-                          : bookingDetails?.status == "CONFIRMED"
-                          ? "complete"
-                          : ""
-                        }
-                      </button>
-                      <button
-                        onClick={() => {
-                          setToggleId(bookingDetails._id);
-                          setShowConfirmModal(true);
-                        }}
-                        className="btn-secondary p-0 px-2"
-                      >
-                        <FontAwesomeIcon icon={faX} /> cancel
-                      </button>
-                    </div>
-                  )}
+                  {bookingDetails?.status == "CANCELED" &&
+                    bookingDetails?.paymentFailDetails && (
+                      <>
+                        <p>
+                          <span className="font-medium ">Canceled By: </span>
+                          {bookingDetails.paymentFailDetails.actionFrom ==
+                          "shop"
+                            ? "workshop"
+                            : "user"}
+                        </p>
+                        <p>
+                          <span className="font-medium ">Reason: </span>
+                          {bookingDetails.paymentFailDetails.reason}
+                        </p>
+                      </>
+                    )}
+                  {bookingDetails.paymentStatus === "PAID" &&
+                    !["COMPLETED", "CANCELED"].includes(
+                      bookingDetails.status
+                    ) && (
+                      <div className="inline-flex space-x-2 ml-2">
+                        <button
+                          onClick={() =>
+                            togglePickupStatus(
+                              bookingDetails._id,
+                              bookingDetails?.status == "PENDING"
+                                ? "CONFIRMED"
+                                : bookingDetails?.status == "CONFIRMED"
+                                ? "COMPLETED"
+                                : ""
+                            )
+                          }
+                          className="btn-primary p-0 px-2"
+                        >
+                          <FontAwesomeIcon icon={faPencil} />
+                          {bookingDetails?.status == "PENDING"
+                            ? "CONFIRM"
+                            : bookingDetails?.status == "CONFIRMED"
+                            ? "complete"
+                            : ""}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setToggleId(bookingDetails._id);
+                            setShowConfirmModal(true);
+                          }}
+                          className="btn-secondary p-0 px-2"
+                        >
+                          <FontAwesomeIcon icon={faX} /> cancel
+                        </button>
+                      </div>
+                    )}
                 </p>
               </>
             )}
@@ -239,7 +266,11 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                 className="h-72 w-full z-10"
               >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={bookingDetails?.locationdetails?.coordinates || [0, 0]} >
+                <Marker
+                  position={
+                    bookingDetails?.locationdetails?.coordinates || [0, 0]
+                  }
+                >
                   <Popup>{bookingDetails?.locationdetails?.description}</Popup>
                 </Marker>
               </MapContainer>
@@ -262,17 +293,24 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                 }}
               />
             </h3>
-              <label className="block text-gray-700 mb-2" htmlFor="Reason">
-                Reason:
-              </label>
-                <input type="text"
-                placeholder='Enter Reason'
-                value={inputDetails} 
-              onChange={(e) => setInputDetails(e.target.value)} 
+            <label className="block text-gray-700 mb-2" htmlFor="Reason">
+              Reason:
+            </label>
+            <input
+              type="text"
+              placeholder="Enter Reason"
+              value={inputDetails}
+              onChange={(e) => setInputDetails(e.target.value)}
               className="border border-gray-300 rounded w-full p-2 mb-3"
-              style={reasonError.length !==0 ? { outline: 'none', boxShadow: '0 0 0 1px red' } : {}}
-               />
-               <span className='block text-red-600 opacity-80 font-light text-end pe-2'>{reasonError}</span>
+              style={
+                reasonError.length !== 0
+                  ? { outline: "none", boxShadow: "0 0 0 1px red" }
+                  : {}
+              }
+            />
+            <span className="block text-red-600 opacity-80 font-light text-end pe-2">
+              {reasonError}
+            </span>
 
             <div className="flex items-center justify-end">
               <button
@@ -281,13 +319,10 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
                   setShowConfirmModal(false);
                   setToggleId("");
                 }}
-                >
+              >
                 no thanks
               </button>
-              <button
-                className="btn-secondary"
-                onClick={handleCancel}
-              >
+              <button className="btn-secondary" onClick={handleCancel}>
                 confirm cancel
               </button>
             </div>
