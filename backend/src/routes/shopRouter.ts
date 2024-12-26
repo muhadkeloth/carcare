@@ -50,6 +50,8 @@ router.get('/dashStatistics', shopController.dashStatistics);
 router.get('/barChartFilter', shopController.barChartFilter);
 router.get('/lineChartFilter', shopController.lineChartFilter);
 
+router.get('/reviews', shopController.fetchShopReviews);
+
 // chat
 router.get('/createChatRoom/:userId', shopController.newChatRoomByUser);
 router.get('/chatHistory', shopController.fetchChatHistory);

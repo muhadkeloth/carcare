@@ -17,9 +17,10 @@ export interface CurrentUser{
 
 const ChatHistory = () => {
   const { _id:userId } = useSelector((state:RootState)=> state.user.userDetails) || {}
-    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-    const [currentUser, setCurrentUser] = useState<CurrentUser>({name:""});
-    const dispatch = useDispatch();
+  const roomId = useSelector((state:RootState)=> state.chat.activeChat);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({name:""});
+  const dispatch = useDispatch();
 
     useEffect(()=> {
       if(userId) connectSocket(userId);
@@ -71,7 +72,7 @@ const ChatHistory = () => {
           onMenuClick={() => setIsSidebarOpen(true)}
         />
         <ChatMessages />
-        <ChatInput />
+        {roomId &&  <ChatInput /> }       
       </div>
     </div>
 

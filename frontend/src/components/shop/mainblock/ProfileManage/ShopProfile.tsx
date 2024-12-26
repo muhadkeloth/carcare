@@ -3,7 +3,7 @@ import EditProfile from './editcomponents/EditProfile';
 import SidebarShopprofile from './SidebarShopprofile';
 import WorkingTime from './editcomponents/WorkingTime';
 import MoreInfo from './editcomponents/MoreInfo';
-import Reviews from './editcomponents/Reviews';
+import Reviews from './editcomponents/Reviews/Reviews';
 import ChangePass from './editcomponents/ChangePass';
 
 

@@ -260,6 +260,17 @@ export const fetchfilterPriceCart = async (period:'monthly'|'yearly'|'weekly'):P
     }
 }
 
+export const fetchAllReviews = async():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get('/shop/reviews')
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch reviews');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 export const findChatRoom = async(userId:string):Promise<{status:number,data:any}> => {
     try {
         const response = await api.get(`/shop/createChatRoom/${userId}`);

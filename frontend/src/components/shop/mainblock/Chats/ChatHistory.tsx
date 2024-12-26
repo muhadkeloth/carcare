@@ -17,6 +17,7 @@ export interface CurrentUser{
 
 const ChatHistory = () => {
   const { _id:shopId } = useSelector((state:RootState)=>state.shop.shopDetails) || {};
+  const roomId = useSelector((state:RootState)=> state.chat.activeChat);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser>({name:""});
   const dispatch = useDispatch();
@@ -64,7 +65,6 @@ const ChatHistory = () => {
         />
       )}
 
-      {/* <div className="flex-1 flex flex-col  min-w-0"> */}
       <div className="flex-1 flex flex-col  min-w-0 h-full">
         <ChatHeader
           name={currentUser.name}
@@ -73,7 +73,7 @@ const ChatHistory = () => {
         />
      
         <ChatMessages />
-        <ChatInput />
+        {roomId &&  <ChatInput /> }   
       </div>
     </div>
 

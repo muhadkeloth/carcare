@@ -592,6 +592,7 @@ interface BookingDetails extends bookingDetailsType {
 }
 
 export interface Reviews {
+  _id?:string;
   review:Review;
   userId:{
     username:string;

@@ -565,6 +565,24 @@ export class ShopController extends BaseController<any> {
     }
   }
 
+  fetchShopReviews = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
+    try {
+      if (!req.user){
+        logger.warn(`error to find shop id`);
+        throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
+      }
+      const allReviewsByBookings = await this.bookingService.getReviewsByShopId(req.user)
+      const allReviewsByPickups = await this.pickupService.getReviewsByShopId(req.user)
+      const allReviews = [...allReviewsByBookings,...allReviewsByPickups];
+      res.status(HttpStatusCode.SUCCESS).json({allReviews,message:'reviews fetch successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
+
   newChatRoomByUser = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
     try {
       if (!req.user){

@@ -535,7 +535,6 @@ export default class UserController extends BaseController<IUser> {
       const allReviewsByBookings = await this.bookingService.getReviewsByShopId(id)
       const allReviewsByPickups = await this.pickupService.getReviewsByShopId(id)
       const allReviews = [...allReviewsByBookings,...allReviewsByPickups];
-      console.log('allReviewsByBookings',allReviewsByBookings)
       res.status(HttpStatusCode.SUCCESS).json({allReviews,message:'reviews fetch successfuly'});
     } catch (error) {
       const err = error as Error;
