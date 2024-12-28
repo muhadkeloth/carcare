@@ -43,7 +43,7 @@ const ChangePass:React.FC = () => {
   return (
     <div className="flex flex-col mt-4 space-y-4  justify-center items-center">
       <h3 className="font-semibold text-2xl">Change Password</h3>
-      <form onSubmit={handleSubmit} className='w-1/3 space-y-4'>
+      <form onSubmit={handleSubmit} className='md:w-1/3 space-y-4'>
         <div >
         <label className="block text-sm font-medium">Current Password</label>
         <input

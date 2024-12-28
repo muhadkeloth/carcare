@@ -52,39 +52,44 @@ const WorkingTime:React.FC = () => {
 
 
   return (
-     <div className="time-selector">
-      <h2 className="text-lg font-semibold mb-4">Select Work Hours</h2>
-      <div className="flex justify-around ">
-        <label className="flex flex-col w-1/4">
-          Opening Time:
+    <div className="time-selector">
+      <h2 className="text-lg font-semibold my-4">Select Work Hours</h2>
+      <div className="flex flex-col md:flex-row justify-around gap-4">
+        <label className="flex flex-col w-full md:w-1/4">
+          <span className="text-gray-500 mb-2">Opening Time:</span>
           <input
             type="time"
             value={openingTime}
             onChange={(e) => setOpeningTime(e.target.value)}
-            className="border  p-2  rounded"
-            />
-            </label>
-        <label className="flex flex-col w-1/4">
-          Closing Time:
+            className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </label>
+        <label className="flex flex-col w-full md:w-1/4">
+          <span className="text-gray-500 mb-2">Closing Time:</span>
           <input
             type="time"
             value={closingTime}
             onChange={(e) => setClosingTime(e.target.value)}
-            className="border w-full p-2 rounded"
+            className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </label>
       </div>
+
       <div className="flex flex-col my-4 space-y-3">
         {error && <p className="text-red-500">{error}</p>}
         <button
           onClick={handleSubmit}
-          className={`btn-primary ${isLoading && 'flex justify-center'}`}
-          >
-            {isLoading ? <ThreeDots height="" color='white' wrapperClass=" w-10 h-6" /> : 'Submit'}
+          className={`btn-primary ${isLoading && "flex justify-center"}`}
+        >
+          {isLoading ? (
+            <ThreeDots height="" color="white" wrapperClass=" w-10 h-6" />
+          ) : (
+            "Submit"
+          )}
         </button>
-            </div>
+      </div>
     </div>
-  )
+  );
 }
 
 export default WorkingTime

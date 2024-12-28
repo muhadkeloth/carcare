@@ -9,6 +9,8 @@ import { ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setShopUser } from "../../features/shopSlice";
 import { fetchShopUserDetails } from "../../services/shopService";
+import { motion } from "framer-motion";
+
 
 const ShopHome: React.FC = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -87,12 +89,14 @@ const ShopHome: React.FC = () => {
               handleLogout={handleLogout}
             />
           </div>
-          <div
-            className={`bg-mainclr-500 rounded-e-md flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full transition-transform duration-300 ease-in-out ${
-              showMenu ? "translate-x-0" : "-translate-x-full"
-            } md:hidden w-3/5`}
+          <motion.div
+          initial={{ x: "-100%" }} 
+          animate={{ x: showMenu ? "0%" : "-100%" }} 
+          exit={{ x: "-100%" }} 
+          transition={{ duration: 0.5, ease: "easeInOut" }} 
+          className="bg-mainclr-500 rounded-e-md flex flex-col items-start py-4 ps-4 text-white space-y-4 fixed z-10 left-0 top-0 h-full md:hidden w-3/5"
           >
-            <SidebarCRUD
+             <SidebarCRUD
               title="Shop Panel"
               sections={sections}
               activeSection={activeSection}
@@ -100,7 +104,7 @@ const ShopHome: React.FC = () => {
               handleLogout={handleLogout}
               showMenu={showMenu}
             />
-          </div>
+          </motion.div>
         </div>
         <ShopMain activeSection={activeSection} />
       </div>

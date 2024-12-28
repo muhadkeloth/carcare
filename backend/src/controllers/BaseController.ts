@@ -31,7 +31,6 @@ export default abstract class BaseController<T extends Doc> {
         logger.warn('user blocked')
         throw new AppError("Account is blocked. Please contact customer care.",HttpStatusCode.FORBIDDEN);
       }
-      // if(role === 'shop'){
         if(!user.password && role === 'shop'){
           if(user.otpExpiry && new Date() > user.otpExpiry){
             logger.warn("OTP expired.");
@@ -51,7 +50,6 @@ export default abstract class BaseController<T extends Doc> {
     
           res.status(HttpStatusCode.SUCCESS).json({ token, role, message: "Login successful" });
         }
-      // }
 
     } catch (error) {
       const err = error as Error;

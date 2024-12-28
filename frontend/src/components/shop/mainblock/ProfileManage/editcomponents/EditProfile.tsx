@@ -251,8 +251,7 @@ const EditProfile: React.FC = () => {
               )}
             </div>
           </div>
-
-          <div className="mb-3">
+          <div className="relative z-0 w-full ">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Location
             </label>
@@ -260,12 +259,12 @@ const EditProfile: React.FC = () => {
             <MapContainer
               center={[11.87508, 75.373848]}
               zoom={10}
-              className="h-72 w-full z-10"
+              className="h-72 w-full z-0"
             >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+               attribution="&copy; OpenStreetMap contributors"  />
               <LocationPicker
                 onLocationChange={setSelectedLocation}
-                // initialPosition={selectedLocation}
                 initialPosition={selectedLocation ? [selectedLocation] : selectedLocation}
               />
             </MapContainer>
