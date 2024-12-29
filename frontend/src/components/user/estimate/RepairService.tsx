@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { setEstimateWorkDetails } from '../../../features/estimateSlice';
 import { BookingProps } from '../../utilities/interface';
+import { HoverMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 
 const RepairService:React.FC<BookingProps> = ({setActiveSection}) => {
   const { shopdetails } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
@@ -22,6 +23,7 @@ const RepairService:React.FC<BookingProps> = ({setActiveSection}) => {
         <div className="mt-10 w-full ">
           <div className="grid grid-cols-1  gap-3">
             {shopdetails?.estimate?.map((work) => (
+              <HoverMotionWrapper key={work.work} >
               <div
                 key={work.work}
                 onClick={() => handlelocation(work)}
@@ -36,6 +38,7 @@ const RepairService:React.FC<BookingProps> = ({setActiveSection}) => {
                   </h3>
                 </div>
               </div>
+              </HoverMotionWrapper>
             ))}
           </div>
           {!shopdetails?.estimate ||

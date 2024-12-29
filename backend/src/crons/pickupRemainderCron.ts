@@ -8,7 +8,7 @@ import logger from '../middleware/logger';
 const pickupService = new PickupService(new PickupRepository(Pickups))
 
 const pickupremainderCron = () => {
-    cron.schedule('0,30 8-19 * * 1-5',async()=>{
+    cron.schedule('0,30 8-19 * * 1-6',async()=>{
         const pickups = await pickupService.getUpcomingPickups(30);
         if(pickups){            
             for(const pickup of pickups){

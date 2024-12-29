@@ -3,6 +3,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { ToastActive } from '../../utilities/functions';
 import { passwordConfirmValidation, passwordValidation } from '../../utilities/validation';
 import { changePasswordUser } from '../../../services/userService';
+import { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 
 const ChangePassword:React.FC = () => {
     const [input,setInput] = useState({password:'',newPassword:'',confirmPassword:''});
@@ -52,7 +53,7 @@ const ChangePassword:React.FC = () => {
               <div className="flex flex-col sm:flex-row my-6 sm:mx-4">
                 <div className="flex flex-col flex-grow sm:ms-4 items-center">
                   <form onSubmit={handleSubmit} className="w-1/3 space-y-4">
-                    <div>
+                    <DropMotionWrapper>
                       <label className="block text-sm font-medium">
                         Current Password
                       </label>
@@ -68,8 +69,8 @@ const ChangePassword:React.FC = () => {
                       {error?.passError && (
                         <span className="text-red-500">{error?.passError}</span>
                       )}
-                    </div>
-                    <div>
+                    </DropMotionWrapper>
+                    <DropMotionWrapper>
                       <label className="block text-sm font-medium">
                         New Password
                       </label>
@@ -87,8 +88,8 @@ const ChangePassword:React.FC = () => {
                           {error?.newpassError}
                         </span>
                       )}
-                    </div>
-                    <div>
+                    </DropMotionWrapper>
+                    <DropMotionWrapper>
                       <label className="block text-sm font-medium">
                         Confirm Password
                       </label>
@@ -106,7 +107,8 @@ const ChangePassword:React.FC = () => {
                           {error?.confirmPasswordError}
                         </span>
                       )}
-                    </div>
+                    </DropMotionWrapper>
+                    <DropMotionWrapper>
                     <button type="submit" disabled={isLoading} className="w-full btn-primary">
                       {isLoading ? (
                         <div className="flex justify-center items-center  w-full">
@@ -116,32 +118,9 @@ const ChangePassword:React.FC = () => {
                         "Change Password"
                       )}
                     </button>
+                    </DropMotionWrapper>
                   </form>
                 </div>
-
-                {/* {showConfirmModal && (
-                  <div className="fixed inset-0  bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-                      <h3 className="text-lg font-bold mb-4">
-                        Are you sure you want to confirm Edit this Profile?
-                      </h3>
-                      <div className="flex items-center justify-end">
-                        <button
-                          className="btn-secondary mr-2"
-                          onClick={() => setShowConfirmModal(false)}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          className="btn-primary"
-                          onClick={handleSaveChanges}
-                        >
-                          Confirm
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )} */}
               </div>
             </div>
           </div>

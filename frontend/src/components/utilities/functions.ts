@@ -106,7 +106,7 @@ export const formatDate = (isoDate: Date | undefined | string) => {
 export   const getPaymentStatusColor = (status:bookingStatus|PaymentStatus) => {
   const colors = {
     PENDING: ' text-yellow-500 font-semibold',
-    PAID: 'text-green-500 font-semibold inline-flex items-center justify-center',
+    PAID: 'text-green-500 font-semibold ',
     FAILED: ' text-red-500 font-semibold',
     REFUNDED: ' text-gray-500 font-semibold',
     CONFIRMED:' text-blue-500 font-semibold',
@@ -135,8 +135,28 @@ export const getNextAvailableDate = ():string => {
     nextAvailableDate.setDate(nextAvailableDate.getDate() + 1);
   } while (nextAvailableDate.getDate() === 6 || nextAvailableDate.getDate() === 0);
   
-  return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric',year:'numeric'})
+  return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric'})
+  // return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric',year:'numeric'})
 }
+
+export const getStatusMessageofShop = (opening: string,closing: string): { text: string; color: string } => {
+  const today = new Date();
+  const currentDay = today.getDay();
+  const currentTime = today.getHours() * 60 + today.getMinutes();
+
+  const openingTime = parseInt(opening.split(":")[0]) * 60 + parseInt(opening.split(":")[1]);
+  const closingTime = parseInt(closing.split(":")[0]) * 60 + parseInt(closing.split(":")[1]);
+
+  if (currentDay >= 1 && currentDay <= 5) {
+    if (currentTime >= openingTime && currentTime <= closingTime) {
+      return { text: "Open", color: "text-green-500" };
+    } else {
+      return { text: "Closed", color: "text-red-500" };
+    }
+  }
+
+  return { text: "Closed", color: "text-red-500" };
+};
 
 export const generateCountsforChart = (period:'monthly'|'yearly'|'weekly', data:any[]) => {
   const counts = [];
@@ -210,3 +230,19 @@ export const formatToIndianNumbering = (number:number):string => {
   return formatted;
 };
 
+export const addTimeinDate = (selectedDate: Date, selectedTime: string): Date => {
+  const [time, period] = selectedTime.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (period === "PM" && hours !== 12) {
+    hours += 12;
+  } else if (period === "AM" && hours === 12) {
+    hours = 0;
+  }
+  const updatedDate:Date = new Date(selectedDate.getTime());
+  updatedDate.setHours(hours)
+  updatedDate.setMinutes(minutes);
+  updatedDate.setSeconds(0);
+  updatedDate.setMilliseconds(0);
+  return updatedDate;
+};

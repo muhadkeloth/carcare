@@ -5,6 +5,9 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { formatDate, ToastActive } from '../../../utilities/functions'
 import { PickupsDetails } from '../../../utilities/interface'
 import { fetchBrokerageTable } from '../../../../services/adminService'
+import { motion } from 'framer-motion'
+import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper '
+
 
 const PickupBrockerage:React.FC = () => {
       const [tableInputs, setTableInputs] = useState<any[]>([]);
@@ -55,33 +58,34 @@ const PickupBrockerage:React.FC = () => {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
         Brokerage History
       </h2>
+      <ZoomInMotionWrapper>
+        <Table headers={tableHeaders} data={tableInputs} />
 
-      <Table headers={tableHeaders} data={tableInputs} />
-
-      <div className="flex justify-center items-center mt-4">
-        <button
-          disabled={currentPage === 1}
-          className="btn-primary disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        >
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </button>
-        <span className="text-sm mx-2 text-gray-600">
-          {" "}
-          Page {currentPage} of {totalPages}{" "}
-        </span>
-        <button
-          disabled={currentPage === totalPages}
-          className="btn-primary disabled:bg-gray-200"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-        >
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
-      </div>
+        <div className="flex justify-center items-center mt-4">
+          <button
+            disabled={currentPage === 1}
+            className="btn-primary disabled:bg-gray-200"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          >
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+          <span className="text-sm mx-2 text-gray-600">
+            {" "}
+            Page {currentPage} of {totalPages}{" "}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            className="btn-primary disabled:bg-gray-200"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+          >
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        </div>
+      </ZoomInMotionWrapper>
     </>
-  )
+  );
 }
 
 export default PickupBrockerage

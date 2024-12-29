@@ -53,7 +53,7 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
               navigateToSection(navigate,'ChatHistory','shop');
         }
 
-
+        
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

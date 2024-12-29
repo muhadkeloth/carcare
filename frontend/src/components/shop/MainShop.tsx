@@ -35,13 +35,6 @@ const ShopMain: React.FC<SectionMainProps> = ({ activeSection }) => {
   return (
     <div className="flex-1 p-1 sm:p-2 bg-gray-100 ">
        {renderSection()}
-        {/* {activeSection === 'Dash' && <Dashboard />}
-        {activeSection === 'VehicleManage' && <VehicleManagement />}
-        {activeSection === 'EstimateManage' && <EstimateMangement />}
-        {activeSection === 'BookingManage' && <BookingManagement />}
-        {activeSection === 'PickupManage' && <PickupManagement />}
-        {activeSection === 'ChatHistory' && <ChatHistory />}
-        {activeSection === 'ProfileEdit' && <ShopProfile />} */}
     </div>
   )
 }

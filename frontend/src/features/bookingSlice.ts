@@ -16,7 +16,7 @@ const bookingSlice = createSlice({
                 state.bookingDetails = {shopdetails:action.payload};
             }
         },
-        setDateAndTime(state,action:PayloadAction<{selectedDate:Date;selectedTime:string;}>){
+        setDateAndTime(state,action:PayloadAction<{selectedDate:string;selectedTime:string;}>){
             if(state.bookingDetails){
                 state.bookingDetails.shedule = {date:action.payload.selectedDate,time:action.payload.selectedTime}
             }else{

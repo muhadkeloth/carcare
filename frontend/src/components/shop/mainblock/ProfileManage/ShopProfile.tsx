@@ -5,7 +5,8 @@ import WorkingTime from './editcomponents/WorkingTime';
 import MoreInfo from './editcomponents/MoreInfo';
 import Reviews from './editcomponents/Reviews/Reviews';
 import ChangePass from './editcomponents/ChangePass';
-
+import { motion } from 'framer-motion'
+import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 const ShopProfile: React.FC = () => {
   const [activeSection, setActiveSection] = useState('EditProfile');
@@ -17,10 +18,10 @@ const ShopProfile: React.FC = () => {
 
   return (
     <div className="p-4">
-
         <h2 className="text-2xl font-bold ms-1 mt-1 mb-4 pe-1 text-gray-800">
           Profile Management
         </h2>
+        <ZoomInMotionWrapper>
           <SidebarShopprofile activeSection={activeSection} handleActiveSection={handleActiveSection} >
         {activeSection === 'EditProfile' && <EditProfile />}
         {activeSection === 'ChangePass' && <ChangePass />}
@@ -28,6 +29,7 @@ const ShopProfile: React.FC = () => {
         {activeSection === 'WorkingTime' && <WorkingTime />}
         {activeSection === 'Reviews' && <Reviews />}
       </SidebarShopprofile>
+      </ZoomInMotionWrapper>      
       
     </div>
   );

@@ -12,21 +12,7 @@ const pickupService = new PickupService(new PickupRepository(Pickups))
 const bookingService = new BookingService(new BookingRepository(Bookings))
 
 const autoCancelCron = () => {
-    cron.schedule('0,30 8-19 * * 1-5',async()=>{
-        // const pickups = await pickupService.getOverduePickups(30);
-        // if(pickups){            
-        //     for(const pickup of pickups){
-        //         await pickupService.togglePickupStatus(pickup._id as string,'CANCELLED',`no response from ${pickup.userDetails.firstName}`,'shop');
-        //         await sendCancelEmail(pickup.userDetails.email,'pickup','auto')
-        //     }
-        // }
-        // const bookings = await bookingService.getOverdueBookings(30);
-        // if(bookings){            
-        //     for(const booking of bookings){
-        //         await bookingService.toggleBookingStatus(booking._id as string,'CANCELLED',`no response from ${booking.userDetails.firstName}`,'shop');
-        //         await sendCancelEmail(booking.userDetails.email,'booking','auto')
-        //     }
-        // }
+    cron.schedule('0,30 8-19 * * 1-6',async()=>{
         const [pickups, bookings] = await Promise.all([
             pickupService.getOverduePickups(30),
             bookingService.getOverdueBookings(30),

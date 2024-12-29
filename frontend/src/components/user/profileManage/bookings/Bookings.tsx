@@ -7,6 +7,7 @@ import OrderDetails from './OrderDetails'
 import { PickupsDetails } from '../../../utilities/interface'
 import { formatDate, ToastActive } from '../../../utilities/functions'
 import { fetchAllBookingsByUser } from '../../../../services/userService'
+import { DropMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper '
 
 const Bookings:React.FC = () => {
   const [bookings, setBookings] = useState<PickupsDetails[]>([]);
@@ -72,7 +73,7 @@ const Bookings:React.FC = () => {
 
 
   return (
-    <>
+    <DropMotionWrapper>
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
         Booking Management
       </h2>
@@ -114,7 +115,7 @@ const Bookings:React.FC = () => {
           />
         )}
       </Modal>
-    </>
+    </DropMotionWrapper>
   )
 }
 

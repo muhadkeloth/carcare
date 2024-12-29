@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { setActiveChat } from "../../../../features/chatSlice";
 import { navigateToSection } from "../../../utilities/navigate/common";
 
+
 const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [toggleId, setToggleId] = useState("");
@@ -52,6 +53,7 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
     navigateToSection(navigate,'ChatHistory','shop');
   };
 
+  
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

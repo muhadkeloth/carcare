@@ -1,16 +1,17 @@
 import {   faIndianRupeeSign, faLocationDot, faShoppingCart, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchfilterCountCart, fetchfilterPriceCart, fetchStatistics } from '../../../../services/shopService'
 import { findtotalRating, formatDate, formatToIndianNumbering, mergeRatingCounts, ToastActive } from '../../../utilities/functions'
 import BarChart from '../../../charts/BarChart'
 import PieChart from '../../../charts/PieChart'
 import LineChart from '../../../charts/LineChart'
-import LineAnalytics from '../../../charts/lineAnalytics'
+import LineAnalytics from '../../../charts/LineAnalytics'
 import { Period, StatusAnalytics } from '../../../utilities/interface'
+import { motion } from 'framer-motion';
+import MotionWrapper from '../../../reuseComponents/ui/MotionWrapper '
 
-
-const Dashboard:React.FC = () => {
+const Dashboard = () => {
   const [periodBarChart, setPeriodBarChart] = useState<Period>('monthly')
   const [periodLineChart, setPeriodLineChart] = useState<Period>('monthly')
   const [bookingsCountforBarChart,setBarChartBarData] = useState<any[]>([])
@@ -110,82 +111,173 @@ const Dashboard:React.FC = () => {
 
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <motion.div
+    className="p-6 bg-gray-100 min-h-screen"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.8 }}
+  >
     <h1 className="text-3xl font-bold text-gray-800 mb-6">Shop Dashboard</h1>
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statistics.map((stat) => (
-        <div
+        <motion.div
           key={stat.id}
           className={`p-4 rounded-lg shadow-md flex items-center ${stat.color} text-white`}
+          whileHover={{ scale: 1.05 }}
+          initial={{ y: 50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
         >
           <FontAwesomeIcon icon={stat.icon} className="text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold">{stat.title}</h3>
             <p className="text-2xl font-bold">{stat.value}</p>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
 
     <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <MotionWrapper
+        className="bg-white p-6 rounded-lg shadow-md"
+      >
         <div className="flex justify-between">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">{`${periodBarChart[0].toUpperCase()}${periodBarChart.slice(1)}`} Breakdown</h3>
-        <div className="flex text-sm text-gray-500 gap-2">
-          <button className={`hover:text-mainclr-500  ${periodBarChart=='weekly'? 'text-mainclr-400':''}`} onClick={()=>handleFilterChart('Bar','weekly')}>weekly</button>
-          <button className={`hover:text-mainclr-500 ${periodBarChart=='monthly'? 'text-mainclr-400':''}`} onClick={()=>handleFilterChart('Bar','monthly')}>monthly</button>
-          <button className={`hover:text-mainclr-500 ${periodBarChart=='yearly'? 'text-mainclr-400':''}`} onClick={()=>handleFilterChart('Bar','yearly')}>yearly</button>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            {`${periodBarChart[0].toUpperCase()}${periodBarChart.slice(1)}`}{" "}
+            Breakdown
+          </h3>
+          <div className="flex text-sm text-gray-500 gap-2">
+            <button
+              className={`hover:text-mainclr-500  ${
+                periodBarChart == "weekly" ? "text-mainclr-400" : ""
+              }`}
+              onClick={() => handleFilterChart("Bar", "weekly")}
+            >
+              weekly
+            </button>
+            <button
+              className={`hover:text-mainclr-500 ${
+                periodBarChart == "monthly" ? "text-mainclr-400" : ""
+              }`}
+              onClick={() => handleFilterChart("Bar", "monthly")}
+            >
+              monthly
+            </button>
+            <button
+              className={`hover:text-mainclr-500 ${
+                periodBarChart == "yearly" ? "text-mainclr-400" : ""
+              }`}
+              onClick={() => handleFilterChart("Bar", "yearly")}
+            >
+              yearly
+            </button>
+          </div>
         </div>
+        <BarChart
+          period={periodBarChart}
+          bookingsCountforBarChart={bookingsCountforBarChart}
+          pickupsCountforBarChart={pickupsCountforBarChart}
+        />
+      </MotionWrapper>
+
+      <MotionWrapper className="bg-white p-6 rounded-lg shadow-md" >
+        <div className="flex justify-between">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            {`${periodLineChart[0].toUpperCase()}${periodLineChart.slice(1)}`}{" "}
+            Revenue
+          </h3>
+          <div className="flex text-sm text-gray-500 gap-2 ">
+            <button
+              className={`hover:text-mainclr-500  ${
+                periodLineChart == "weekly" ? "text-mainclr-400" : ""
+              }`}
+              onClick={() => handleFilterChart("Line", "weekly")}
+            >
+              weekly
+            </button>
+            <button
+              className={`hover:text-mainclr-500 ${
+                periodLineChart == "monthly" ? "text-mainclr-400" : ""
+              }`}
+              onClick={() => handleFilterChart("Line", "monthly")}
+            >
+              monthly
+            </button>
+            <button
+              className={`hover:text-mainclr-500 ${
+                periodLineChart == "yearly" ? "text-mainclr-400" : ""
+              }`}
+              onClick={() => handleFilterChart("Line", "yearly")}
+            >
+              yearly
+            </button>
+          </div>
         </div>
-        <BarChart period={periodBarChart} bookingsCountforBarChart={bookingsCountforBarChart} pickupsCountforBarChart={pickupsCountforBarChart} /> 
+        <LineChart
+          period={periodLineChart}
+          bookingsPriceCountforLineChart={bookingsPriceCountforLineChart}
+          pickupsPriceCountforLineChart={pickupsPriceCountforLineChart}
+        />
+      </MotionWrapper>
+
+      <MotionWrapper className="bg-white p-6 rounded-lg shadow-md" >
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Service Breakdown
+        </h3>
+        <PieChart ratingforPieChart={ratingforPieChart} />
+      </MotionWrapper>
+
+      <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
+        <LineAnalytics
+          statusAnalytics={totalbookingsbyStatus}
+          bookingthrow="Booking"
+        />
+        <LineAnalytics
+          statusAnalytics={totalpickupsbyStatus}
+          bookingthrow="Pickup"
+        />
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex justify-between">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">{`${periodLineChart[0].toUpperCase()}${periodLineChart.slice(1)}`} Revenue</h3>
-        <div className="flex text-sm text-gray-500 gap-2 ">
-          <button className={`hover:text-mainclr-500  ${periodLineChart=='weekly'? 'text-mainclr-400':''}`} onClick={()=>handleFilterChart('Line','weekly')}>weekly</button>
-          <button className={`hover:text-mainclr-500 ${periodLineChart=='monthly'? 'text-mainclr-400':''}`} onClick={()=>handleFilterChart('Line','monthly')}>monthly</button>
-          <button className={`hover:text-mainclr-500 ${periodLineChart=='yearly'? 'text-mainclr-400':''}`} onClick={()=>handleFilterChart('Line','yearly')}>yearly</button>
-        </div>
-        </div>
-        <LineChart period={periodLineChart} bookingsPriceCountforLineChart={bookingsPriceCountforLineChart} pickupsPriceCountforLineChart={pickupsPriceCountforLineChart} />
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Service Breakdown</h3>
-        <PieChart ratingforPieChart={ratingforPieChart} />
-      </div>
-      <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
-        <LineAnalytics statusAnalytics={totalbookingsbyStatus} bookingthrow='Booking' />
-        <LineAnalytics statusAnalytics={totalpickupsbyStatus} bookingthrow='Pickup' />
-      </div>
-      <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">Upcoming Bookings</h3>
-        <ul className='list-disc ms-5'>
+      <MotionWrapper className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Upcoming Bookings
+        </h3>
+        <ul className="list-disc ms-5">
           {upComingbookings.length > 0 ? (
-            upComingbookings.map(booking => (
-              <li>{booking.userDetails.firstName} {booking.userDetails.phoneNumber} {formatDate(booking.shedule.date)} {booking.shedule.time}</li>
+            upComingbookings.map((booking) => (
+              <li>
+                {booking.userDetails.firstName}{" "}
+                {booking.userDetails.phoneNumber}{" "}
+                {formatDate(booking.shedule.date)} {booking.shedule.time}
+              </li>
             ))
-          ):(
-            <li className='text-gray-400'>no upcoming bookings this week</li>
+          ) : (
+            <li className="text-gray-400">no upcoming bookings this week</li>
           )}
         </ul>
-      </div>
-      <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">Upcoming Pickups</h3>
-        <ul className='list-disc ms-5'>
-        {upComingbookings.length > 0 ? (
-          upComingpickups.map(pickup =>(
-            <li>{pickup.userDetails.firstName} {pickup.userDetails.phoneNumber} {formatDate(pickup.shedule.date)} {pickup.shedule.time}</li>
-          ))
-          ):(
-            <li className='text-gray-400'>no upcoming pickups this week</li>
+      </MotionWrapper>
+
+      <MotionWrapper className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md" >
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Upcoming Pickups
+        </h3>
+        <ul className="list-disc ms-5">
+          {upComingbookings.length > 0 ? (
+            upComingpickups.map((pickup) => (
+              <li>
+                {pickup.userDetails.firstName}{" "}
+                {pickup.userDetails.phoneNumber}{" "}
+                {formatDate(pickup.shedule.date)} {pickup.shedule.time}
+              </li>
+            ))
+          ) : (
+            <li className="text-gray-400">no upcoming pickups this week</li>
           )}
         </ul>
-      </div>
+      </MotionWrapper>
     </div>
-  </div>
+  </motion.div>
   );
 }
 

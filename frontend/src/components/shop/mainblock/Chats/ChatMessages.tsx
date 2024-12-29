@@ -73,9 +73,9 @@ const ChatMessages = () => {
           </div>
         )
       ):(
-        <div className="flex flex-col justify-center w-[70%]">
+        <div className="flex flex-col items-center justify-center w-full min-h-[400px]">
           <span className="text-center mb-4">No Messages Yet</span>
-          <img src={no_message} alt="no_message" className='mt-5' />
+          <img src={no_message} alt="no_message" className='w-[60%] mt-5' />
         </div>
       )}
       <div ref={messagesEndRef} />

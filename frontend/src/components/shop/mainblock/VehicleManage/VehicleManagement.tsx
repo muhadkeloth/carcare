@@ -19,6 +19,8 @@ import {
 import { ToastActive } from "../../../utilities/functions";
 import { nameValidation } from "../../../utilities/validation";
 import Table from "../../../reuseComponents/Table";
+import { AnimatePresence, motion } from 'framer-motion'
+import { ZoomInMotionWrapper } from "../../../reuseComponents/ui/MotionWrapper ";
 
 const VehicleManagement: React.FC = () => {
   const [shopvehicles, setShopVehicles] = useState<Vehicle[]>([]);
@@ -241,33 +243,36 @@ const VehicleManagement: React.FC = () => {
           <FontAwesomeIcon icon={faPlus} /> Add vehicle
         </button>
       </div>
-      <Table
-        headers={tableHeaders}
-        data={shopvehicles}
-        renderActions={renderActions}
-      />
 
-      <div className="flex justify-center items-center mt-4">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="btn-primary disabled:bg-gray-200"
-        >
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </button>
-        <span className="text-sm mx-2 text-gray-600">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-          className="btn-primary disabled:bg-gray-200"
-        >
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
-      </div>
+      <ZoomInMotionWrapper>
+        <Table
+          headers={tableHeaders}
+          data={shopvehicles}
+          renderActions={renderActions}
+        />
+
+        <div className="flex justify-center items-center mt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="btn-primary disabled:bg-gray-200"
+          >
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+          <span className="text-sm mx-2 text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="btn-primary disabled:bg-gray-200"
+          >
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        </div>
+      </ZoomInMotionWrapper>
 
       {showAddModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center overflow-y-scroll ">

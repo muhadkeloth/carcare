@@ -5,8 +5,8 @@ import { IBookings } from "../utils/interface";
 
 const PickupsSchema: Schema<IBookings> = new Schema(
     {
-        userId:{type:Schema.Types.ObjectId,ref:"User"},
-        shopId:{type:Schema.Types.ObjectId,ref:"Shop"},
+        userId:{type:Schema.Types.ObjectId,ref:"User", required: true},
+        shopId:{type:Schema.Types.ObjectId,ref:"Shop", required: true},
         shedule:{
             date:{type:String},
             time:{type:String},

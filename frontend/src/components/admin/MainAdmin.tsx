@@ -1,4 +1,3 @@
-import React from 'react'
 import Dashboard from './mainblock/Dash/Dashboard';
 import UserManagement from './mainblock/UserManage/UserManagement';
 import ShopManagement from './mainblock/shopManage/ShopManagement';
@@ -9,7 +8,7 @@ import BookingBrockerage from './mainblock/Brockerages/BookingBrockerage';
 
 
 
-const AdminMain: React.FC<SectionMainProps> = ({ activeSection }) => {
+const AdminMain = ({ activeSection }:SectionMainProps) => {
   return (
     <div className="flex-1 p-1 sm:p-2 bg-gray-100">
         {activeSection === 'Dash' && <Dashboard />}

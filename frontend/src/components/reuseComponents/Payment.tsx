@@ -6,6 +6,7 @@ import { ToastActive } from '../utilities/functions';
 import { confirmBooking } from '../../services/userService';
 import { HttpStatusCode, paymentProps } from '../utilities/interface';
 import { loadStripe } from '@stripe/stripe-js';
+import PaymentSuccessAnimation from './PaymentSuccessAnimation';
 
 
 export const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISH_KEY);
@@ -16,7 +17,16 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
     const elements = useElements();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { _id, shopdetails, shedule, vehicleDetails ,userDetails, repairWork, locationdetails} = bookingDetails;
+    const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
+    const {
+      _id,
+      shopdetails,
+      shedule,
+      vehicleDetails,
+      userDetails,
+      repairWork,
+      locationdetails,
+    } = bookingDetails;
 
     const handlePayment  = async () => {
         if(!stripe || !elements)return;
@@ -48,13 +58,17 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
             const response = await confirmBooking(token,bookingDetails,methodofBooking)
             if(response.status !== HttpStatusCode.SUCCESS)throw new Error('payment failed');
             ToastActive('success','payment successfull');
-            setLoading(false);
-            closeModal()
+            setIsPaymentSuccessful(true);
+            setTimeout(() => {
+              closeModal();
+              setIsPaymentSuccessful(false);
+            }, 4000);
           } catch (error) {
             console.error('in payment',error)
             ToastActive('error','payment failed');
-            setLoading(false);
             closeModal()
+        }finally{
+          setLoading(false);
         }
       }
 
@@ -64,6 +78,9 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
+        {isPaymentSuccessful ? (
+            <PaymentSuccessAnimation />
+        ) :(
       <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96 relative">
         <button
           className="absolute top-4 right-4 text-xl cursor-pointer"
@@ -75,7 +92,7 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
           Confirm Payment
         </h2>
         <div className="flex mb-4 justify-between">
-        <p className="">Payment Amount 
+        <p className="">Payment Amount{' '} 
             <span className='text-xs text-gray-600'>{!repairWork?.priceStart && `${methodofBooking} charge`}</span>
             </p>
         <p className="font-bold text-green-500">
@@ -96,6 +113,7 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
           {loading ? "Processing..." : "Pay Now"}
         </button>
       </div>
+         )} 
     </div>
   )
 }

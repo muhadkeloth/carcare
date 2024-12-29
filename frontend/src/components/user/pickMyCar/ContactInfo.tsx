@@ -6,6 +6,7 @@ import { setPickCaruserdetails } from '../../../features/pickMyCarSlice';
 import { handleInputValue } from '../../utilities/validation';
 import { RootState } from '../../../store';
 import { BookingProps } from '../../utilities/interface';
+import { ZoomInMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 
 
 const ContactInfo:React.FC<BookingProps> = ({setActiveSection}) => {
@@ -25,7 +26,7 @@ const ContactInfo:React.FC<BookingProps> = ({setActiveSection}) => {
     
 
       return (
-        <div className="flex justify-center pt-2 gap-4">
+        <ZoomInMotionWrapper className="flex justify-center pt-2 gap-4">
           <div className="border rounded-lg flex flex-col">
             <h1 className="text-2xl border-b py-6 px-14 font-semibold">
               Contact Information
@@ -125,7 +126,7 @@ const ContactInfo:React.FC<BookingProps> = ({setActiveSection}) => {
               </form>
             </div>
           </div>
-        </div>
+        </ZoomInMotionWrapper>
       );
 }
 

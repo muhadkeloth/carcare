@@ -4,7 +4,7 @@ import { Button } from '../../reuseComponents/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImages, faPaperPlane, faSmile, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { sendMessage } from '../../../services/socketService';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { saveImageMessage, saveMessage } from '../../../services/userService';
 import Picker from '@emoji-mart/react';
@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ColorRing } from 'react-loader-spinner';
 
 
-const ChatInput:React.FC = () => {
+const ChatInput = () => {
     const [message,setMessage] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {activeChat} = useSelector((state:RootState) => state.chat);
@@ -87,7 +87,7 @@ const ChatInput:React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-20 left-4 bg-white p-2 rounded-lg shadow-lg flex items-center gap-2"
+            className="absolute bottom-20 left-4 bg-black p-2 max-w-[80%] max-h-[40%] rounded-lg shadow-lg flex items-center gap-2"
           >
             <img
               src={filePreview}
@@ -96,7 +96,7 @@ const ChatInput:React.FC = () => {
             />
             <button
               onClick={removeFile}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 "
+              className="absolute top-2 right-2 text-gray-500 bg-white rounded-full px-1  hover:text-gray-700 "
             >
               <FontAwesomeIcon icon={faTimes} size="lg" />
             </button>

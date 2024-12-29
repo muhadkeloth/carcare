@@ -118,9 +118,14 @@ export default class BookingService extends BaseService<IBookings> {
     async getOverdueBookings(minutesAfter:number):Promise<IBookings[] | null > {
         const now = new Date();
         const overdueTime = new Date(now.getTime() - minutesAfter * 60 * 1000);
+
         return await this.repository.findBookingsByFilter({
-            'shedule.data': {$lt: overdueTime},
-            status: {$in:['PENDING','CONFIRMED']}
+            $expr:{
+                $and:[
+                    { $lt: [{$dateFromString:{dateString:"$shedule.date"}},overdueTime]},
+                    { $in: ["$status", ["PENDING", "CONFIRMED"]] }
+                ]
+            }
         })
     }
 

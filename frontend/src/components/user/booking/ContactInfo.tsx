@@ -7,6 +7,8 @@ import { setuserdetails } from "../../../features/bookingSlice";
 import { handleInputValue } from "../../utilities/validation";
 import { BookingProps } from "../../utilities/interface";
 import { formatDate } from "../../utilities/functions";
+import DropOffTemp from "../../reuseComponents/DropOffTemp";
+import { DropMotionWrapper } from "../../reuseComponents/ui/MotionWrapper ";
 
 const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
   const userfromRedux = useSelector((state: RootState) => state.user.userDetails);
@@ -29,8 +31,8 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
 
 
   return (
-    <div className="flex justify-center pt-2 gap-4">
-      <div className="border rounded-lg flex flex-col">
+    <DropMotionWrapper className="flex flex-col sm:flex-row justify-center pt-2 gap-4">
+      <div className="border rounded-lg flex flex-col sm:w-1/2 lg:w-1/3">
         <h1 className="text-2xl border-b py-6 px-14 font-semibold">
           Contact Information
         </h1>
@@ -100,14 +102,13 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
         </div>
       </div>
 
-      <div className="border rounded-lg h-fit p-3  ">
-        <p className="text-gray-500 text-sm font-semibold uppercase">
+      <div className="border rounded-lg h-fit p-3 sm:w-1/2 md:w-2/5 lg:w-1/3 mt-4 sm:mt-0 ">
+        {/* <p className="text-gray-500 text-sm font-semibold uppercase">
           drop off at
-        </p>
+        </p> */}
 
-        {/* start herer */}
 
-        <div className="flex pb-4 pt-2 ">
+        {/* <div className="flex pb-4 pt-2 ">
           <div className="w-28  rounded overflow-hidden">
             <img
               src={shopdetails?.image}
@@ -133,12 +134,6 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
                       {(shopdetails.rating.ratingSum / shopdetails.rating.count).toFixed(1)} ({shopdetails.rating.count})
                         </>
                       )}
-                {/* {" "}
-                <FontAwesomeIcon
-                  icon={faStar}
-                  className="text-yellow-400"
-                />{" "}
-                4.8 (15) */}
               </p>
             </div>
             <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
@@ -153,9 +148,9 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
               availability Wed, Oct 15 at 8 am
             </h6>
           </div>
-        </div>
+        </div> */}
 
-        <div className="w-full mt-2 ms-1  p-4  border-b pb-3">
+        {/* <div className="w-full mt-2 ms-1  p-4  border-b pb-3">
           <p className="text-gray-500 text-sm font-semibold uppercase">
             drop off at
           </p>
@@ -170,7 +165,8 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
           <p className="text-gray-600">
             {vehicleDetails?.description && vehicleDetails.description}{" "}
           </p>
-        </div>
+        </div> */}
+        <DropOffTemp shopdetails={shopdetails} shedule={shedule} vehicleDetails={vehicleDetails} />
         <div className="mt-3 px-1 flex justify-center ">
           <button
             onClick={() => handleSaveChanges()}
@@ -193,7 +189,7 @@ const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
           </button>
         </div>
       </div>
-    </div>
+    </DropMotionWrapper>
   );
 };
 

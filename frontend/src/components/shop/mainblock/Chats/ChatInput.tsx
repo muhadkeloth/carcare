@@ -3,13 +3,13 @@ import { Input } from '../../../reuseComponents/ui/input';
 import { Button } from '../../../reuseComponents/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImages, faPaperPlane, faSmile, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { sendMessage } from '../../../../services/socketService';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
 import { saveImageMessage, saveMessage } from '../../../../services/shopService';
-import { sendMessage } from '../../../../services/socketService';
+import Picker from '@emoji-mart/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ColorRing } from 'react-loader-spinner';
-import Picker from '@emoji-mart/react';
 
 
 const ChatInput = () => {
@@ -90,7 +90,7 @@ const ChatInput = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-20 left-4 bg-white p-2 rounded-lg shadow-lg flex items-center gap-2"
+            className="absolute bottom-20 left-4 bg-black p-2 max-w-[80%] max-h-[40%] rounded-lg shadow-lg flex items-center gap-2 w-full sm:w-[50%] md:w-[40%]"
           >
             <img
               src={filePreview}
@@ -99,7 +99,7 @@ const ChatInput = () => {
             />
             <button
               onClick={removeFile}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 "
+              className="absolute top-2 right-2 text-gray-500 bg-white rounded-full px-1 hover:text-gray-700 "
             >
               <FontAwesomeIcon icon={faTimes} size="lg" />
             </button>
@@ -107,7 +107,7 @@ const ChatInput = () => {
         )}
       </AnimatePresence>
 
-      <div className="flex items-center gap-2 relative">
+      <div className="flex items-center gap-2 relative flex-wrap sm:flex-nowrap">
         <Input
           type="file"
           accept="image/*"
@@ -119,6 +119,7 @@ const ChatInput = () => {
           variant="outline"
           size="icon"
           onClick={() => fileInputRef.current?.click()}
+          className="mb-2 sm:mb-0"
         >
           <FontAwesomeIcon icon={faImages} />
         </Button>
@@ -126,6 +127,7 @@ const ChatInput = () => {
           variant="outline"
           size="icon"
           onClick={() => setShowEmojiPicker((prev) => !prev)}
+          className="mb-2 sm:mb-0"
         >
           <FontAwesomeIcon icon={faSmile} />
         </Button>
@@ -136,7 +138,7 @@ const ChatInput = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-20"
+              className="absolute bottom-20 left-0 sm:left-auto sm:right-0 w-[80%] sm:w-[auto]"
             >
               <Picker onEmojiSelect={addEmoji} />
             </motion.div>
@@ -148,7 +150,7 @@ const ChatInput = () => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Type your message..."
-          className="flex-1"
+          className="flex-1 mb-2 sm:mb-0"
         />
         <Button
           onClick={handleSendMessage}
@@ -168,8 +170,32 @@ const ChatInput = () => {
         </Button>
       </div>
     </div>
-    // <div className="p-4 border-t border-border bg-background">
-    //   <div className="flex items-center gap-2">
+    // <div className="p-4 border-t border-border bg-background relative">
+    //   <AnimatePresence>
+    //     {filePreview && (
+    //       <motion.div
+    //         initial={{ opacity: 0, scale: 0.9 }}
+    //         animate={{ opacity: 1, scale: 1 }}
+    //         exit={{ opacity: 0, scale: 0.9 }}
+    //         transition={{ duration: 0.3 }}
+    //         className="absolute bottom-20 left-4 bg-black p-1 max-w-[80%] max-h-[40%] rounded-lg shadow-lg flex items-center gap-2"
+    //       >
+    //         <img
+    //           src={filePreview}
+    //           alt="Preview"
+    //           className="w-full h-full object-cover rounded-lg"
+    //         />
+    //         <button
+    //           onClick={removeFile}
+    //           className="absolute top-2 right-2 text-gray-500 bg-white rounded-full px-1 hover:text-gray-700 "
+    //         >
+    //           <FontAwesomeIcon icon={faTimes} size="lg" />
+    //         </button>
+    //       </motion.div>
+    //     )}
+    //   </AnimatePresence>
+
+    //   <div className="flex items-center gap-2 relative">
     //     <Input
     //       type="file"
     //       accept="image/*"
@@ -184,6 +210,27 @@ const ChatInput = () => {
     //     >
     //       <FontAwesomeIcon icon={faImages} />
     //     </Button>
+    //     <Button
+    //       variant="outline"
+    //       size="icon"
+    //       onClick={() => setShowEmojiPicker((prev) => !prev)}
+    //     >
+    //       <FontAwesomeIcon icon={faSmile} />
+    //     </Button>
+    //     <AnimatePresence>
+    //       {showEmojiPicker && (
+    //         <motion.div
+    //           initial={{ opacity: 0, scale: 0.9 }}
+    //           animate={{ opacity: 1, scale: 1 }}
+    //           exit={{ opacity: 0, scale: 0.9 }}
+    //           transition={{ duration: 0.3 }}
+    //           className="absolute bottom-20"
+    //         >
+    //           <Picker onEmojiSelect={addEmoji} />
+    //         </motion.div>
+    //       )}
+    //     </AnimatePresence>
+
     //     <Input
     //       value={message}
     //       onChange={(e) => setMessage(e.target.value)}
@@ -191,8 +238,21 @@ const ChatInput = () => {
     //       placeholder="Type your message..."
     //       className="flex-1"
     //     />
-    //     <Button onClick={handleSendMessage} disabled={!(message.trim() || file)}>
-    //       <FontAwesomeIcon icon={faPaperPlane} />
+    //     <Button
+    //       onClick={handleSendMessage}
+    //       disabled={!(message.trim() || file)}
+    //     >
+    //       {isLoading ? (
+    //         <ColorRing
+    //           visible={true}
+    //           width="35"
+    //           ariaLabel="color-ring-loading"
+    //           wrapperClass="color-ring-wrapper"
+    //           colors={["#fff", "#fff", "#fff", "#fff", "#ff"]}
+    //         />
+    //       ) : (
+    //         <FontAwesomeIcon icon={faPaperPlane} className="w-6" />
+    //       )}
     //     </Button>
     //   </div>
     // </div>

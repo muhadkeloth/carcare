@@ -7,6 +7,7 @@ import { BookingProps, HttpStatusCode } from '../../utilities/interface'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { ToastActive } from '../../utilities/functions'
+import { ZoomInMotionWrapper } from '../../reuseComponents/ui/MotionWrapper '
 
 const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
   const [make,setMake] = useState('')
@@ -42,7 +43,7 @@ const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
 
 
   return (
-    <div className="flex justify-center pt-2 gap-4">
+    <ZoomInMotionWrapper className="flex justify-center pt-2 gap-4">
       <div className="border rounded-lg flex flex-col">
         <h1 className="text-2xl border-b py-6 px-14 font-semibold">
           Tell us about your vehicle
@@ -114,7 +115,7 @@ const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
         )}
         </div>
       </div>
-    </div>
+    </ZoomInMotionWrapper>
   )
 }
 

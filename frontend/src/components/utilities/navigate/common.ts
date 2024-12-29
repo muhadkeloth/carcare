@@ -37,6 +37,8 @@ export const navigateHome = (navigate:any,role:string):void => {
   }
 }
 
+
+
 export const navigateProfile = (navigate:any):void => {
   if(localStorage.getItem("user_token")){
     navigate('/profile')

@@ -5,6 +5,8 @@ import { HttpStatusCode, User } from '../../../utilities/interface';
 import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminService';
 import { ToastActive } from '../../../utilities/functions';
 import Table from '../../../reuseComponents/Table';
+import { motion } from 'framer-motion'
+import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
 const UserManagement:React.FC = () => {
@@ -71,30 +73,60 @@ const UserManagement:React.FC = () => {
   return (
     <>
       <h2 className="text-2xl font-bold mb-4 text-gray-800">User Management</h2>
-
-      <Table headers={tableHeaders} data={users} renderActions={renderActions} />
+      <ZoomInMotionWrapper>
+      <Table
+        headers={tableHeaders}
+        data={users}
+        renderActions={renderActions}
+      />
 
       <div className="flex justify-center items-center mt-4">
-        <button disabled={currentPage === 1} className="btn-primary disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} >
+        <button
+          disabled={currentPage === 1}
+          className="btn-primary disabled:bg-gray-200"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        >
           <FontAwesomeIcon icon={faAngleLeft} />
         </button>
-        <span className="text-sm mx-2 text-gray-600"> Page {currentPage} of {totalPages} </span>
-        <button disabled={currentPage === totalPages} className="btn-primary disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) } >
+        <span className="text-sm mx-2 text-gray-600">
+          {" "}
+          Page {currentPage} of {totalPages}{" "}
+        </span>
+        <button
+          disabled={currentPage === totalPages}
+          className="btn-primary disabled:bg-gray-200"
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+        >
           <FontAwesomeIcon icon={faAngleRight} />
         </button>
       </div>
+      </ZoomInMotionWrapper>
 
       {showConfirmModal && (
         <div className="fixed inset-0  bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">Are you sure you want to confirm change user Status?</h3>
+            <h3 className="text-lg font-bold mb-4">
+              Are you sure you want to confirm change user Status?
+            </h3>
             <div className="flex items-center justify-end">
-              <button className="btn-secondary mr-2" onClick={() => {setShowConfirmModal(false); setToggleId(""); }} >
+              <button
+                className="btn-secondary mr-2"
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setToggleId("");
+                }}
+              >
                 Cancel
               </button>
-              <button className="btn-primary" onClick={() => toggleStatus(toggleId)} > Confirm </button>
+              <button
+                className="btn-primary"
+                onClick={() => toggleStatus(toggleId)}
+              >
+                {" "}
+                Confirm{" "}
+              </button>
             </div>
           </div>
         </div>

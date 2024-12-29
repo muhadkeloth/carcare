@@ -121,8 +121,13 @@ export default class PickupService extends BaseService<IBookings> {
         const now = new Date();
         const targetTime = new Date(now.getTime() + minutesBefore * 60 * 1000);
         return await this.repository.findPickupsByFilter({
-            'shedule.date':{ $gte: now, $lt: targetTime},
-            status:"CONFIRMED"
+            $expr:{
+                $and:[
+                    { $gte: [{$dateFromString:{dateString:"$shedule.date"}},now]},
+                    { $lte: [{$dateFromString:{dateString:"$shedule.date"}},targetTime]},
+                    { status:"CONFIRMED"}
+                ]
+            }
         })
     }
 
@@ -130,10 +135,15 @@ export default class PickupService extends BaseService<IBookings> {
         const now = new Date();
         const overdueTime = new Date(now.getTime() - minutesAfter * 60 * 1000);
         return await this.repository.findPickupsByFilter({
-            'shedule.data': {$lt: overdueTime},
-            status: {$in:['PENDING','CONFIRMED']}
+            $expr:{
+                $and:[
+                    { $lt: [{$dateFromString:{dateString:"$shedule.date"}},overdueTime]},
+                    { $in: ["$status", ["PENDING", "CONFIRMED"]] }
+                ]
+            }
         })
     }
+
 
     async getReviewsByShopId(shopId:string):Promise<Partial<IBookings[]>>{
         const response =  await this.repository.findReviwesByShopId(shopId)

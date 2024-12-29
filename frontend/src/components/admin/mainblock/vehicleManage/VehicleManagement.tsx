@@ -6,7 +6,8 @@ import { addNewVehicle, deleteVehicle, editVehicle, fetchAllVehicle } from '../.
 import Table from '../../../reuseComponents/Table';
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
-
+import { motion } from 'framer-motion'
+import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
 const VehicleManagement:React.FC = () => { 
@@ -173,62 +174,125 @@ const VehicleManagement:React.FC = () => {
 
   return (
     <div className="p-4">
-
       <div className="flex justify-between mt-1 mb-4 pe-1">
-        <h2 className="text-2xl font-bold ms-1 text-gray-800">Vehicle Management</h2>
-        <button className="btn-primary"
-          onClick={() => { setShowAddModal(true); setIsEditMode(false); setNewVehicle({ brand: "", vehicleModel: [] });}}>
+        <h2 className="text-2xl font-bold ms-1 text-gray-800">
+          Vehicle Management
+        </h2>
+        <button
+          className="btn-primary"
+          onClick={() => {
+            setShowAddModal(true);
+            setIsEditMode(false);
+            setNewVehicle({ brand: "", vehicleModel: [] });
+          }}
+        >
           <FontAwesomeIcon icon={faPlus} /> Add vehicle
         </button>
       </div>
 
-      <Table headers={tableHeaders} data={vehicles} renderActions={renderActions} />
+      <ZoomInMotionWrapper>
+        <Table
+          headers={tableHeaders}
+          data={vehicles}
+          renderActions={renderActions}
+        />
 
-      <div className="flex justify-center items-center mt-4">
-        <button disabled={currentPage === 1} className="btn-primary disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} >
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </button>
-        <span className="text-sm mx-2 text-gray-600">Page {currentPage} of {totalPages}</span>
-        <button onClick={() =>setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages} className="btn-primary disabled:bg-gray-200" >
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
-      </div>
+        <div className="flex justify-center items-center mt-4">
+          <button
+            disabled={currentPage === 1}
+            className="btn-primary disabled:bg-gray-200"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          >
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+          <span className="text-sm mx-2 text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="btn-primary disabled:bg-gray-200"
+          >
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        </div>
+      </ZoomInMotionWrapper>
 
       {showAddModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center overflow-y-scroll ">
           <div className="bg-white m-5 p-6 rounded shadow-md w-full  max-w-md">
-            <h3 className="text-lg font-bold  mb-4">{isEditMode ? "Edit Vehicle" : "Add New Vehicle"}</h3>
+            <h3 className="text-lg font-bold  mb-4">
+              {isEditMode ? "Edit Vehicle" : "Add New Vehicle"}
+            </h3>
             <div className="w-full">
-              <label className=" text-sm  font-medium text-gray-700">Brand Name</label>
-              <input type="text" value={newVehicle.brand} placeholder="Eg: Tata"
-                onChange={(e) =>setNewVehicle({ ...newVehicle, brand: e.target.value })}
-                style={error?.brand ? { outline: "none", boxShadow: "0 0 0 1px red" } : {} }
-                className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none" />
+              <label className=" text-sm  font-medium text-gray-700">
+                Brand Name
+              </label>
+              <input
+                type="text"
+                value={newVehicle.brand}
+                placeholder="Eg: Tata"
+                onChange={(e) =>
+                  setNewVehicle({ ...newVehicle, brand: e.target.value })
+                }
+                style={
+                  error?.brand
+                    ? { outline: "none", boxShadow: "0 0 0 1px red" }
+                    : {}
+                }
+                className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              />
               <p className="text-red-300">{error?.brand}</p>
             </div>
 
             <div className="w-full mt-4">
-              <label className="block text-sm font-medium text-gray-700">Model Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Model Name
+              </label>
               <div className="flex items-center gap-2">
-                <input type="text" value={inputModel} placeholder="Eg: Punch"
+                <input
+                  type="text"
+                  value={inputModel}
+                  placeholder="Eg: Punch"
                   onChange={(e) => setInputModel(e.target.value)}
                   className="mt-1 flex w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none "
-                  style={ error?.vehicleModel ? { outline: "none", boxShadow: "0 0 0 1px red" } : {} } />
+                  style={
+                    error?.vehicleModel
+                      ? { outline: "none", boxShadow: "0 0 0 1px red" }
+                      : {}
+                  }
+                />
                 <p className="text-red-300">{error?.vehicleModel}</p>
-                <button onClick={handleAddModel} className="px-4 py-2 mt-1 btn-primary" > Add</button>
-                <button className="px-4 py-2 mt-1 btn-secondary"
-                  onClick={() =>setNewVehicle((prev) => ({ ...prev, vehicleModel: [] }))} >
+                <button
+                  onClick={handleAddModel}
+                  className="px-4 py-2 mt-1 btn-primary"
+                >
+                  {" "}
+                  Add
+                </button>
+                <button
+                  className="px-4 py-2 mt-1 btn-secondary"
+                  onClick={() =>
+                    setNewVehicle((prev) => ({ ...prev, vehicleModel: [] }))
+                  }
+                >
                   Clear
                 </button>
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
                 {newVehicle.vehicleModel.map((model) => (
-                  <div key={model} className="flex items-center bg-gray-200 text-gray-800 px-3 py-1 rounded-full" >
+                  <div
+                    key={model}
+                    className="flex items-center bg-gray-200 text-gray-800 px-3 py-1 rounded-full"
+                  >
                     <span>{model}</span>
-                    <button className="ml-2 text-gray-400 hover:text-gray-500" onClick={() => handleRemoveModel(model)} >
+                    <button
+                      className="ml-2 text-gray-400 hover:text-gray-500"
+                      onClick={() => handleRemoveModel(model)}
+                    >
                       <FontAwesomeIcon icon={faX} />
                     </button>
                   </div>
@@ -237,8 +301,15 @@ const VehicleManagement:React.FC = () => {
             </div>
 
             <div className="flex justify-end mt-4">
-              <button onClick={() => setShowAddModal(false)} className="btn-secondary mr-2 ">Cancel</button>
-              <button onClick={handleSubmit} className="btn-primary">{isEditMode ? "Update" : "Add"}</button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="btn-secondary mr-2 "
+              >
+                Cancel
+              </button>
+              <button onClick={handleSubmit} className="btn-primary">
+                {isEditMode ? "Update" : "Add"}
+              </button>
             </div>
           </div>
         </div>
@@ -247,10 +318,20 @@ const VehicleManagement:React.FC = () => {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">Are you sure you want to {actionType} this vehicle?</h3>
+            <h3 className="text-lg font-bold mb-4">
+              Are you sure you want to {actionType} this vehicle?
+            </h3>
             <div className="flex items-center justify-end">
-              <button className="btn-secondary mr-2" onClick={() => setShowConfirmModal(false)}>Cancel</button>
-              <button className="btn-primary" onClick={actionType === "delete" ? confirmDelete : confirmEdit} >
+              <button
+                className="btn-secondary mr-2"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={actionType === "delete" ? confirmDelete : confirmEdit}
+              >
                 Confirm
               </button>
             </div>

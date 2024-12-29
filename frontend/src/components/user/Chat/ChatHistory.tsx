@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import Header from '../reusableComponents/Header'
 import ChatSidebar from './ChatSidebar';
 import ChatInput from './ChatInput';
-import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import { cleanupSocket, connectSocket } from '../../../services/socketService';
 import { fetchChatRooms } from '../../../services/userService';
 import { useDispatch, useSelector } from 'react-redux';
 import {  clearChat, setChats } from '../../../features/chatSlice';
 import { RootState } from '../../../store';
+import ChatHeader from '../../reuseComponents/Chats/ChatHeader';
 
 export interface CurrentUser{
   name:string;

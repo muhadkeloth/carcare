@@ -3,10 +3,12 @@ import { useDispatch } from 'react-redux';
 import {  addMonths, format, isBefore, isSunday, } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import TimeSlot from '../booking/dropOff/TimeSlot';
+import TimeSlot from '../../reuseComponents/TimeSlot';
 import { setDateAndTimePickCar } from '../../../features/pickMyCarSlice';
 import {  BookingProps } from '../../utilities/interface';
-import { generateDaysInMonth } from '../../utilities/functions';
+import { addTimeinDate, generateDaysInMonth } from '../../utilities/functions';
+import { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
+import CalendarPicker from '../../reuseComponents/CalendarPicker';
 
 
 const Time:React.FC<BookingProps> = ({setActiveSection}) => {
@@ -26,7 +28,8 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
 
   const handleDropoffDateAndTime = () => {
       if(date && time){
-        dispatch(setDateAndTimePickCar({date ,time}))
+        const updatedDate:Date = addTimeinDate(date,time);
+        dispatch(setDateAndTimePickCar({date:updatedDate.toISOString() ,time}))
       }
       setActiveSection('Summary')     
   }
@@ -43,7 +46,14 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
           When should we schedule your car pickup?
         </h1>
 
-        <div className="p-4 mt-4 mx-auto  shadow-sm ">
+        <CalendarPicker 
+          currentMonth={currentMonth}
+          daysInMonth={daysInMonth}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+          onDateClick={handleDateClick} />
+
+        {/* <div className="p-4 mt-4 mx-auto  shadow-sm ">
           <div className="flex justify-between items-center mb-4">
             <button className="btn-primary" onClick={handlePrevMonth}>
               <FontAwesomeIcon icon={faAngleLeft} />
@@ -83,9 +93,11 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
+        {/* here */}
 
-        <div className="p-4 flex flex-col justify-center items-center mx-auto ">
+        {date && (
+        <DropMotionWrapper className="p-4 flex flex-col justify-center items-center mx-auto ">
           <h2 className="text-lg font-bold mb-4 uppercase">
             times for {format(currentMonth, "MMMM yyyy")}
           </h2>
@@ -95,7 +107,7 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
               selectedTime={time}
             />
           </div>
-        </div>
+        
         <div className="  flex flex-col p-4 items-center">
           <button
             onClick={() => handleDropoffDateAndTime()}
@@ -109,6 +121,8 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
             confirm date and time <FontAwesomeIcon icon={faArrowRight} />
           </button>
         </div>
+          </DropMotionWrapper>
+          )}
       </div>
     </div>
   );

@@ -6,82 +6,92 @@ import { fetchNearbyShops } from '../../../services/userService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { setPickCarShopdetails } from '../../../features/pickMyCarSlice';
+import { HoverMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
+import ShopsbyLocation from '../../reuseComponents/ShopsbyLocation';
 
 const WorkShop:React.FC<BookingProps> = ({setActiveSection}) => {
-    const [shops, setShops] = useState<Shop[]>([]);
-  const [loading, setLoading] = useState(false);
-  const { locationdetails } = useSelector((state: RootState) => state.pickMyCar.PickCarDetails) || {};
-  const dispatch = useDispatch()
+  //   const [shops, setShops] = useState<Shop[]>([]);
+  // const [loading, setLoading] = useState(false);
+  // const { locationdetails } = useSelector((state: RootState) => state.pickMyCar.PickCarDetails) || {};
+  // const dispatch = useDispatch()
 
-  const fetchShops = async () => {
-    try {
-      setLoading(true);
-      if(!locationdetails?.coordinates){
-        setActiveSection('Location');
-        return;
-      }
-      const shopsData = await fetchNearbyShops(locationdetails.coordinates[0],locationdetails.coordinates[1]); 
-        setShops(shopsData);
-    } catch (error) {
-      console.error('Error fetching shops:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchShops = async () => {
+  //   try {
+  //     setLoading(true);
+  //     if(!locationdetails?.coordinates){
+  //       setActiveSection('Location');
+  //       return;
+  //     }
+  //     const shopsData = await fetchNearbyShops(locationdetails.coordinates[0],locationdetails.coordinates[1]); 
+  //       setShops(shopsData);
+  //   } catch (error) {
+  //     console.error('Error fetching shops:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const handleSelectShop = (shop:any) => {
-    dispatch(setPickCarShopdetails(shop))
-    setActiveSection('Vehicle');
-  };
+  // const handleSelectShop = (shop:any) => {
+  //   dispatch(setPickCarShopdetails(shop))
+  //   setActiveSection('Vehicle');
+  // };
   
-  useEffect(()=>{
-    fetchShops()
-  },[])
+  // useEffect(()=>{
+  //   fetchShops()
+  // },[])
 
 
   return (
-    <div className="flex justify-center p-5 pt-2">
-    <div className="flex max-w-6xl mx-auto px-4 mb-10 py-12 flex-col mt-24 items-center">
-      <h2 className="text-5xl font-semibold">Choose Nearby Shop</h2>
-      <div className="mt-10 w-full ">
-        <div className="grid grid-cols-1  gap-6">
-          {shops.map((shop) => (
-            <div key={shop._id}
-              onClick={() => handleSelectShop(shop)}
-              className="border rounded-lg shadow-md cursor-pointer flex items-center hover:shadow-sm" >
-              <div className="w-1/4">
-              <img
-                src={shop.image}
-                alt={shop.shopName}
-                className="w-32 h-32 object-cover rounded-md "
-              />
-              </div>
-              <div className="w-3/4 ps-3 mx-2 ">
-              <h3 className="flex justify-between text-lg font-semibold">
-              {shop.shopName}
-              <button
-                className="text-sm text-mainclr-600 Hover:text-mainclr-400 hover:underline cursor-pointer">
-                Select
-              </button>
-              </h3>
-              <p className="text-sm text-gray-500">
-                {Object.values(shop.address).join(' ')}
-              </p>
-                </div>
-            </div>
-          ))}
-        </div>
-        {!loading && shops.length === 0 && (
-          <div className='flex flex-col items-center py-4  text-center border'>
-          <p className="text-gray-500 my-4 ">No shops found for the entered pincode.</p>
-          <button className='btn-primary  w-1/2' onClick={()=>setActiveSection('Location')}>
-          <FontAwesomeIcon icon={faArrowLeft} /> Change Location
-          </button>
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
+    <ShopsbyLocation
+    setActiveSection={setActiveSection}
+    sliceSelector={(state) => state.pickMyCar.PickCarDetails}
+    setShopDetails={setPickCarShopdetails}
+    nextSection="Vehicle"
+  />
+  //   <div className="flex justify-center p-5 pt-2">
+  //   <div className="flex max-w-6xl mx-auto px-4 mb-10 py-12 flex-col mt-24 items-center">
+  //     <h2 className="text-5xl font-semibold">Choose Nearby Shop</h2>
+  //     <div className="mt-10 w-full ">
+  //       <div className="grid grid-cols-1  gap-6">
+  //         {shops.map((shop) => (
+  //           <HoverMotionWrapper key={shop._id} >
+  //           <div             
+  //             onClick={() => handleSelectShop(shop)}
+  //             className="border rounded-lg shadow-md cursor-pointer flex items-center hover:shadow-sm" >
+  //             <div className="w-1/4">
+  //             <img
+  //               src={shop.image}
+  //               alt={shop.shopName}
+  //               className="w-32 h-32 object-cover rounded-md "
+  //             />
+  //             </div>
+  //             <div className="w-3/4 ps-3 mx-2 ">
+  //             <h3 className="flex justify-between text-lg font-semibold">
+  //             {shop.shopName}
+  //             <button
+  //               className="text-sm text-mainclr-600 Hover:text-mainclr-400 hover:underline cursor-pointer">
+  //               Select
+  //             </button>
+  //             </h3>
+  //             <p className="text-sm text-gray-500">
+  //               {Object.values(shop.address).join(' ')}
+  //             </p>
+  //               </div>
+  //           </div>
+  //           </HoverMotionWrapper>
+  //         ))}
+  //       </div>
+  //       {!loading && shops.length === 0 && (
+  //         <div className='flex flex-col items-center py-4  text-center border'>
+  //         <p className="text-gray-500 my-4 ">No shops found for the entered pincode.</p>
+  //         <button className='btn-primary  w-1/2' onClick={()=>setActiveSection('Location')}>
+  //         <FontAwesomeIcon icon={faArrowLeft} /> Change Location
+  //         </button>
+  //         </div>
+  //       )}
+  //     </div>
+  //   </div>
+  // </div>
   )
 }
 

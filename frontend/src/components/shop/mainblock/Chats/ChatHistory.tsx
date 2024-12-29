@@ -6,9 +6,9 @@ import { fetchChatRooms } from "../../../../services/shopService";
 import ChatSidebar from "./ChatSidebar";
 import ChatInput from "./ChatInput";
 import ChatMessages from "./ChatMessages";
-import ChatHeader from "./ChatHeader";
 import { RootState } from "../../../../store";
-
+import { motion } from 'framer-motion'
+import ChatHeader from "../../../reuseComponents/Chats/ChatHeader";
 
 export interface CurrentUser{
   name:string;
@@ -49,37 +49,40 @@ const ChatHistory = () => {
     };
 
   return (
-    <>
-    <div className="flex flex-col h-screen max-h-screen ">
+    <motion.div
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="flex flex-col h-screen max-h-screen ">
         <div className="flex bg-background rounded-md overflow-hidden flex-1">
-      <ChatSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        onSelectUser={handleUserSelection}
-      />
-      
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+          <ChatSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            onSelectUser={handleUserSelection}
+          />
 
-      <div className="flex-1 flex flex-col  min-w-0 h-full">
-        <ChatHeader
-          name={currentUser.name}
-          isOnline={currentUser?.isOnline || false}
-          onMenuClick={() => setIsSidebarOpen(true)}
-        />
-     
-        <ChatMessages />
-        {roomId &&  <ChatInput /> }   
+          {isSidebarOpen && (
+            <div
+              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 lg:hidden"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+          )}
+
+          <div className="flex-1 flex flex-col  min-w-0 h-full">
+            <ChatHeader
+              name={currentUser.name}
+              isOnline={currentUser?.isOnline || false}
+              onMenuClick={() => setIsSidebarOpen(true)}
+            />
+
+            <ChatMessages />
+            {roomId && <ChatInput />}
+          </div>
+        </div>
       </div>
-    </div>
-
-    </div>
-    </>
-  )
+    </motion.div>
+  );
 }
 
 export default ChatHistory

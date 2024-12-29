@@ -6,8 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import BarChart from '../../../charts/BarChart'
 import LineChart from '../../../charts/LineChart'
 import PieChart from '../../../charts/PieChart'
-import LineAnalytics from '../../../charts/lineAnalytics'
+import LineAnalytics from '../../../charts/LineAnalytics'
 import { fetchfilterCountCart, fetchfilterPriceCart, fetchStatistics } from '../../../../services/adminService'
+import { motion } from 'framer-motion'
+import MotionWrapper from '../../../reuseComponents/ui/MotionWrapper '
+
 
 const Dashboard:React.FC = () => {
   const [periodBarChart, setPeriodBarChart] = useState<Period>('monthly')
@@ -105,26 +108,34 @@ const Dashboard:React.FC = () => {
 
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <motion.div className="p-6 bg-gray-100 min-h-screen"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.8 }}
+    >
     <h1 className="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statistics.map((stat) => (
-        <div
+        <motion.div
           key={stat.id}
           className={`p-4 rounded-lg shadow-md flex items-center ${stat.color} text-white`}
+          whileHover={{ scale: 1.05 }}
+          initial={{ y: 50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
         >
           <FontAwesomeIcon icon={stat.icon} className="text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold">{stat.title}</h3>
             <p className="text-2xl font-bold">{stat.value}</p>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
 
     <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <MotionWrapper className="bg-white p-6 rounded-lg shadow-md">
         <div className="flex justify-between">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">{`${periodBarChart[0].toUpperCase()}${periodBarChart.slice(1)}`} Breakdown</h3>
         <div className="flex text-sm text-gray-500 gap-2">
@@ -134,9 +145,9 @@ const Dashboard:React.FC = () => {
         </div>
         </div>
         <BarChart period={periodBarChart} bookingsCountforBarChart={bookingsCountforBarChart} pickupsCountforBarChart={pickupsCountforBarChart} /> 
-      </div>
+      </MotionWrapper>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <MotionWrapper className="bg-white p-6 rounded-lg shadow-md">
         <div className="flex justify-between">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">{`${periodLineChart[0].toUpperCase()}${periodLineChart.slice(1)}`} Revenue</h3>
         <div className="flex text-sm text-gray-500 gap-2 ">
@@ -146,16 +157,19 @@ const Dashboard:React.FC = () => {
         </div>
         </div>
         <LineChart period={periodLineChart} bookingsPriceCountforLineChart={bookingsPriceCountforLineChart} pickupsPriceCountforLineChart={pickupsPriceCountforLineChart} isAdmin={true} />
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      </MotionWrapper>
+
+      <MotionWrapper className="bg-white p-6 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Service Breakdown</h3>
         <PieChart ratingforPieChart={ratingforPieChart} />
-      </div>
+      </MotionWrapper>
+
       <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
         <LineAnalytics statusAnalytics={totalbookingsbyStatus} bookingthrow='Booking' />
         <LineAnalytics statusAnalytics={totalpickupsbyStatus} bookingthrow='Pickup' />
       </div>
-      <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
+
+      <MotionWrapper className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">Upcoming Bookings</h3>
         <ul className='list-disc ms-5'>
           {upComingbookings.length > 0 ? (
@@ -166,8 +180,9 @@ const Dashboard:React.FC = () => {
             <li className='text-gray-400'>no upcoming bookings this week</li>
           )}
         </ul>
-      </div>
-      <div className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
+      </MotionWrapper>
+
+      <MotionWrapper className="flex flex-col bg-white p-6 gap-3 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">Upcoming Pickups</h3>
         <ul className='list-disc ms-5'>
         {upComingbookings.length > 0 ? (
@@ -178,9 +193,9 @@ const Dashboard:React.FC = () => {
             <li className='text-gray-400'>no upcoming pickups this week</li>
           )}
         </ul>
-      </div>
+      </MotionWrapper>
     </div>
-  </div>
+  </motion.div>
   )
 }
 

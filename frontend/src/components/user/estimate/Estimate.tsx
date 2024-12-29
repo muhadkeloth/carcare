@@ -12,6 +12,7 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch } from 'react-redux'
 import { clearbookingdetails } from '../../../features/bookingSlice'
 import { clearestimateDetails } from '../../../features/estimateSlice'
+import { ZoomMotionWrapper } from '../../reuseComponents/ui/MotionWrapper '
 
 const Estimate:React.FC = () => {
   const [activeSection, setActiveSection] = useState('Location')
@@ -26,22 +27,35 @@ useEffect(() => {
   return (
     <div className='min-h-screen'>
       <nav className="flex p-4 border-b justify-between">
+      <ZoomMotionWrapper>
+
         <button>
-          <span onClick={()=>navigateHome(navigate, 'user')}
-           className='font-semibold text-gray-700 cursor-pointer'><FontAwesomeIcon icon={faChevronLeft} /> Exit</span> 
+          <span 
+          // onClick={()=>navigateHome(navigate, 'user')}
+          onClick={() => navigate(-1)}
+          className='font-semibold text-gray-700 cursor-pointer'><FontAwesomeIcon icon={faChevronLeft} /> Exit</span> 
         </button>
+          </ZoomMotionWrapper>
         <ul className="sm:flex gap-5 justify-center hidden items-center ">
           <li className='cursor-pointer' onClick={()=>setActiveSection('Location')} >
-            <h1 className={`font-semibold text-1xl ${activeSection === 'Location' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' }  `}>Location</h1>
+            <ZoomMotionWrapper>
+               <h1 className={`font-semibold text-1xl ${activeSection === 'Location' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' }  `}>Location</h1>
+              </ZoomMotionWrapper>
           </li>
           <li className={`${activeSection !== 'Location' && 'cursor-pointer' } `} onClick={()=>activeSection !== 'Location' && setActiveSection('Workshop')}>
-          <h1 className={`font-semibold text-1xl ${activeSection === 'Workshop' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' } `}>Work Shop</h1>
+          <ZoomMotionWrapper>
+             <h1 className={`font-semibold text-1xl ${activeSection === 'Workshop' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' } `}>Work Shop</h1>
+            </ZoomMotionWrapper>
           </li>
           <li className={`${activeSection == 'Estimate' && 'cursor-pointer' } `} onClick={()=>activeSection == 'Estimate' && setActiveSection('RepairService')}>
-          <h1 className={`font-semibold text-1xl ${activeSection === 'RepairService' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' } `}>Repair Service</h1>
+          <ZoomMotionWrapper>
+             <h1 className={`font-semibold text-1xl ${activeSection === 'RepairService' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' } `}>Repair Service</h1>
+            </ZoomMotionWrapper>
           </li>
           <li  >
-          <h1 className={`font-semibold text-1xl ${activeSection === 'Estimate' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' } `}>Estimate</h1>
+          <ZoomMotionWrapper>
+             <h1 className={`font-semibold text-1xl ${activeSection === 'Estimate' ? 'text-mainclr-500 hover:text-mainclr-400' : 'text-gray-600 hover:text-gray-500' } `}>Estimate</h1>
+            </ZoomMotionWrapper>
           </li>
         </ul>
         

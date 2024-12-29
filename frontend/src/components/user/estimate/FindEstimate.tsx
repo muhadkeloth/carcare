@@ -5,19 +5,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCar, faIndianRupeeSign, faStar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { navigateBookingSlot } from '../../utilities/navigate/userNavigator';
+import { HoverMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 
 
 const FindEstimate:React.FC = () => {
   const { shopdetails, repairWork } = useSelector((state: RootState) => state.estimate.estimateDetails) || {};
   const navigate = useNavigate();
-    const handleBookAppointment = () => {
-      navigateBookingSlot(navigate);
-    }
+
+  const handleBookAppointment = () => {
+    navigateBookingSlot(navigate);
+  };
 
 
   return (
     <div className="flex flex-col justify-center items-center pt-2   ">
-      <div className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3 my-4 ">
+      <HoverMotionWrapper className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3 my-4 ">
         <div className="w-full mt-2 ms-1  p-4  pb-3">
           <div className="flex justify-between">
             <p className="text-gray-500 text-sm font-semibold uppercase">
@@ -34,9 +36,9 @@ const FindEstimate:React.FC = () => {
             <FontAwesomeIcon icon={faCar} /> {`${repairWork?.work}`}{" "}
           </p>
         </div>
-      </div>
+      </HoverMotionWrapper>
 
-      <div className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3  mb-4 ">
+      <HoverMotionWrapper className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3  mb-4 ">
         <p className="text-gray-500 text-sm font-semibold uppercase">
           drop off at
         </p>
@@ -66,12 +68,7 @@ const FindEstimate:React.FC = () => {
                       {(shopdetails.rating.ratingSum / shopdetails.rating.count).toFixed(1)} ({shopdetails.rating.count})
                         </>
                       )}
-                {/* {" "}
-                <FontAwesomeIcon
-                  icon={faStar}
-                  className="text-yellow-400"
-                />{" "}
-                4.8 (15) */}
+                      
               </p>
             </div>
             <span className="mt-3 max-w-full break-words whitespace-normal text-sm  text-gray-600">
@@ -87,7 +84,7 @@ const FindEstimate:React.FC = () => {
             </h6>
           </div>
         </div>
-      </div>
+      </HoverMotionWrapper>
 
       <div className="mt-3 px-1 flex justify-center ">
         <button onClick={() => handleBookAppointment()} className="btn-primary">

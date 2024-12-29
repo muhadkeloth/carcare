@@ -7,7 +7,8 @@ import { PickupsDetails } from "../../../utilities/interface";
 import { fetchAllPickupsByShopId } from "../../../../services/shopService";
 import Modal from "../../../reuseComponents/Modal";
 import OrderDetails from "./OrderDetails";
-
+import { motion } from 'framer-motion'
+import { ZoomInMotionWrapper } from "../../../reuseComponents/ui/MotionWrapper ";
 
 
 const PickupManagement: React.FC = () => {
@@ -78,31 +79,36 @@ const PickupManagement: React.FC = () => {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
         Pickup Management
       </h2>
+      <ZoomInMotionWrapper>
+        <Table
+          headers={tableHeaders}
+          data={tableInputs}
+          onRowClick={handleRowClick}
+        />
 
-      <Table headers={tableHeaders} data={tableInputs} onRowClick={handleRowClick}/>
-
-      <div className="flex justify-center items-center mt-4">
-        <button
-          disabled={currentPage === 1}
-          className="btn-primary disabled:bg-gray-200"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        >
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </button>
-        <span className="text-sm mx-2 text-gray-600">
-          {" "}
-          Page {currentPage} of {totalPages}{" "}
-        </span>
-        <button
-          disabled={currentPage === totalPages}
-          className="btn-primary disabled:bg-gray-200"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-        >
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
-      </div>
+        <div className="flex justify-center items-center mt-4">
+          <button
+            disabled={currentPage === 1}
+            className="btn-primary disabled:bg-gray-200"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          >
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+          <span className="text-sm mx-2 text-gray-600">
+            {" "}
+            Page {currentPage} of {totalPages}{" "}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            className="btn-primary disabled:bg-gray-200"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+          >
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        </div>
+      </ZoomInMotionWrapper>
 
       <Modal
         isOpen={selectedOrder !== null}
@@ -111,8 +117,8 @@ const PickupManagement: React.FC = () => {
       >
         {selectedOrder && (
           <OrderDetails
-          bookingDetails={selectedOrder}
-          handlesetPickupData={handlesetPickupData}
+            bookingDetails={selectedOrder}
+            handlesetPickupData={handlesetPickupData}
           />
         )}
       </Modal>

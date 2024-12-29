@@ -7,6 +7,7 @@ import OrderDetails from './OrderDetails'
 import { PickupsDetails } from '../../../utilities/interface'
 import { fetchAllPickupsByUser } from '../../../../services/userService'
 import { formatDate, ToastActive } from '../../../utilities/functions'
+import { DropMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper '
 
 const Pickups:React.FC = () => {
   const [pickups, setPickups] = useState<PickupsDetails[]>([]);
@@ -73,7 +74,7 @@ const Pickups:React.FC = () => {
 
 
   return (
-    <>
+    <DropMotionWrapper>
     <h2 className="text-2xl font-bold mb-4 text-gray-800">
       Pickup Management
     </h2>
@@ -115,7 +116,7 @@ const Pickups:React.FC = () => {
         />
       )}
     </Modal>
-  </>
+  </DropMotionWrapper>
   )
 }
 
