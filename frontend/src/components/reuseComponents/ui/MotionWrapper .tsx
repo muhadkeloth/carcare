@@ -29,7 +29,7 @@ export const DropMotionWrapper = ({children, className}:MotionWrapperProps) => {
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{once:true}}
         // exit={{ y: 50, opacity: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5 }}
       >
         {children}
       </motion.div>
@@ -81,8 +81,19 @@ export const ZoomInMotionWrapper = ({children, className}:MotionWrapperProps) =>
     );
 }
 
+export const FloatMotionWrapper = ({children, className}:MotionWrapperProps) => {
+    return (
+      <motion.div
+        className={className ?? ''}
+        whileHover={{scale: 1.1,cursor: "pointer",}}
+        animate={{y: [0, -10, 0], }}
+        transition={{duration: 2,repeat: Infinity,repeatType: "reverse",}}
+      >
+        {children}
+      </motion.div>
+    );
+}
+
 export default MotionWrapper;
 
-// initial={{ y: 50, opacity: 0 }}
-// animate={{ y: 0, opacity: 1 }}
-// transition={{ duration: 0.4 }}
+

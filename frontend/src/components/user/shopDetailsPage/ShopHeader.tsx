@@ -1,10 +1,10 @@
 import { faClock, faEnvelope, faMapPin, faPhone, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { formatPhoneNumber, formatTime } from '../../utilities/functions';
 import MapDirectionButton from '../../reuseComponents/MapDirectionButton ';
+import { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 
 
 interface ShopHeaderProps {
@@ -13,8 +13,10 @@ interface ShopHeaderProps {
   }
 
 
-const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }) => {
+const ShopHeader= ({ activeSection, onSectionChange }:ShopHeaderProps) => {
     const { address , shopName, rating, phoneNumber, email, workingTime, location} = useSelector((state:RootState) => state.shop.shopDetails) || {}
+   
+
     const tabs = [
         { id: 'overview', label: 'Overview' },
         { id: 'services', label: 'Services' },
@@ -26,7 +28,7 @@ const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }
   return (
     <div className="bg-white shadow-sm sticky top-0 z-40">
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="py-2">
+        <DropMotionWrapper className="pt-2">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-900">
               {shopName && shopName[0]?.toUpperCase() + shopName?.slice(1)}
@@ -71,7 +73,7 @@ const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }
               <span>{email}</span>
             </div>
           </div>
-        </div>
+        </DropMotionWrapper>
 
         <div className="flex space-x-8 border-b">
           {tabs.map((tab) => (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import NavLogin from '../authenticate/NavLogin'
 import AdminMain from './MainAdmin'
 import { faBuilding, faCar, faChartBar, faChartLine, faStore, faUserCog } from '@fortawesome/free-solid-svg-icons'
@@ -31,9 +31,12 @@ const AdminDash: React.FC = () => {
     ];
 
 
+
     useEffect(() => {
       const token = localStorage.getItem("admin_token");
-      if (!token) navigateLogin(navigate, "admin");
+      if (!token){
+        navigateLogin(navigate, "admin");
+      }
     }, [navigate]);
 
   return (

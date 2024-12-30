@@ -1,6 +1,7 @@
 import { faCarBurst, faGaugeSimple, faGear, faMicrochip, faOilCan, faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
+import { DropMotionWrapper, ZoomMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 
 const ShopServices:React.FC = () => {
 
@@ -47,11 +48,13 @@ const ShopServices:React.FC = () => {
   return (
     <section id="services" className="scroll-mt-24">
     <div className="bg-white rounded-xl shadow-sm p-6">
+    <DropMotionWrapper>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Our Services</h2>
+    </DropMotionWrapper>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {services.map((service, index) => {
           return (
-            <div
+            <ZoomMotionWrapper
               key={index}
               className="flex gap-4 p-4 border rounded-xl hover:border-mainclr-500 transition-colors group"
             >
@@ -63,7 +66,7 @@ const ShopServices:React.FC = () => {
                 <p className="text-sm text-gray-600 mt-1">{service.description}</p>
                 <p className="text-sm font-medium text-mainclr-600 mt-2">{service.priceRange}</p>
               </div>
-            </div>
+            </ZoomMotionWrapper>
           );
         })}
       </div>

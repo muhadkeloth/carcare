@@ -19,7 +19,7 @@ const FindEstimate:React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center pt-2   ">
-      <HoverMotionWrapper className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3 my-4 ">
+      <HoverMotionWrapper className="border rounded-lg h-fit p-5 max-w-xl w-full md:w-2/3 my-4 ">
         <div className="w-full mt-2 ms-1  p-4  pb-3">
           <div className="flex justify-between">
             <p className="text-gray-500 text-sm font-semibold uppercase">
@@ -38,12 +38,12 @@ const FindEstimate:React.FC = () => {
         </div>
       </HoverMotionWrapper>
 
-      <HoverMotionWrapper className="border rounded-lg h-fit p-5 max-w-xl md:w-2/3  mb-4 ">
+      <HoverMotionWrapper className="border rounded-lg h-fit p-5 max-w-xl w-full md:w-2/3  mb-4 ">
         <p className="text-gray-500 text-sm font-semibold uppercase">
           drop off at
         </p>
-        <div className="flex pb-4 pt-2 mt-3 ">
-          <div className="w-32  rounded overflow-hidden">
+        <div className="flex flex-col sm:flex-row pb-4 pt-2 mt-3">
+          <div className="w-32  rounded overflow-hidden mb-4 sm:mb-0 sm:w-1/4">
             <img
               src={shopdetails?.image}
               alt="shop img"
@@ -51,7 +51,7 @@ const FindEstimate:React.FC = () => {
             />
           </div>
 
-          <div className="flex flex-col  ms-3 w-full">
+          <div className="flex flex-col  sm:ms-3 w-full">
             <div className="flex  justify-between">
               <h2 className=" max-w-full break-words whitespace-normal text-base font-medium  text-gray-900">
                 {shopdetails?.shopName &&

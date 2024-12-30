@@ -7,12 +7,21 @@ import BookingPanel from "./BookingPanel";
 import { clearestimateDetails } from "../../../features/estimateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import { useNavigate } from "react-router-dom";
+import { navigateFindWorkShop } from "../../utilities/navigate/userNavigator";
 
 const MainBlock: React.FC = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const dispatch = useDispatch();
   const shopDetails = useSelector((state:RootState) => state.shop.shopDetails)
+  const navigate = useNavigate();
 
+  useEffect(()=> {
+    if(!shopDetails){
+      navigateFindWorkShop(navigate)
+    }
+  },[shopDetails]);
+  
   const scrollToSection = (section: string) => {
     setActiveSection(section);
     const element = document.getElementById(section);

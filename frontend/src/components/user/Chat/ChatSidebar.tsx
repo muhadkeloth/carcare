@@ -104,7 +104,7 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
           onClick={()=> handleRoom(chat)}
         >
           <div className="relative">
-            {chat.shopId.image ? (
+            {chat.shopId?.image ? (
               <img
                 src={chat.shopId.image}
                 alt={chat.shopId.shopName}

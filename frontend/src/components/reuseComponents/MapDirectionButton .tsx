@@ -2,7 +2,7 @@ import { faRoute } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { motion } from 'framer-motion'
-import { ZoomInMotionWrapper } from "./ui/MotionWrapper ";
+import { FloatMotionWrapper, ZoomInMotionWrapper } from "./ui/MotionWrapper ";
 
 interface MapDirectionButtonProps { 
     coordinates:[number, number]
@@ -25,30 +25,17 @@ const MapDirectionButton  = ({coordinates}:MapDirectionButtonProps) => {
           Get Directions
         </ZoomInMotionWrapper>
       )}
-
-      <motion.button
-        onClick={handleClick}
-        className="btn-primary px-3 py-1 "
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-        whileHover={{
-          scale: 1.1,
-          cursor: "pointer",
-        }}
-        animate={{
-          y: [0, -10, 0], 
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-      >
-        <FontAwesomeIcon icon={faRoute} />
-      </motion.button>
+      <FloatMotionWrapper>
+        <button
+          className="btn-primary px-3 py-1 "
+          onClick={handleClick}
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
+          <FontAwesomeIcon icon={faRoute} />
+        </button>
+      </FloatMotionWrapper>
     </div>
-
-
   );
 }
 

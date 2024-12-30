@@ -23,12 +23,12 @@ const Header:React.FC = () => {
 
     const getUserData = useCallback(async () => {
       try {
-        const response = await fetchUserData()
+        const response = await fetchUserData(navigate)
         if(response.status === HttpStatusCode.SUCCESS){          
          dispatch(setUser(response.data.userdet))
         }
       } catch (error) {
-        console.error('Failed to fetch userdata:', error);
+        console.error('Failed to fetch userdata:', error);      
       }
     },[dispatch])
 

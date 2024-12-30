@@ -22,7 +22,7 @@ const PickCarHome:React.FC = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('Location')
   const dispatch = useDispatch()
-  useFetchUserData();
+  useFetchUserData(navigate);
 
   useEffect(()=>{
     dispatch(clearPickCarDetails());

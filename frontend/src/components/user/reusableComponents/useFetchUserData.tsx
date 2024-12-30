@@ -5,13 +5,13 @@ import { HttpStatusCode } from "../../utilities/interface";
 import { setUser } from "../../../features/userSlice";
 
 
-const useFetchUserData = () => {
+const useFetchUserData = (navigate:any) => {
     const dispatch = useDispatch();
 
   useEffect(() => {
     (async ()=> {
         try {
-            const response = await fetchUserData()
+            const response = await fetchUserData(navigate)
             if(response.status === HttpStatusCode.SUCCESS){
                 dispatch(setUser(response.data.userdet));
             }

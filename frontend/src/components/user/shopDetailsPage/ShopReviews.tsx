@@ -8,6 +8,7 @@ import { fetchShopReviews } from '../../../services/userService';
 import { Reviews } from '../../utilities/interface';
 import { ThreeDots } from 'react-loader-spinner';
 import { formatDistanceStrict } from 'date-fns';
+import MotionWrapper from '../../reuseComponents/ui/MotionWrapper ';
 
 
 const ShopReviews:React.FC = () => {
@@ -44,7 +45,7 @@ const ShopReviews:React.FC = () => {
           <ThreeDots height="" color="" wrapperClass="w-10 h-6"/>
         ): reviews.length > 0 ? (
             reviews.map((review, index) => (
-              <div key={index} className="border-b last:border-b-0 pb-8 last:pb-0">
+              <MotionWrapper key={index} className="border-b last:border-b-0 pb-8 last:pb-0">
               <div className="flex items-start gap-4">
               <img
               src={review.userId.image}
@@ -68,7 +69,7 @@ const ShopReviews:React.FC = () => {
               <p className="mt-3 text-gray-600">{review.review.feedback}</p>
               </div>
               </div>
-              </div>
+              </MotionWrapper>
             ))
           ):(
             <p className="flex text-gray-400 justify-center">no reviews ...</p>

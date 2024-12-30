@@ -5,17 +5,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import Admin from './components/routes/Admin';
 import User from './components/routes/User';
 
-const App:React.FC = () => {
+const App = () => {
   return (
     <BrowserRouter>
     <Routes>
-
       <Route path='/*' element={<User />} />
-
       <Route path='/shop/*' element={<Shop />} />
-
-      <Route path='/admin/*' element={<Admin />} />
-        
+      <Route path='/admin/*' element={<Admin />} />        
     </Routes>
     </BrowserRouter>
   )

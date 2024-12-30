@@ -42,11 +42,12 @@ const ShopHome: React.FC = () => {
   
     const getShopData = useCallback(async () => {
         try {
-          const response = await fetchShopUserDetails()
+          const response = await fetchShopUserDetails(navigate)
           if(!response || !response.data) throw new Error('canot find shop user details');
                 dispatch(setShopUser(response.data.shopUser))
         } catch (error) {
-          console.error('Failed to fetch userdata:', error);
+          console.error('Failed to fetch shop data:', error);
+          
         }
       },[dispatch])
   

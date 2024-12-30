@@ -24,7 +24,7 @@ const BookingSlot:React.FC = () => {
     ? state.estimate.estimateDetails.shopdetails
     : state.bookingdetails.bookingDetails?.shopdetails;
   } );
-  useFetchUserData();
+  useFetchUserData(navigate);
   
 useEffect(()=>{
   if(!shopdetails){

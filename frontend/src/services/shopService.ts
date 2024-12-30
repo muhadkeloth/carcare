@@ -1,15 +1,18 @@
 import { AxiosError } from "axios";
 import { ErrorResponse, Estimate, HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
+import { navigateLogin } from "../components/utilities/navigate/common";
 
 
 
-export const fetchShopUserDetails = async ():Promise<{status:number;data:any}> => {
+export const fetchShopUserDetails = async (navigate:any):Promise<{status:number;data:any}> => {
     try {
         const response = await api.get('/shop/shopdetails');
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find shopuser details');
         return {status:response.status,data:response.data}
     } catch (error) {
+        localStorage.removeItem('shop_token')
+        navigateLogin(navigate,'shop')
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
     }

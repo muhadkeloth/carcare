@@ -4,6 +4,24 @@ import { bookingStatus, Day, PaymentStatus, RatingData, Suggestion } from "./int
 import { addDays, endOfMonth, endOfWeek, isAfter, isBefore, isSameDay, isSunday, startOfMonth, startOfWeek } from "date-fns";
 
 
+export const getToken = (role: string) => {
+  switch (role) {
+    case 'user':
+      return localStorage.getItem('user_token');
+    case 'shop':
+      return localStorage.getItem('shop_token');
+    case 'admin':
+      return localStorage.getItem('admin_token');
+    default:
+      return null;
+  }
+};
+
+export const isAuthenticated = (role: string) => {
+  return getToken(role) !== null;
+};
+
+
 
 export const getAddressFromCoordinates = async (location:number[]) => {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${location[0]}&lon=${location[1]}&format=json`;
