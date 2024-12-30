@@ -4,6 +4,7 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { formatPhoneNumber, formatTime } from '../../utilities/functions';
+import MapDirectionButton from '../../reuseComponents/MapDirectionButton ';
 
 
 interface ShopHeaderProps {
@@ -13,7 +14,7 @@ interface ShopHeaderProps {
 
 
 const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }) => {
-    const { address , shopName, rating, phoneNumber, email, workingTime} = useSelector((state:RootState) => state.shop.shopDetails) || {}
+    const { address , shopName, rating, phoneNumber, email, workingTime, location} = useSelector((state:RootState) => state.shop.shopDetails) || {}
     const tabs = [
         { id: 'overview', label: 'Overview' },
         { id: 'services', label: 'Services' },
@@ -41,9 +42,6 @@ const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }
                     ({rating.count}+ reviews)
                   </span>{" "}
                 </>
-                {/* <FontAwesomeIcon icon={faStar} className="text-yellow-400 " /> */}
-                {/* <span className="font-semibold">4.8</span> */}
-                {/* <span className="text-gray-500">(120+ reviews)</span> */}
               </div>
             )}
           </div>
@@ -53,10 +51,12 @@ const ShopHeader:React.FC<ShopHeaderProps> = ({ activeSection, onSectionChange }
               <span>
                 {address?.city.length !== 0 ? address?.city : address?.state}
               </span>
+                {location?.coordinates && (
+                  <MapDirectionButton coordinates={location.coordinates} />
+                )}
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <FontAwesomeIcon icon={faClock} className="text-mainclr-500" />
-              {/* <span>10:00 AM - 6:00 PM</span> */}
               <span>
                 {formatTime(workingTime?.opening || "")} -{" "}
                 {formatTime(workingTime?.closing || "")}

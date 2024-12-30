@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TimeSlotProps } from "../utilities/interface";
 import { generateTimeSlots } from "../utilities/functions";
 import { HoverMotionWrapper } from "./ui/MotionWrapper ";
@@ -6,8 +6,17 @@ import { HoverMotionWrapper } from "./ui/MotionWrapper ";
 
 
 
-const TimeSlot: React.FC<TimeSlotProps> = ({selectedTime,setSelectedTime}) => {
-  const timeSlots = generateTimeSlots("9:00", "17:00");
+const TimeSlot = ({selectedTime,setSelectedTime,wokingTime}:TimeSlotProps) => {
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+
+  useEffect(()=> {
+    if(wokingTime){
+      setTimeSlots(generateTimeSlots(wokingTime.opening, wokingTime.closing))
+    }else{
+      setTimeSlots(generateTimeSlots("9:00", "17:00"));
+    }
+
+  },[wokingTime])
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);

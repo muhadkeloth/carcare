@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import {  addMonths, format, isBefore, isSunday, } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -9,9 +9,12 @@ import {  BookingProps } from '../../utilities/interface';
 import { addTimeinDate, generateDaysInMonth } from '../../utilities/functions';
 import { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 import CalendarPicker from '../../reuseComponents/CalendarPicker';
+import { RootState } from '../../../store';
 
 
 const Time:React.FC<BookingProps> = ({setActiveSection}) => {
+  const { shopdetails } = useSelector((state: RootState) => state.pickMyCar.PickCarDetails) || {};
+
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [date, setDate] = useState<Date | null>(null);
     const [time, setTime] = useState<string | null>(null);
@@ -34,6 +37,10 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
       setActiveSection('Summary')     
   }
 
+  useEffect(()=> {
+    if(!shopdetails)setActiveSection('Location')
+  },[shopdetails])
+
 
   const handlePrevMonth = () => setCurrentMonth(addMonths(currentMonth, -1));
   const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
@@ -53,48 +60,7 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
           onNextMonth={handleNextMonth}
           onDateClick={handleDateClick} />
 
-        {/* <div className="p-4 mt-4 mx-auto  shadow-sm ">
-          <div className="flex justify-between items-center mb-4">
-            <button className="btn-primary" onClick={handlePrevMonth}>
-              <FontAwesomeIcon icon={faAngleLeft} />
-            </button>
-            <h2 className="text-lg font-bold">
-              {format(currentMonth, "MMMM yyyy")}
-            </h2>
-            <button className="btn-primary" onClick={handleNextMonth}>
-              <FontAwesomeIcon icon={faAngleRight} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-2">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div
-                key={day}
-                className="text-center font-medium text-gray-600 uppercase"
-              >
-                {day}
-              </div>
-            ))}
-
-            {daysInMonth.map(({ date, isDisabled, isToday, isSelected }) => (
-              <button
-                key={date.toISOString()}
-                onClick={() => handleDateClick(date)}
-                disabled={isDisabled}
-                className={`p-2 rounded-lg text-center ${
-                  isDisabled
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "hover:bg-mainclr-100 hover:text-mainclr-600"
-                } ${isToday ? "bg-green-100 text-green-600" : ""} ${
-                  isSelected ? "bg-mainclr-600 text-white" : ""
-                }`}
-              >
-                {format(date, "d")}
-              </button>
-            ))}
-          </div>
-        </div> */}
-        {/* here */}
+     
 
         {date && (
         <DropMotionWrapper className="p-4 flex flex-col justify-center items-center mx-auto ">
@@ -105,6 +71,7 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
             <TimeSlot
               setSelectedTime={setTime}
               selectedTime={time}
+              wokingTime={shopdetails?.workingTime}
             />
           </div>
         

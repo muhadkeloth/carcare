@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  faArrowRight, faBolt, faCar, faClock, faEnvelope, faFile, faLocationDot, faPhone, faStar, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Elements } from '@stripe/react-stripe-js';
 import Payment, { stripePromise } from '../../reuseComponents/Payment';
-import MapComponent from './MapComponents';
 import { BookingProps } from '../../utilities/interface';
 import { formatDate, formatTime, getNextAvailableDate } from '../../utilities/functions';
 import { HoverMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';

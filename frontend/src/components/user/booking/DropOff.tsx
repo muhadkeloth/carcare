@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { format, isBefore, isSunday,  addMonths } from "date-fns";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  faArrowRight, } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +11,8 @@ import { addTimeinDate, generateDaysInMonth, } from '../../utilities/functions';
 import  { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 import DropOffTemp from '../../reuseComponents/DropOffTemp';
 import CalendarPicker from '../../reuseComponents/CalendarPicker';
+import { navigateFindWorkShop } from '../../utilities/navigate/userNavigator';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -19,11 +21,17 @@ const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const dispatch = useDispatch()
+    const navigate = useNavigate();
     const shopdetails = useSelector((state:RootState)=>{
       return state.estimate.estimateDetails 
       ? state.estimate.estimateDetails.shopdetails
       : state.bookingdetails.bookingDetails?.shopdetails;
     } );
+
+      useEffect(()=> {
+        if(!shopdetails)navigateFindWorkShop(navigate)
+      },[shopdetails])
+
 
     const daysInMonth = generateDaysInMonth(currentMonth, selectedDate);
 
@@ -68,6 +76,7 @@ const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
                 <TimeSlot
                   setSelectedTime={setSelectedTime}
                   selectedTime={selectedTime}
+                  wokingTime={shopdetails?.workingTime}
                 />
               </div>
             </DropMotionWrapper>

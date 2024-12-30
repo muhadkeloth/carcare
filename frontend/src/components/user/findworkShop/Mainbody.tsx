@@ -192,8 +192,7 @@ const Mainbody: React.FC = () => {
                                 shop.workingTime?.closing
                               ).text
                             }
-                          </span>{" "}
-                          {getNextAvailableDate()}
+                          </span>{" Today "}
                         </>
                       )}
                     </h6>

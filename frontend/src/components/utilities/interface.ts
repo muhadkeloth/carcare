@@ -417,6 +417,7 @@ setActiveSection:React.Dispatch<React.SetStateAction<string>>;
 export interface TimeSlotProps {
   selectedTime: string | null;
   setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
+  wokingTime?:{opening:string,closing:string}
 }
 
 

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setActiveChat } from "../../../../features/chatSlice";
 import { navigateToSection } from "../../../utilities/navigate/common";
+import MapDirectionButton from "../../../reuseComponents/MapDirectionButton ";
 
 
 const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPickupData,}) => {
@@ -255,8 +256,9 @@ const OrderDetails: React.FC<BookingDetailsProps> = ({bookingDetails,handlesetPi
 
         {bookingDetails?.locationdetails && (
           <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center justify-between space-x-2 mb-4">
               <h3 className="text-lg font-semibold">Location Details</h3>
+              <MapDirectionButton coordinates={bookingDetails.locationdetails.coordinates} />
             </div>
             <p className="mb-4">
               {bookingDetails?.locationdetails?.description}{" "}

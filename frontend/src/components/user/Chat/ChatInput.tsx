@@ -1,4 +1,4 @@
-import React, {  useRef, useState } from 'react'
+import React, {  useEffect, useRef, useState } from 'react'
 import { Input } from '../../reuseComponents/ui/input';
 import { Button } from '../../reuseComponents/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -78,6 +78,14 @@ const ChatInput = () => {
         setShowEmojiPicker(false);
       }
 
+      useEffect(()=>{
+          return ()=> {
+            setMessage('');
+            setFile(null);
+            setFilePreview(null)
+          }
+      },[activeChat])
+
   return (
     <div className="p-4 border-t border-border bg-background relative">
       <AnimatePresence>
@@ -87,8 +95,10 @@ const ChatInput = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-20 left-4 bg-black p-2 max-w-[80%] max-h-[40%] rounded-lg shadow-lg flex items-center gap-2"
+            className="absolute bottom-24 left-4  p-2 rounded-lg shadow-lg flex items-center gap-2 
+                   max-w-[80%] sm:max-w-[50%] sm:max-h-[30%] max-h-[40%] h-auto w-auto sm:p-4"
           >
+            <div className="relative flex justify-center items-center w-full h-full">
             <img
               src={filePreview}
               alt="Preview"
@@ -100,6 +110,7 @@ const ChatInput = () => {
             >
               <FontAwesomeIcon icon={faTimes} size="lg" />
             </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -134,7 +145,7 @@ const ChatInput = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-20"
+              className="absolute bottom-24 sm:bottom-20"
             >
               <Picker onEmojiSelect={addEmoji} />
             </motion.div>
@@ -145,7 +156,7 @@ const ChatInput = () => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Type your message..."
-          className="flex-1"
+          className="flex-1 bg-white"
         />
         <Button
           onClick={handleSendMessage}
