@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Shop from './components/routes/Shop';
 import 'react-toastify/dist/ReactToastify.css';

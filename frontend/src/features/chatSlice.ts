@@ -1,23 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Message, onlineUser } from "../components/utilities/types";
+import { ChatState } from "../components/utilities/interface";
 
-export type Message = {
-    _id?:string;
-    chatId:string;
-    senderId:string;
-    message:string;
-    image?:string;
-    createdAt:string;
-};
 
-type onlineUser = {userId:string;isOnline:boolean}
 
-interface ChatState {
-    messages:Message[];
-    chats:any[];
-    activeChat:string | null;
-    onlineUsers:onlineUser[],
-    Notification:[];
-}
+
 const initialState:ChatState = {
     messages:[],
     chats:[],
@@ -51,14 +38,6 @@ const chatSlice = createSlice({
     clearActiveChat(state) {
       state.activeChat = null;
     },
-    //   addNotification(state, action) {
-    //     state.notifications.push(action.payload);
-    //   },
-    //   clearNotifications(state, action) {
-    //     state.notifications = state.notifications.filter(
-    //       (n) => n.chatId !== action.payload
-    //     );
-    //   },
   },
 });
 

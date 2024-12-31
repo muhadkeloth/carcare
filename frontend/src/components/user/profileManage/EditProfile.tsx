@@ -248,7 +248,6 @@ const EditProfile:React.FC = () => {
             </div>
           </div>
         </div>
-        {/* )} */}
       </div>
     </div>
   );

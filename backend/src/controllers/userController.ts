@@ -28,6 +28,7 @@ import ChatRepository from "../repositories/ChatRepository";
 import ChatService from "../services/ChatService";
 import MessageRepository from "../repositories/MessageRepository";
 import MessageService from "../services/MessageService";
+import { generateAccessTokens, generateTokens } from "../utils/functions";
 
 
 
@@ -104,16 +105,34 @@ export default class UserController extends BaseController<IUser> {
         email,password: hashedPassword,
       } as IUser);
 
-      const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
-      const token = jwt.sign({ id: user._id, role: "user" }, JWT_SALT, {expiresIn: "1D",});
+      // const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
+      // const token = jwt.sign({ id: user._id, role: "user" }, JWT_SALT, {expiresIn: "1D",});
+      const { accessToken, refreshToken } = generateTokens({id:user._id, role:'user'})
 
-      res.status(HttpStatusCode.CREATED).json({ token, role: "user", message: "User registered successfully" });
+      res.status(HttpStatusCode.CREATED).json({ accessToken, refreshToken, role: "user", message: "User registered successfully" });
+      // res.status(HttpStatusCode.CREATED).json({ token, role: "user", message: "User registered successfully" });
     } catch (error) {
         const err = error as Error;
         logger.error(`error in signup: ${err.message}`);
         next(err);
     }
   };
+
+  refreshToken = async (req:Request,res:Response,next:NextFunction) => {
+    const { refreshToken } = req.body;
+    if(!refreshToken){
+      logger.warn(`Missing refreshToken in request body`);
+      throw new AppError("Missing refresh token", HttpStatusCode.BAD_REQUEST);
+    }
+    try {
+      const newAccessToken = generateAccessTokens(refreshToken);
+      res.status(HttpStatusCode.SUCCESS).json({ accessToken: newAccessToken });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`error fetching token: ${err.message}`);
+        next(err);
+    }
+  }
 
   getNearShops = async (req: Request, res: Response, next: NextFunction) => {
     const { latitude, longitude } = req.query;

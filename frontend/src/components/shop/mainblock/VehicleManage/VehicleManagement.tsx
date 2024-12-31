@@ -19,7 +19,6 @@ import {
 import { ToastActive } from "../../../utilities/functions";
 import { nameValidation } from "../../../utilities/validation";
 import Table from "../../../reuseComponents/Table";
-import { AnimatePresence, motion } from 'framer-motion'
 import { ZoomInMotionWrapper } from "../../../reuseComponents/ui/MotionWrapper ";
 
 const VehicleManagement: React.FC = () => {

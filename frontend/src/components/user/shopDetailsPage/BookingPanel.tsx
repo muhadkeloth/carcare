@@ -24,7 +24,6 @@ const BookingPanel:React.FC = () => {
       const handleChat = async () => {
           const response = await findChatRoom(shopDetails?._id || '');
           if(!response) throw new Error('error to create room')
-          console.log('response',response.data.chatRooms);
           navigateChatRoom(navigate,response.data.chatRooms._id)
       }
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import {motion} from 'framer-motion'
 import Confetti from 'react-confetti'
 

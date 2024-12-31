@@ -1,4 +1,3 @@
-import React from 'react';
 import carcare_cut from '../../assets/images/carCare_logo_cut.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +9,7 @@ interface NavLoginProps {
   toggleMenu?:() => void;
   handleLogout?: () => void;
 }
-const NavLogin: React.FC<NavLoginProps> = ({ showBar, showMenu,toggleMenu, handleLogout }) => {
+const NavLogin = ({ showBar, showMenu,toggleMenu, handleLogout }:NavLoginProps) => {
 
   return (
     <header className=" flex items-center justify-between  p-2 border-b border-black shadow-sm">

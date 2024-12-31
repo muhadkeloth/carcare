@@ -40,21 +40,22 @@ export const navigateHome = (navigate:any,role:string):void => {
 
 
 export const navigateProfile = (navigate:any):void => {
-  if(localStorage.getItem("user_token")){
+  if(localStorage.getItem("user_access_token")){
     navigate('/profile')
   }
 }
 
 export const navigateToSection = (navigate:any,section:string,role:string):void => {
-  if(role == 'shop' && localStorage.getItem("shop_token")){
+  if(role == 'shop' && localStorage.getItem("shop_access_token")){
       navigate(`/shop?menu=${section}`)
-  }else if(role == 'admin' && localStorage.getItem("admin_token")){
+  }else if(role == 'admin' && localStorage.getItem("admin_access_token")){
       navigate(`/admin?menu=${section}`)
   }
 }
 
 export const navigateLogout = (navigate:any,role:string):void => {
-  localStorage.removeItem(`${role}_token`);
+  localStorage.removeItem(`${role}_access_token`);
+  localStorage.removeItem(`${role}_refresh_token`);
   if(role === 'user'){
     store.dispatch(clearUser())
   }else if(role === 'shop'){

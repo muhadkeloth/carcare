@@ -5,7 +5,6 @@ import Locationfind from './Locationfind'
 import VehicleDetails from './ShopDetails'
 import RepairService from './RepairService'
 import FindEstimate from './FindEstimate'
-import { navigateHome } from '../../utilities/navigate/common'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -28,10 +27,8 @@ useEffect(() => {
     <div className='min-h-screen'>
       <nav className="flex p-4 border-b justify-between">
       <ZoomMotionWrapper>
-
         <button>
           <span 
-          // onClick={()=>navigateHome(navigate, 'user')}
           onClick={() => navigate(-1)}
           className='font-semibold text-gray-700 cursor-pointer'><FontAwesomeIcon icon={faChevronLeft} /> Exit</span> 
         </button>
@@ -62,8 +59,7 @@ useEffect(() => {
         <img src={carcare_logo} className="h-8" alt="carCare" />
       </nav>
 
-      <div className="container flex flex-col max-w-6xl mx-auto px-4 mb-10  ">
-  
+      <div className="container flex flex-col max-w-6xl mx-auto px-4 mb-10  ">  
         {activeSection === 'Location'  && < Locationfind setActiveSection={setActiveSection} />}
         {activeSection === 'Workshop'  && <VehicleDetails setActiveSection={setActiveSection} />}
         {activeSection === 'RepairService'  && <RepairService setActiveSection={setActiveSection} />}

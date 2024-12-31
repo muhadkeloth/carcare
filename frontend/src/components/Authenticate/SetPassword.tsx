@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import NavLogin from './NavLogin';
 import carlogo from '../../assets/images/CarCare-white.png';
 import { navigateHome, navigateLogin } from '../utilities/navigate/common';
@@ -47,7 +47,9 @@ const SetPassword:React.FC = () => {
         const response = await fetchSetPassword(url,{email,password,role});
         if(response.status == HttpStatusCode.CREATED){
           if(role == 'shop'){
-            localStorage.setItem(`${role}_token`,response.data.token);
+            // localStorage.setItem(`${role}_token`,response.data.token);
+            localStorage.setItem(`${role}_access_token`,response.data.accessToken);
+            localStorage.setItem(`${role}_refresh_token`,response.data.refreshToken);
             navigateHome(navigate,role);
           }else{
             navigateLogin(navigate,role);

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Login from '../authenticate/Login'
 import AdminDash from '../admin/DashAdmin'
@@ -8,7 +7,7 @@ import SetPassword from '../authenticate/SetPassword'
 import Error from '../reuseComponents/Error'
 import PrivateRoute from './PrivateRoute'
 
-const Admin:React.FC = () => {
+const Admin = () => {
   return (
     <Routes>
       <Route path='login' element={<Login role="admin" />} />

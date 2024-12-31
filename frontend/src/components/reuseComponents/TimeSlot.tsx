@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TimeSlotProps } from "../utilities/interface";
 import { generateTimeSlots } from "../utilities/functions";
 import { HoverMotionWrapper } from "./ui/MotionWrapper ";

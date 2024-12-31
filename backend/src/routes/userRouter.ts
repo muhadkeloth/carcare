@@ -22,6 +22,7 @@ router.post('/signup', userController.signup);
 router.post('/otpgenerate', userController.otpgenerate);
 router.post('/otpvalidation', userController.otpvalidation);
 router.post('/resetPassword', userController.resetPassword);
+router.post('/user/refreshToken', userController.refreshToken);
 
 router.get('/getnearshops', userController.getNearShops);
 router.get('/shopPincode/:pincode', userController.getShopByPincode);

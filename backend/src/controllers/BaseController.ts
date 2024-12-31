@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { AppError } from "../middleware/errorHandler";
 import {otpgenerateFn, otpvalidationFn, resetPasswordFn,} from "./commonController";
 import logger from "../middleware/logger";
+import { generateTokens } from "../utils/functions";
 
 interface Doc extends Document {
   isActive?: boolean;
@@ -45,10 +46,12 @@ export default abstract class BaseController<T extends Doc> {
         }else{
           await this.service.validatePassword(password,user?.password || '',"password");
     
-          const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
-          const token = jwt.sign({ id: user._id, role }, JWT_SALT, {expiresIn: "1D",});
+          // const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
+          // const token = jwt.sign({ id: user._id, role }, JWT_SALT, {expiresIn: "1D",});
+          const { accessToken, refreshToken } = generateTokens({id:user._id,role})
     
-          res.status(HttpStatusCode.SUCCESS).json({ token, role, message: "Login successful" });
+          res.status(HttpStatusCode.SUCCESS).json({ accessToken, refreshToken, role, message: "Login successful" });
+          // res.status(HttpStatusCode.SUCCESS).json({ token, role, message: "Login successful" });
         }
 
     } catch (error) {
@@ -86,7 +89,7 @@ export default abstract class BaseController<T extends Doc> {
     const { email, password, role } = req.body;
     try {
       const response = await resetPasswordFn(email, password, role);
-      res.status(response.status).json({token:response.token, message: response.message });
+      res.status(response.status).json({accessToken:response.accessToken,refreshToken:response.refreshToken, message: response.message });
     } catch (error) {
         const err = error as Error;
         logger.error(`reset password error: ${err.message}`);

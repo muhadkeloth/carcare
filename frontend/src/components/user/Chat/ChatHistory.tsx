@@ -75,9 +75,7 @@ const ChatHistory = () => {
         {roomId &&  <ChatInput /> }       
       </div>
     </div>
-
-    </div>
-        
+    </div>        
     </>
   )
 }

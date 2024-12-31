@@ -4,6 +4,15 @@ import api from "./axiosConfig"
 import { ErrorResponse } from "../components/utilities/interface";
 
 
+export const fetchRefreshToken = async (url:string,refreshToken:string):Promise<returnApiPromise> => {
+    try {
+        return await api.post(url, {refreshToken});
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message); 
+    }
+}
+
 export const fetchForgotPass = async (url:string,body:bodyEmailvsRole):Promise<returnApiPromise> => {
     try {
         return await api.post(url, body);

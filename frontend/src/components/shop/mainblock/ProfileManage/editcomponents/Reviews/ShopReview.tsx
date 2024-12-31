@@ -26,9 +26,6 @@ const ShopReview = ({ review }: ShopReviewProps) => {
     </div>
     
     <div className="mt-4">
-      {/* <p className="text-sm text-muted-foreground mb-2">
-        from: {review.orderDetails}
-      </p> */}
       <p className="text-foreground">{review.review.feedback}</p>
     </div>
   </div>

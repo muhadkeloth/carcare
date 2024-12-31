@@ -10,8 +10,6 @@ import { formatDate, formatTime, getNextAvailableDate } from '../../utilities/fu
 import { HoverMotionWrapper } from '../../reuseComponents/ui/MotionWrapper '
 
 
-
-
 const Summary:React.FC<BookingProps> = ({setActiveSection}) => {
   const shopdetails = useSelector((state:RootState)=>{
     return state.estimate.estimateDetails 

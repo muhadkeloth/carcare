@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client'
-import { Message } from '../features/chatSlice';
+import { Message } from '../components/utilities/types';
 
 let socket:Socket|null = null;
 const socketURL = import.meta.env.VITE_ENDPORTSOCKETBACKEND;

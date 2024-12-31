@@ -33,7 +33,8 @@ const Header:React.FC = () => {
     },[dispatch])
 
     useEffect(() => {
-      const token = localStorage.getItem("user_token");
+      const token = localStorage.getItem("user_access_token");
+      // const token = localStorage.getItem("user_token");
       if(token){
         getUserData()
       }
@@ -95,9 +96,6 @@ const Header:React.FC = () => {
                     Profile
                   </span>
                 </li>
-                {/* <li>
-            <span className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</span>
-          </li> */}
                 <li>
                   <span
                     onClick={() => {

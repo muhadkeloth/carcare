@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchBrokerageTable } from '../../../../services/adminService';
 import { formatDate, ToastActive } from '../../../utilities/functions';
 import { PickupsDetails } from '../../../utilities/interface';
 import Table from '../../../reuseComponents/Table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import {motion} from 'framer-motion'
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
-const BookingBrockerage:React.FC = () => {
+const BookingBrockerage = () => {
       const [tableInputs, setTableInputs] = useState<any[]>([]);
           const [currentPage, setCurrentPage] = useState(1);
           const [totalPages, setTotalPages] = useState(1);

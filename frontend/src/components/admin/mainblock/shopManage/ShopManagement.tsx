@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faPlus, faX } from '@fortawesome/free-solid-svg-icons';
 import { MapContainer, TileLayer } from 'react-leaflet';
@@ -11,11 +11,10 @@ import { addNewShop, fetchAllShop, toggleShopStatus } from '../../../../services
 import { ThreeDots } from 'react-loader-spinner';
 import Table from '../../../reuseComponents/Table';
 import { handleInputValue } from '../../../utilities/validation';
-import {motion} from 'framer-motion'
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
-const ShopManagement: React.FC = () => {
+const ShopManagement = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newShop, setNewShop] = useState<NewShop>({ shopName: '', ownerName: '',email:'', image: null, phoneNumber: '', location:'' });
@@ -28,9 +27,6 @@ const ShopManagement: React.FC = () => {
   const [isLoading,setIsLoading] = useState(false)
 
 
-  useEffect(()=>{
-    console.log('selectedLocation',selectedLocation)
-  })
 
   const fetchShops = async (page:number) => {
     try {

@@ -21,7 +21,8 @@ export const fetchUserData = async (navigate:any):Promise<{status:number,data:an
        const response =  await api.get('/userdetails')
        return {status:response.status,data:response.data}
     } catch (error) {
-        localStorage.removeItem('user_token')
+        localStorage.removeItem('user_access_token')
+        localStorage.removeItem('user_refresh_token')
         navigateLogin(navigate,'user')
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);

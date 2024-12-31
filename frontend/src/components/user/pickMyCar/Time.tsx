@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import {  addMonths, format, isBefore, isSunday, } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import TimeSlot from '../../reuseComponents/TimeSlot';
 import { setDateAndTimePickCar } from '../../../features/pickMyCarSlice';
 import {  BookingProps } from '../../utilities/interface';
@@ -58,9 +58,7 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
           daysInMonth={daysInMonth}
           onPrevMonth={handlePrevMonth}
           onNextMonth={handleNextMonth}
-          onDateClick={handleDateClick} />
-
-     
+          onDateClick={handleDateClick} />     
 
         {date && (
         <DropMotionWrapper className="p-4 flex flex-col justify-center items-center mx-auto ">

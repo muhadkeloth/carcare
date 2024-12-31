@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Footer from '../reusableComponents/Footer'
-import { navigateHome } from '../../utilities/navigate/common'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {  faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -15,7 +14,7 @@ import { useDispatch } from 'react-redux'
 import { clearPickCarDetails } from '../../../features/pickMyCarSlice'
 import { ToastContainer } from 'react-toastify'
 import useFetchUserData from '../reusableComponents/useFetchUserData'
-import { DropMotionWrapper, ZoomMotionWrapper } from '../../reuseComponents/ui/MotionWrapper '
+import { ZoomMotionWrapper } from '../../reuseComponents/ui/MotionWrapper '
 
 
 const PickCarHome:React.FC = () => {
@@ -35,7 +34,6 @@ const PickCarHome:React.FC = () => {
     <nav className="flex p-4 border-b justify-between">
       <button>
         <span 
-        // onClick={()=>navigateHome(navigate, 'user')}
         onClick={() => navigate(-1)}
          className='font-semibold text-gray-700 cursor-pointer'><FontAwesomeIcon icon={faChevronLeft} /> Exit</span> 
       </button>
@@ -75,7 +73,6 @@ const PickCarHome:React.FC = () => {
     </nav>
 
     <div className="container flex flex-col max-w-6xl mx-auto px-4 mb-10  ">
-
       {activeSection === 'Location' && <Location  setActiveSection={setActiveSection} />}
       {activeSection === 'Workshop' && <WorkShop  setActiveSection={setActiveSection} />}
       {activeSection === 'Vehicle' && <Vehicle  setActiveSection={setActiveSection} />}

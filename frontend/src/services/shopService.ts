@@ -11,7 +11,8 @@ export const fetchShopUserDetails = async (navigate:any):Promise<{status:number;
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find shopuser details');
         return {status:response.status,data:response.data}
     } catch (error) {
-        localStorage.removeItem('shop_token')
+        localStorage.removeItem('shop_access_token')
+        localStorage.removeItem('shop_refresh_token')
         navigateLogin(navigate,'shop')
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);

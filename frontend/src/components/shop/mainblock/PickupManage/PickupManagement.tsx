@@ -7,7 +7,6 @@ import { PickupsDetails } from "../../../utilities/interface";
 import { fetchAllPickupsByShopId } from "../../../../services/shopService";
 import Modal from "../../../reuseComponents/Modal";
 import OrderDetails from "./OrderDetails";
-import { motion } from 'framer-motion'
 import { ZoomInMotionWrapper } from "../../../reuseComponents/ui/MotionWrapper ";
 
 

@@ -6,8 +6,7 @@ import { createShopEstimate, deleteShopEstimate, editEstimate, fetchAllestimates
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
 import Table from '../../../reuseComponents/Table';
-import { motion } from 'framer-motion'
-import { DropMotionWrapper, ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
+import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
 const EstimateMangement:React.FC = () => {

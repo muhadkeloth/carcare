@@ -4,7 +4,6 @@ import { Shop } from '../../utilities/interface';
 import { ThreeDots } from 'react-loader-spinner';
 
 
-
 const Shops:React.FC = () => {
     const [shops,setShops] = useState<Shop[]>([]);
     const [error,setError] = useState<string | null>(null);
@@ -21,7 +20,6 @@ const Shops:React.FC = () => {
           console.error("error fetching nearby shops:",error);
           setShops([]);
           setError(errorMessage)
-          // setError("unable to fetch nearby shops.")
         }
     }
 

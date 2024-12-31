@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Shop from "../models/Shop";
-import { randomPassword } from "../utils/functions";
+import { generateAccessTokens, randomPassword } from "../utils/functions";
 import { sendOtpEmail } from "../utils/emailService";
 import { AppError } from "../middleware/errorHandler";
 import { HttpStatusCode, IUser } from "../utils/interface";
@@ -56,6 +56,22 @@ export default class AdminController extends BaseController<IUser> {
         next(err);
     }
   };
+
+  refreshToken = async (req:Request,res:Response,next:NextFunction) => {
+    const { refreshToken } = req.body;
+    if(!refreshToken){
+      logger.warn(`Missing refreshToken in request body`);
+      throw new AppError("Missing refresh token", HttpStatusCode.BAD_REQUEST);
+    }
+    try {
+      const newAccessToken = generateAccessTokens(refreshToken);
+      res.status(HttpStatusCode.SUCCESS).json({ accessToken: newAccessToken });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`error fetching token: ${err.message}`);
+        next(err);
+    }
+  }
 
   toggleStatus = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;

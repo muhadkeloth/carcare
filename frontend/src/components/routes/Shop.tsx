@@ -1,4 +1,3 @@
-import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Login from '../authenticate/Login'
 import ForgotPass from '../authenticate/ForgotPass'
@@ -8,7 +7,7 @@ import ShopHome from '../shop/HomeShop'
 import Error from '../reuseComponents/Error'
 import PrivateRoute from './PrivateRoute'
 
-const Shop:React.FC = () => {
+const Shop = () => {
     return (
       <Routes>
         <Route path="login" element={<Login role="shop" />} />

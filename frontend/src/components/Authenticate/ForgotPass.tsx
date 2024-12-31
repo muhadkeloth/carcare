@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { ToastActive } from '../utilities/functions';
 
 
-const ForgotPass:React.FC<RoleProps> = ({ role }) => {
+const ForgotPass = ({ role }:RoleProps) => {
     const [email,setEmail] = useState('')
     const [emailError,setEmailError] = useState('')
     const navigate = useNavigate()

@@ -19,6 +19,7 @@ router.post('/login', adminController.login );
 router.post('/otpgenerate', adminController.otpgenerate);
 router.post('/otpvalidation', adminController.otpvalidation);
 router.post('/resetPassword', adminController.resetPassword);
+router.post('/refreshToken', adminController.refreshToken);
 
 
 router.use(authenticateToken);

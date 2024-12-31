@@ -152,12 +152,6 @@ const Summary:React.FC<BookingProps> = ({setActiveSection}) => {
         </div>
       </HoverMotionWrapper>
 
-      {/* ******************* */}
-      {/* <div className="border rounded-lg h-96  max-w-xl md:w-2/3 mb-4 ">
-          <MapComponent />
-      </div> */}
-      {/* ******************* */}
-
       <div className="mt-3 px-1 flex justify-center w-full">
         <Elements stripe={stripePromise}>
           <button

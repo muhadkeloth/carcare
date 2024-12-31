@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NavLogin from './NavLogin'
 import carlogo from '../../assets/images/CarCare-white.png';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -13,7 +13,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { ToastActive } from '../utilities/functions';
 
 
-const OtpValidation:React.FC = () => {
+const OtpValidation = () => {
   const [otp,setOtp] = useState<string[]>(Array(6).fill(''));
   const [otpError,setOtpError] = useState('');
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -63,7 +63,9 @@ const OtpValidation:React.FC = () => {
         const response = await fetchSignup('/signup',{...newUserDetails,userOtp:otp});
         if(response.status == HttpStatusCode.CREATED) {
           if(response.data.token){
-            localStorage.setItem(`${response.data.role}_token`,response.data.token);
+            // localStorage.setItem(`${response.data.role}_token`,response.data.token);
+            localStorage.setItem(`${response.data.role}_access_token`,response.data.accessToken);
+            localStorage.setItem(`${response.data.role}_refresh_token`,response.data.refreshToken);
             navigateHome(navigate,response.data.role);
           }
         }else{

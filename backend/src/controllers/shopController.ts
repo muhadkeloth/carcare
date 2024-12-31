@@ -21,6 +21,7 @@ import ChatService from "../services/ChatService";
 import MessageService from "../services/MessageService";
 import ChatRepository from "../repositories/ChatRepository";
 import MessageRepository from "../repositories/MessageRepository";
+import { generateAccessTokens } from "../utils/functions";
 
 export class ShopController extends BaseController<any> {
   protected vehicleService: VehicleService;
@@ -41,6 +42,22 @@ export class ShopController extends BaseController<any> {
     this.chatService = new ChatService(chatRepository);
     const messageRepository = new MessageRepository(Message)
     this.messageService = new MessageService(messageRepository);
+  }
+
+  refreshToken = async (req:Request,res:Response,next:NextFunction) => {
+    const { refreshToken } = req.body;
+    if(!refreshToken){
+      logger.warn(`Missing refreshToken in request body`);
+      throw new AppError("Missing refresh token", HttpStatusCode.BAD_REQUEST);
+    }
+    try {
+      const newAccessToken = generateAccessTokens(refreshToken);
+      res.status(HttpStatusCode.SUCCESS).json({ accessToken: newAccessToken });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`error fetching token: ${err.message}`);
+        next(err);
+    }
   }
 
   getAllvehicleDetails = async (req:Request,res:Response,next:NextFunction) => {

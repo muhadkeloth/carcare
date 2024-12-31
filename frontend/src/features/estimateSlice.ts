@@ -23,7 +23,6 @@ const estimateSlice = createSlice({
                 state.estimateDetails = {shopdetails:action.payload};
             }
         },
-        // setEstimateWorkDetails(state,action:PayloadAction<{work:string;priceStart:number;priceEnd:number;}>){
         setEstimateWorkDetails(state,action:PayloadAction<Estimate>){
             if(state.estimateDetails){
                 state.estimateDetails.repairWork = action.payload;

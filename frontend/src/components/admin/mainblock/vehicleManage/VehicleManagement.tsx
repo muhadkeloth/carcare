@@ -1,16 +1,15 @@
 import { faAngleLeft, faAngleRight, faPencil, faPlus, faTrash, faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HttpStatusCode, Vehicle } from '../../../utilities/interface';
 import { addNewVehicle, deleteVehicle, editVehicle, fetchAllVehicle } from '../../../../services/adminService';
 import Table from '../../../reuseComponents/Table';
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
-import { motion } from 'framer-motion'
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
-const VehicleManagement:React.FC = () => { 
+const VehicleManagement = () => { 
     const [vehicles,setVehicles] = useState<Vehicle[]>([])
     const [newVehicle, setNewVehicle] = useState<Vehicle>({ brand:'',vehicleModel:[] });
     const [error,setError] = useState<Record<string,string> | null>(null)

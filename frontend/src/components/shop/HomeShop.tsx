@@ -53,7 +53,8 @@ const ShopHome: React.FC = () => {
   
       
       useEffect(() => {
-        const token = localStorage.getItem("shop_token");
+        const token = localStorage.getItem("shop_access_token");
+        // const token = localStorage.getItem("shop_token");
         if (!token) {
           navigateLogin(navigate, "shop");
         }

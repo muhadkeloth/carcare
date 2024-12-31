@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import { HttpStatusCode, IShop, IUser } from "../utils/interface";
+import { generateTokens } from "../utils/functions";
 
 export const otpgenerateFn = async (email:string,role:string) => {    
     try{
@@ -80,9 +81,14 @@ export const resetPasswordFn = async (email:string,password:string,role:string) 
         delete userDetails.otp;
         delete userDetails.otpExpiry;
         userDetails.save();
-        const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
-        const token = jwt.sign({id:userDetails._id,role:'shop'}, JWT_SALT , {expiresIn:"1D"})
-        return {status:HttpStatusCode.CREATED,token,message:"password reset successfully"};
+        // const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
+        // const token = jwt.sign({id:userDetails._id,role}, JWT_SALT , {expiresIn:"1D"})
+        const { accessToken, refreshToken } = generateTokens({id:userDetails._id, role})
+        
+        // const token = jwt.sign({id:userDetails._id,role:'shop'}, JWT_SALT , {expiresIn:"1D"})
+
+        return {status:HttpStatusCode.CREATED,accessToken,refreshToken,message:"password reset successfully"};
+        // return {status:HttpStatusCode.CREATED,token,message:"password reset successfully"};
     }catch(error){
         console.log('reset password error backend')
         return {status:HttpStatusCode.INTERNAL_SERVER_ERROR,message:'errorin resetpasss'};

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import {  useEffect, useState } from 'react'
 import NavLogin from '../authenticate/NavLogin'
 import AdminMain from './MainAdmin'
 import { faBuilding, faCar, faChartBar, faChartLine, faStore, faUserCog } from '@fortawesome/free-solid-svg-icons'
@@ -8,7 +8,7 @@ import { ToastContainer } from 'react-toastify'
 import SidebarCRUD from '../reuseComponents/SidebarCRUD'
 import { motion } from 'framer-motion'
 
-const AdminDash: React.FC = () => {
+const AdminDash = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [activeSection, setActiveSection] = useState('Dash');
     const navigate = useNavigate();
@@ -33,7 +33,8 @@ const AdminDash: React.FC = () => {
 
 
     useEffect(() => {
-      const token = localStorage.getItem("admin_token");
+      // const token = localStorage.getItem("admin_token");
+      const token = localStorage.getItem("admin_access_token");
       if (!token){
         navigateLogin(navigate, "admin");
       }

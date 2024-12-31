@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatDate, formatToIndianNumbering, mergeRatingCounts, ToastActive } from '../../../utilities/functions'
 import { Period, StatusAnalytics } from '../../../utilities/interface'
 import { faIndianRupeeSign, faLocationDot, faMoneyBillTrendUp, faShoppingCart } from '@fortawesome/free-solid-svg-icons'
@@ -12,14 +12,13 @@ import { motion } from 'framer-motion'
 import MotionWrapper from '../../../reuseComponents/ui/MotionWrapper '
 
 
-const Dashboard:React.FC = () => {
+const Dashboard = () => {
   const [periodBarChart, setPeriodBarChart] = useState<Period>('monthly')
   const [periodLineChart, setPeriodLineChart] = useState<Period>('monthly')
   const [bookingsCountforBarChart,setBarChartBarData] = useState<any[]>([])
   const [pickupsCountforBarChart,setPickupsCountforBarChart] = useState<any[]>([])
   const [bookingsPriceCountforLineChart,setBookingsPriceCountforLineChart] = useState<any[]>([])
   const [pickupsPriceCountforLineChart,setPickupsPriceCountforLineChart] = useState<any[]>([])
-  const [brockeragePriceCountForLineChart,setBrockeragePriceCountForLineChart] = useState<any[]>([])
   const [ratingforPieChart,setRatingforPieChart] = useState<any[]>([])
   const [totalRevenue,setTotalRevenue] = useState('')
   const [totalBrockerage,setTotalBrockerage] = useState('')

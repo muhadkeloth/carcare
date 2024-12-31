@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
-import { addMessages, Message, setMessages } from '../../../../features/chatSlice';
+import { addMessages, setMessages } from '../../../../features/chatSlice';
 import { joinRoom, leaveRoom,  onNewMessage } from '../../../../services/socketService';
 import { fetchAllMessages } from '../../../../services/shopService';
 import { ScrollArea } from '../../../reuseComponents/ui/scroll-area';
 import { format } from 'date-fns';
 import no_message from '../../../../assets/images/no_message.svg'
+import { Message } from '../../../utilities/types';
 
 
 const ChatMessages = () => {

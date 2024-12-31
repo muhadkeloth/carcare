@@ -65,22 +65,6 @@ const MainSection:React.FC = () => {
         <p className="mt-6 mb-9 text-base font-medium text-center">
           Your One-Stop Solution for Car Car,{" "}
         </p>{" "}
-        {/* location */}
-        {/* <div className="m-6 flex flex-col md:flex-row md:space-x-4 items-center ">
-            <input type="text" 
-            value={input}
-            onChange={handleInputChange}
-            className='border  border-gray-300 rounded w-full md:w-1/4  p-4 mb-4 md:mb-0 md:flex-1'
-            placeholder='Address' /> */}
-        {/* <input type="text" 
-            className='border border-gray-300 rounded w-full p-4 mb-4 md:mb-0 md:flex-1'
-            placeholder='Select vehicle make' /> */}
-        {/* <button 
-            onClick={handleLocation}
-            className="btn-primary w-full md:w-1/3 p-4 ">
-                Find Near WorkShop 
-                </button>               
-        </div> */}
         <div className="m-6 flex flex-col md:flex-row justify-center md:space-x-4 relative">
           <div className="w-full md:w-2/3 relative">
             <input

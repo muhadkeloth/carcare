@@ -18,6 +18,7 @@ router.post('/login', shopController.login);
 router.post('/otpgenerate', shopController.otpgenerate);
 router.post('/otpvalidation', shopController.otpvalidation);
 router.post('/resetPassword', shopController.resetPassword);
+router.post('/refreshToken', shopController.refreshToken);
 
 router.use(authenticateToken);
 router.use(roleBasedAccess(['shop']));

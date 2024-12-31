@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BookingDetailsProps, Estimate, Shop } from '../../../utilities/interface';
+import { BookingDetailsProps, Shop } from '../../../utilities/interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCar, faClock, faComment, faCreditCard, faIndianRupee, faMessage, faScrewdriverWrench, faStar, faUser, faX } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, ToastActive } from '../../../utilities/functions';

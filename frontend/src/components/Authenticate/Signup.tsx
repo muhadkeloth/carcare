@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import NavLogin from './NavLogin'
 import {  useNavigate } from 'react-router-dom';
 import carlogo from '../../assets/images/CarCare-white.png';
@@ -13,7 +13,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import { ToastActive } from '../utilities/functions';
 
 
-const Signup:React.FC = () => {
+const Signup = () => {
     const [inputDetails,setInputDetails] = useState({username:'',email:'',phoneNumber:'',password:'',confirmPassword:''})
     const [error,setError] = useState<Record<string,string> | null>(null)
     const navigate = useNavigate();

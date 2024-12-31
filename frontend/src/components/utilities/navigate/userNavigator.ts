@@ -1,7 +1,7 @@
 import { navigateLogin } from "./common";
 
 const checkToken = (navigate:any):boolean | null => {
-  const token = localStorage.getItem('user_token');
+  const token = localStorage.getItem('user_access_token');
   if(!token) {
     navigateLogin(navigate,'user');
     return null;

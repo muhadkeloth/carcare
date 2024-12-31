@@ -7,11 +7,11 @@ import { addDays, endOfMonth, endOfWeek, isAfter, isBefore, isSameDay, isSunday,
 export const getToken = (role: string) => {
   switch (role) {
     case 'user':
-      return localStorage.getItem('user_token');
+      return localStorage.getItem('user_access_token');
     case 'shop':
-      return localStorage.getItem('shop_token');
+      return localStorage.getItem('shop_access_token');
     case 'admin':
-      return localStorage.getItem('admin_token');
+      return localStorage.getItem('admin_access_token');
     default:
       return null;
   }
@@ -154,7 +154,6 @@ export const getNextAvailableDate = ():string => {
   } while (nextAvailableDate.getDate() === 6 || nextAvailableDate.getDate() === 0);
   
   return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric'})
-  // return nextAvailableDate.toLocaleDateString('en-US', {weekday:'short', month: 'short',day:'numeric',year:'numeric'})
 }
 
 export const getStatusMessageofShop = (opening: string,closing: string): { text: string; color: string } => {

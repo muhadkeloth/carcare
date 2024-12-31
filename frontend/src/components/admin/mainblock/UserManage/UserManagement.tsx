@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { HttpStatusCode, User } from '../../../utilities/interface';
 import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminService';
 import { ToastActive } from '../../../utilities/functions';
 import Table from '../../../reuseComponents/Table';
-import { motion } from 'framer-motion'
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 
-const UserManagement:React.FC = () => {
+const UserManagement = () => {
   const [users,setUsers] = useState<User[]>([]);
   const [currentPage,setCurrentPage] = useState(1);
   const [totalPages,setTotalPages] = useState(1);

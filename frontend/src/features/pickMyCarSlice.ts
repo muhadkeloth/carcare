@@ -39,10 +39,8 @@ const PickCarSlice = createSlice({
         },
         setDateAndTimePickCar(state,action:PayloadAction<shedule>){
             if(state.PickCarDetails){
-                // state.PickCarDetails.shedule = {date:action.payload.selectedDate,time:action.payload.selectedTime}
                 state.PickCarDetails.shedule = {date:action.payload.date,time:action.payload.time}
             }else{
-                // state.PickCarDetails = {shedule:{date:action.payload.selectedDate,time:action.payload.selectedTime}}
                 state.PickCarDetails = {shedule:{date:action.payload.date,time:action.payload.time}}
             };
         },

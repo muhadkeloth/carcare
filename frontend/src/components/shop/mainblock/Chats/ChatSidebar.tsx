@@ -8,7 +8,6 @@ import { RootState } from '../../../../store';
 import { setActiveChat, setOnlineUsers } from '../../../../features/chatSlice';
 import { CurrentUser } from './ChatHistory';
 import { getOnlineUsers, leaveRoom, onNotification } from '../../../../services/socketService';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 
 interface ChatSidebarProps {
@@ -22,8 +21,6 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
   const [unreadCounts, setUnreadCounts] = useState<{[key:string]:number}>({})
   const {chats,activeChat,onlineUsers} = useSelector((state:RootState)=>state.chat);    
   const dispatch = useDispatch();
-  const location = useLocation();
-  const navigate = useNavigate();
 
 
   useEffect(() => {

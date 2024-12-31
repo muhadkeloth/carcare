@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import NavLogin from './NavLogin';
 import carlogo from '../../assets/images/CarCare-white.png';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { ToastActive } from '../utilities/functions';
 
 
 
-const Login: React.FC<RoleProps> = ({ role }) => {
+const Login = ({ role }:RoleProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error,setError] = useState<Record<string,string> | null>(null)
@@ -38,8 +38,10 @@ const Login: React.FC<RoleProps> = ({ role }) => {
     try {
       const response = await fetchLogin(role, { email, password, role });
       if (response.status == SUCCESS) {
-        if (response.data.token) {
-          localStorage.setItem(`${role}_token`, response.data.token);
+        if (response.data.accessToken && response.data.refreshToken ) {
+          localStorage.setItem(`${role}_access_token`, response.data.accessToken);
+          localStorage.setItem(`${role}_refresh_token`, response.data.refreshToken);
+          // localStorage.setItem(`${role}_token`, response.data.token);
           navigateHome(navigate, role);
         } else if (response.data?.validotp) {
           navigatePasswordChange(navigate, email, role);
@@ -55,7 +57,8 @@ const Login: React.FC<RoleProps> = ({ role }) => {
 
   useEffect(()=>{
     const rol = role == '' ? 'user' : role ;
-    const token = localStorage.getItem(`${rol}_token`);
+    const token = localStorage.getItem(`${rol}_access_token`);
+    // const token = localStorage.getItem(`${rol}_token`);
     if(token){
       navigateHome(navigate, rol)
     }

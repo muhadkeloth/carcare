@@ -1,4 +1,4 @@
-import {   faIndianRupeeSign, faLocationDot, faShoppingCart, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faIndianRupeeSign, faLocationDot, faShoppingCart, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { fetchfilterCountCart, fetchfilterPriceCart, fetchStatistics } from '../../../../services/shopService'
@@ -64,9 +64,6 @@ const Dashboard = () => {
       }
     }
   }
-
-
-
 
 
  useEffect(()=>{

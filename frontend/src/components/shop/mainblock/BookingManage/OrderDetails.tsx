@@ -233,10 +233,6 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                                   ? "COMPLETED"
                                   : ""
                               )
-                            //   {
-                            //   setToggleId(bookingDetails._id);
-                            //   setShowConfirmModal(true);
-                            // }
                           }
                           className="btn-primary p-0 px-2"
                         >
@@ -333,7 +329,6 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
                     setShowConfirmModal(false);
                     setToggleId("");
                   }
-                  // togglePickupStatus(toggleId, "CANCELLED")
                 }
               >
                 no thanks
@@ -341,24 +336,8 @@ const OrderDetails:React.FC<BookingDetailsProps> = ({ bookingDetails, handlesetP
               <button
                 className="btn-secondary"
                 onClick={handleCancel}
-                // onClick={() =>
-                // togglePickupStatus(
-                //   toggleId,
-                //   bookingDetails?.status == "PENDING"
-                //     ? "CONFIRMED"
-                //     : bookingDetails?.status == "CONFIRMED"
-                //     ? "PICKED"
-                //     : ""
-                // )
-                // }
               >
                 confirm cancel
-                {/* STATUS{" "}
-                {bookingDetails?.status == "PENDING"
-                  ? "CONFIRM"
-                  : bookingDetails?.status == "CONFIRMED"
-                  ? "PICKUP"
-                  : bookingDetails?.status} */}
               </button>
             </div>
           </div>

@@ -39,7 +39,6 @@ useEffect(()=>{
       <nav className="flex p-4 border-b justify-between">
         <button>
           <span
-            // onClick={() => navigateHome(navigate, "user")}
             onClick={() => navigate(-1)}
             className="font-semibold text-gray-700 cursor-pointer"
           >

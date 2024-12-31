@@ -21,7 +21,9 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
     const { UNAUTHORIZED, FORBIDDEN } = HttpStatusCode;
     const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
     const token = req.header('Authorization')?.split(' ')[1];
-    if(!token) return next(new AppError("Access Denied",UNAUTHORIZED))
+    console.log('token2')
+    if(!token) return next(new AppError("Access Denied",FORBIDDEN))
+      console.log('token 1',token)
         
         try{
             const verified = jwt.verify(token, JWT_SALT );
@@ -53,11 +55,59 @@ export const authenticateToken = async (req:AuthenticatedRequest, res:Response, 
         logger.info(`req.user: ${req.user}`,)
         next();
     }catch(error){
-        const err = error as Error;
+      const err = error as Error;
+      if (error instanceof jwt.TokenExpiredError) {
+        // Handle token expiration
+        logger.warn("Access token expired. Sending 401 for refresh.");
+        return next(new AppError(`Token expired: ${err.message}`, UNAUTHORIZED));
+      }
         logger.error(`Error in auth ${err.message}` );
         next(new AppError(`Invalid token: ${err.message}`, FORBIDDEN));
     }
 }
+
+
+// export const authenticateToken = async (req:AuthenticatedRequest, res:Response, next:NextFunction) => {
+//     const { UNAUTHORIZED, FORBIDDEN } = HttpStatusCode;
+//     const JWT_SALT = process.env.JWT_SALT || 'sem_nem_kim_12@32';
+//     const token = req.header('Authorization')?.split(' ')[1];
+//     if(!token) return next(new AppError("Access Denied",UNAUTHORIZED))
+        
+//         try{
+//             const verified = jwt.verify(token, JWT_SALT );
+//             if(!verified || typeof verified !== 'object'){
+//                 return next(new AppError("Invalid token payload",FORBIDDEN));
+//             }
+//             let { id, role } = verified as { id: string; role: string };
+//             const roleServiceMap:Record<string, any> = {
+//                 shop: shopService,
+//                 admin: adminService,
+//                 user: userService,
+//             };
+//             const service = roleServiceMap[role];
+//             if(!service){
+//                 return next(new AppError(`Access Denied: Invalid role '${role}'`, FORBIDDEN));
+//             };
+//             const user = await service.findOne({ _id: id });
+//             // const user = role === 'shop' 
+//             // ? await shopService.findOne({_id:id})
+//             // : role === 'admin' 
+//             // ? await adminService.findOne({_id:id})
+//             // : await userService.findOne({_id:id});
+//         if (!user || !user.isActive) {
+//             return next(new AppError("Access Denied: User inactive or not found", FORBIDDEN));
+//         }
+//         req.user = user._id as string;
+//         req.userRole = role;
+        
+//         logger.info(`req.user: ${req.user}`,)
+//         next();
+//     }catch(error){
+//         const err = error as Error;
+//         logger.error(`Error in auth ${err.message}` );
+//         next(new AppError(`Invalid token: ${err.message}`, FORBIDDEN));
+//     }
+// }
 
 export const roleBasedAccess = (allowedRoles: string[]) => {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

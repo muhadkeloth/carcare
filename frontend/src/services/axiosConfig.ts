@@ -2,6 +2,7 @@ import axios from "axios"
 import store from "../store";
 import { clearUser } from "../features/userSlice";
 import { HttpStatusCode } from "../components/utilities/interface";
+import { fetchRefreshToken } from "./apiCall";
 
 
 const api = axios.create({
@@ -23,13 +24,13 @@ api.interceptors.request.use((config) => {
     let endpoint = '/login';
     
     if(config.url?.startsWith('/admin/')){
-        token = localStorage.getItem('admin_token');
+        token = localStorage.getItem('admin_access_token');
         endpoint = '/admin/login';
     }else if(config.url?.startsWith('/shop/')){
-        token = localStorage.getItem('shop_token');
+        token = localStorage.getItem('shop_access_token');
         endpoint = '/shop/login';
     }else{
-        token =localStorage.getItem('user_token');
+        token =localStorage.getItem('user_access_token');
         endpoint = '/login'
     }
 
@@ -52,19 +53,18 @@ api.interceptors.request.use((config) => {
     }
     
     return config;
-},(error) => {
-    return Promise.reject(error);
-});
+},(error) => Promise.reject(error)
+);
 
 
 
 api.interceptors.response.use(
     (response) => response,
-    (error) => {        
+    async (error) => {     
+        const originalRequest = error.config;   
         if(error.response?.status == HttpStatusCode.FORBIDDEN){
             const currentRoute = window.location.pathname;
             let logoutUrl = 'user';
-
             if(currentRoute.startsWith('/admin')){
                 logoutUrl = 'admin';
             }else if(currentRoute.startsWith('/shop')){
@@ -72,12 +72,37 @@ api.interceptors.response.use(
             }else{
                 store.dispatch(clearUser())
             }
-
-            localStorage.removeItem(`${logoutUrl}_token`);
+            localStorage.removeItem(`${logoutUrl}_access_token`);
+            localStorage.removeItem(`${logoutUrl}_refresh_token`);
+            // window.location.href = `/${logoutUrl}/login`;
+        }else if(error.response?.status === HttpStatusCode.UNAUTHORIZED){
+            const currentRoute = window.location.pathname;
+            let role = 'user';
+            if(currentRoute.startsWith('/admin')){
+                role = 'admin';
+            }else if(currentRoute.startsWith('/shop')){
+                role = 'shop';
+            }
+            try {
+                const refreshToken = localStorage.getItem(`${role}_refresh_token`)
+                if (!refreshToken) {
+                    throw new Error("Refresh token not available");
+                }
+                const refreshResponse = await fetchRefreshToken(`/${role}/refreshToken`, refreshToken);
+                const newAccessToken = refreshResponse.data.accessToken;
+                localStorage.setItem(`${role}_access_token`,newAccessToken);
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                return api(originalRequest);
+            } catch (error) {
+                localStorage.removeItem(`${role}_access_token`);
+                localStorage.removeItem(`${role}_refresh_token`);
+                window.location.href = `/${role}/login`;                
+            }
         }
         return Promise.reject(error);
     }
 )
+
 
 export default api;
 

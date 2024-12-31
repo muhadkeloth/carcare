@@ -5,7 +5,6 @@ import WorkingTime from './editcomponents/WorkingTime';
 import MoreInfo from './editcomponents/MoreInfo';
 import Reviews from './editcomponents/Reviews/Reviews';
 import ChangePass from './editcomponents/ChangePass';
-import { motion } from 'framer-motion'
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
 
 const ShopProfile: React.FC = () => {
