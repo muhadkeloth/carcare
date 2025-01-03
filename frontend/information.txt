@@ -1,0 +1,16 @@
+npm i class-variance-authority:
+   for button reusable in chat
+
+npm i @radix-ui/react-slot:
+    for button reusable in chat;
+
+npm i @radix-ui/react-scroll-area
+    for sroll area resuable in chat
+
+
+use _lib.ts for separate logic and ui;
+
+
+
+npm uninstall @mui/icons-material
+npm uninstall @mui/icons-material
