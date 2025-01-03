@@ -1,251 +1,331 @@
-import { Types } from "mongoose";
-import { AppError } from "../middleware/errorHandler";
-import logger from "../middleware/logger";
-import ShopRepository from "../repositories/ShopRepository";
-import { HttpStatusCode, IShop, IVehicle } from "../utils/interface";
-import BaseService from "./BaseService";
+import { AxiosError } from "axios";
+import { ErrorResponse, Estimate, HttpStatusCode } from "../components/utilities/interface";
+import api from "./axiosConfig";
+import { navigateLogin } from "../components/utilities/navigate/common";
 
 
 
-
-export default class ShopService extends BaseService<IShop> {
-
-        constructor(protected repository: ShopRepository) {
-            super(repository);
-        };
-        
-        async updateById(id:string, updateData:any):Promise<IShop> {
-            const updateddata = await this.repository.updateById(id, updateData);
-            if(!updateddata){
-                logger.error('Shop not found or update failed');
-                throw new AppError("Shop not found or update failed", HttpStatusCode.NOT_FOUND);
-            }
-            return updateddata;
-        }
-
-        async findNearbyShops(latitude:number,longitude:number,radiusInKm:number,limit:number):Promise<IShop[] | null>{
-            return await this.repository.findNearbyShops(latitude,longitude,radiusInKm,limit)
-        }
-
-        
-        async findShopDetailsById(id:string):Promise<IShop | null>{
-                return await this.repository.findShopById(id);        
-            }
-
-
-        async findShops(skip:number,limit:number):Promise<IShop[] | null>{
-            return await this.repository.findShops(skip,limit);
-        }
-
-        async findRandomShops(limit:number):Promise<IShop[] | null>{
-            return await this.repository.findRandomShops(limit);
-        }
-
-        async findCountShops():Promise<number | null>{
-            return await this.repository.findCountShops();
-          }
-
-        async toggleStatus(id: string):Promise<IShop>{
-            const shop = await this.repository.toggleStatusById(id);
-            if(!shop){
-                logger.error('shop not found')
-                throw new AppError('shop not found',HttpStatusCode.NOT_FOUND);
-            } 
-  
-            return shop
-        }
-
-        async createVehicle(shopId:string,vehicledetails:IVehicle[] ,vehicleModel:string[]):Promise<void>{
-            if (shopId.length == 0 || vehicledetails.length == 0 || vehicleModel.length == 0 ) {
-                logger.warn('Invalid vehicle details')
-                throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
-            }
-
-            const shopUser = await this.repository.findShopById(shopId);
-            if(!shopUser){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-
-            if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
-
-            const brand = vehicledetails[0].brand;
-            
-            const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
-
-            const exisitingBrand = shopUser.vehicleIds.find((v) => v.brand === brand);
-            if(exisitingBrand){
-                exisitingBrand.vehicleModelIds = [...new Set([...exisitingBrand.vehicleModelIds, ...vehicleModelIds ])];
-            }else{
-                shopUser.vehicleIds.push({ brand, vehicleModelIds, })
-            };
-            await shopUser.save();
-            
-            logger.info(`Vehicle details updated for shop: ${shopId}`);
-        }
-
-        async findVehicles(_id:string,skip:number,limit:number):Promise<any |null >{
-            const shop =  await this.repository.findVehicles(_id);
-            if(!shop || !shop.vehicleIds) return null;
-            const vehicles = shop.vehicleIds.map(vehicle => ({
-                brand:vehicle.brand,
-                vehicleModel:vehicle.vehicleModelIds.map((v:any) => v.vehicleModel)
-            }));
-            const totalVehicles = vehicles.length;
-            const paginatedVehicles = vehicles.slice(skip,skip + limit);
-
-            return {Vehicle:paginatedVehicles, totalVehicles}
-        }
-
-        async updateVehilce(shopId:string,vehicledetails:IVehicle[] ,vehicleModel:string[]):Promise<any | null> {
-            if (shopId.length == 0 || vehicledetails.length == 0 || vehicleModel.length == 0 ) {
-                logger.warn('Invalid vehicle details')
-                throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
-            }
-
-            const shopUser = await this.repository.findShopById(shopId);
-            if(!shopUser){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-
-            if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
-
-            const brand = vehicledetails[0].brand;
-            const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
-
-            const exisitingBrand = shopUser.vehicleIds.find((v) => v.brand === brand);
-            if(exisitingBrand){
-                exisitingBrand.vehicleModelIds = vehicleModelIds;
-            }else{
-                shopUser.vehicleIds.push({ brand, vehicleModelIds, })
-            };
-            await shopUser.save();
-            
-            logger.info(`Vehicle details updated for shop: ${shopId}`);
-            return {brand,vehicleModel}
-        }
-
-        async deleteVehicleByBrand(shopId:string,brand:string):Promise<void>{
-            const shopUser = await this.repository.findShopById(shopId);
-            if(!shopUser){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-            if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
-
-            shopUser.vehicleIds = shopUser.vehicleIds.filter((v) => v.brand !== brand);
-            await shopUser.save();
-            
-            logger.info(`Vehicle details deleted for shop: ${shopId}`);
-        }
-
-        async findEstimate(_id:string,skip:number,limit:number):Promise<any |null >{
-            const shop =  await this.repository.findShopById(_id);
-            if(!shop || !shop.estimate) return null;
-
-            const totalEstimate = shop.estimate.length;
-            const paginatedEstimate = shop.estimate.slice(skip,skip + limit);
-
-            return {Estimate:paginatedEstimate, totalEstimate}
-        }
-
-        async createEstimate(shopId:string,work:string, priceStart:number, priceEnd:number):Promise<void> {
-            if (shopId.length == 0 || work.length == 0 || !priceStart || !priceEnd ) {
-                logger.warn('Invalid estimate details')
-                throw new AppError("Invalid estimate details",HttpStatusCode.BAD_REQUEST);
-            }
-
-            const shopUser = await this.repository.findShopById(shopId);
-            if(!shopUser){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-
-            if(!shopUser.estimate) shopUser.estimate = [];
-            
-            let exisitingWork = shopUser.estimate.find((v) => v.work === work);
-            if(exisitingWork){
-                exisitingWork.priceStart = priceStart;
-                exisitingWork.priceEnd = priceEnd;
-            }else{
-                shopUser.estimate.push({ work, priceStart, priceEnd })
-            };
-            await shopUser.save();
-            
-            logger.info(`estimate details updated for shop: ${shopId}`);
-        }
-
-        async updateEstimate(shopId:string,work:string, priceStart:number, priceEnd:number ):Promise<any | null> {
-            if (shopId.length == 0 || work.length == 0 || !priceStart || !priceEnd ) {
-                logger.warn('Invalid estimate details')
-                throw new AppError("Invalid estimate details",HttpStatusCode.BAD_REQUEST);
-            }
-
-            const shopUser = await this.repository.findShopById(shopId);
-            if(!shopUser){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-
-            if(!shopUser.estimate) shopUser.estimate = [];
-
-            const exisitingWork = shopUser.estimate.find((v) => v.work === work);
-            if(exisitingWork){
-                exisitingWork.priceStart = priceStart;
-                exisitingWork.priceEnd = priceEnd;
-            }else{
-                shopUser.estimate.push({ work, priceStart, priceEnd })
-            };
-            await shopUser.save();
-            
-            logger.info(`estimate details updated for shop: ${shopId}`);
-            return {work,priceStart,priceEnd }
-        }
-
-        async deleteEstimateByWork(shopId:string,work:string):Promise<void>{
-            const shopUser = await this.repository.findShopById(shopId);
-            if(!shopUser){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-            if(!shopUser.estimate) shopUser.estimate = [];
-
-            shopUser.estimate = shopUser.estimate.filter((v) => v.work !== work);
-            await shopUser.save();
-            
-            logger.info(`estimate details deleted for shop: ${shopId}`);
-         }
-
-         async findShopPincodeByFilter(pincode:string):Promise<string[] | null>{
-            const filteredPincode = await this.repository.findShopPincodeByFilter(pincode);
-            if(!filteredPincode ) return null;
-
-            return [...new Set(filteredPincode.map(doc => doc.address.pincode))]
-        }
-
-         async findFilterShopByPincode(pincode:string):Promise<IShop[] | null>{
-            return await this.repository.findByPincode(pincode);
-        }
-
-        async updateRating(_id:any,rating:number):Promise<IShop | null>{
-            const shopdoc = await this.repository.findOne({_id})
-            if(!shopdoc){
-                logger.warn("Shop not found");
-                throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
-            }
-            if(!shopdoc?.rating || !shopdoc?.rating?.ratingSum){
-                shopdoc.rating = {ratingSum:rating,count:1};
-            }else{
-                shopdoc.rating.ratingSum += rating;
-                shopdoc.rating.count++;
-            }
-            return await shopdoc.save()
-        }
-    
-
- 
-
-
+export const fetchShopUserDetails = async (navigate:any):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.get('/shop/shopdetails');
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find shopuser details');
+        return {status:response.status,data:response.data}
+    } catch (error) {
+        localStorage.removeItem('shop_access_token')
+        localStorage.removeItem('shop_refresh_token')
+        navigateLogin(navigate,'shop')
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
 }
 
+
+
+export const fetchUploadProfileImage = async (formData:FormData):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.put('/shop/uploadprofileimage',formData);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when uploading shop profile image');
+        return {status:response.status,data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchUpdateProfileDetails = async (url:string,details:any):Promise<{data:any}> => {
+    try {
+        const response = await api.put(url,details);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating shop profile details');
+        return {data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchUpdateProfileWorkTime = async (opening:string,closing:string):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/shop/updateprofileWorkTime',{opening,closing});
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating shop work time');
+        return {data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+
+export const changePasswordShop = async (body:{currentPassword:string; newPassword:string}):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/shop/changepassword',body);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error changing password');
+        return {data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+
+export const fetchAllVehicle = async():Promise<{Vehicle:any[];}> => {
+    try {
+        const response = await api.get(`/shop/allvehicledetails`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error(`unexpected status code when fetching vehicle details: ${response.status}`)
+        
+        const {data} = response;
+        if(data && data.Vehicle){
+            return {Vehicle:data.Vehicle}
+        }else{
+            throw new Error('invalid vehicle response structure.')
+        }
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllShopVehicle = async (page:number):Promise<{Vehicle:any[];totalPages:number}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/vehicledetails?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error(`unexpected status code when fetching vehicle details: ${response.status}`)
+        
+        const {data} = response;
+        if(data && data.Vehicle){
+            return {Vehicle:data.Vehicle,totalPages:data.totalPages}
+        }else{
+            throw new Error('invalid vehicle response structure.')
+        }
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const addNewVehicle = async (newVehicle:any):Promise<{status:number;message:string}> => {
+    try {
+        const response = await api.post('/shop/addvehicle', newVehicle);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error in adding new vehicle');
+        return {status:response.status,message:response.data.message}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const editVehicle = async (newVehicle:any):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.put(`/shop/editvehicle`, newVehicle);
+
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
+        return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const deleteShopVehicle = async (brand:string):Promise<{status:number}> => {
+    try {
+        const response = await api.delete(`/shop/deletevehicle/${brand}`);
+
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
+        return {status:response.status}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+
+export const createShopEstimate = async(newEstimate:Estimate):Promise<{status:number;message:string}> => {
+    const response = await api.post('/shop/addestimate', newEstimate);
+    return {status:response.status,message:response.data.message}
+}
+
+export const fetchAllestimates = async(page:number):Promise<{Estimate:any[];totalPages:number}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/allEstimatedetails?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error(`unexpected status code when fetching estimate details: ${response.status}`)
+        
+        const {data} = response;
+        if(data && data.Estimate){
+            return {Estimate:data.Estimate,totalPages:data.totalPages}
+        }else{
+            throw new Error('invalid Estimate response structure.')
+        }
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const editEstimate = async (newEstimate:any):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.put(`/shop/editestimate`, newEstimate);
+
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
+        return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const deleteShopEstimate = async (work:string):Promise<{status:number}> => {
+    try {
+        const response = await api.delete(`/shop/deleteestimate/${work}`);
+
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error in deleting vehicle');
+        return {status:response.status}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllPickupsByShopId = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/pickupsDetailsByShopId?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find pickup details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const togglepickupStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/shop/pickup/${id}`, {status,reason})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  pickup status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllBookingsByShopId = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/shop/bookingDetailsByShopId?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find booking details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const toggleBookingStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/shop/booking/${id}`, {status,reason})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  booking status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchStatistics = async ():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/dashStatistics/`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch statistics');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchfilterCountCart = async (period:'monthly'|'yearly'|'weekly'):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/barChartFilter?period=${period}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch bar chart filter');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchfilterPriceCart = async (period:'monthly'|'yearly'|'weekly'):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/lineChartFilter?period=${period}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch line chart filter');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllReviews = async():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get('/shop/reviews')
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch reviews');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const findChatRoom = async(userId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/createChatRoom/${userId}`);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to fetch create chat room');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get('/shop/chatHistory');
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch chathistory');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllMessages = async(chatRoomId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/shop/fetchMessages/${chatRoomId}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const saveImageMessage = async(formData:FormData):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.post('/shop/saveImageMessage',formData);   
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save image messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const saveMessage = async(chatId:string,message:string,imagePath:string|null):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.post(`/shop/saveMessage`,{chatId,message,imagePath});
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}

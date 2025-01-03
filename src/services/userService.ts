@@ -1,36 +1,276 @@
-import { AppError } from "../middleware/errorHandler";
-import logger from "../middleware/logger";
-import UserRepository from "../repositories/UserRepository";
-import { HttpStatusCode, IUser } from "../utils/interface";
-import BaseService from "./BaseService";
+import { AxiosError } from "axios";
+import { ErrorResponse, HttpStatusCode, Shop } from "../components/utilities/interface";
+import api from "./axiosConfig";
+import { navigateLogin } from "../components/utilities/navigate/common";
 
-export default class UserService extends BaseService<IUser> {
 
-    constructor(protected repository: UserRepository) {
-        super(repository);
-    };
-    
-
-    async create(data: IUser): Promise<IUser> {
-        const user =  await this.repository.create(data);
-        if(!user){
-            logger.error('error in create')
-            throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
-        } 
-        return user;
-      }
-
-async updateById(id:string, updateData:any):Promise<IUser> {
-    const updateddata = await this.repository.updateById(id, updateData);
-    if(!updateddata){
-        logger.error('user not found or update failed');
-        throw new AppError("user not found or update failed", HttpStatusCode.NOT_FOUND);
+export const fetchTopShops = async ():Promise<Shop[]> => {
+    try{
+        const response = await api.get('/getshopsforHome');
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error find shops for homepage');
+        return response.data.shops;
+    }catch(error){
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
     }
-    return updateddata;
+}
+
+export const fetchNearbyShops = async (latitude:number,longitude:number):Promise<Shop[]> => {
+    try{
+        const {data} = await api.get('/getnearshops', {
+            params: { latitude, longitude },
+        });
+        return data.shops;
+    }catch(error){
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchUserData = async (navigate:any):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get('/userdetails')
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        localStorage.removeItem('user_access_token')
+        localStorage.removeItem('user_refresh_token')
+        navigateLogin(navigate,'user')
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchRandomFeedback = async ():Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/randomfeedback`)  
+       if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error find feedback');
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchShopData = async (id:string):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/shopdetails/${id}`)
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchPincode = async (pincode:string):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/shopPincode/${pincode}`)
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchShopByPincode = async (pincode:string):Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/shopsFilterByPincode/${pincode}`)
+       return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchModeldetail = async (_id:string,make:string):Promise<{status:number,data:any}> => {
+    try {
+        return await api.get(`/getModelByMake`, {params:{ _id,make} })
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+
+export const fetchUserUploadProfileImage = async (formData:FormData):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.put('/uploadprofileimage',formData);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when uploading user profile image');
+        return {status:response.status,data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchUserUpdateProfileDetails = async (details:any):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/updateprofiledetails',details);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error when updating profile details');
+        return {data:response.data};
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const changePasswordUser = async (body:{currentPassword:string; newPassword:string}):Promise<{data:any}> => {
+    try {
+        const response = await api.put('/changepassword',body);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error changing password');
+        return {data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const confirmBooking = async (token:any,bookingDetails:any,description:string):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.post('/bookingConfirm',{
+            token,
+            bookingDetails,
+            description,
+        })
+        if(response.status !== HttpStatusCode.SUCCESS)throw new Error('payment error');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
 }
 
 
 
-
+export const fetchAllBookingsByUser = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/bookingDetailsByUser?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find booking details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
 }
 
+export const cancelBookingStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/booking/${id}`, {status,reason})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  booking status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllPickupsByUser = async (page:number):Promise<{status:number,data:any}> => {
+    const itemsPerPage = 10;
+    try {
+        const response = await api.get(`/pickupsDetailsByUser?page=${page}&limit=${itemsPerPage}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find pickup details');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const cancelpickupStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/pickup/${id}`, {status,reason})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  pickup status');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const updateFeedback = async (id:string,rating:number,feedback:string,bookingModel:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.patch(`/feedback/${id}`, {rating,feedback,bookingModel})
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to update feedback and rating');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchShopReviews = async(id:string|undefined):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/reviewsByshop/${id}`)
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch reviews');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const findChatRoom = async(shopId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/createChatRoom/${shopId}`);
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error to fetch create chat room');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get('/chatHistory');
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch chathistory');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllMessages = async(chatRoomId:string):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.get(`/fetchMessages/${chatRoomId}`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const saveImageMessage = async(formData:FormData):Promise<{status:number,data:any}> => {
+    try {
+        const response = await api.post('/saveImageMessage',formData);   
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save image messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const saveMessage = async(chatId:string,message:string,imagePath:string|null):Promise<{status:number,data:any}> => {
+    try {
+           const response = await api.post(`/saveMessage`,{chatId,message,imagePath});
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const estimateFinder = async(task:string):Promise<{status:number,data:any}> => {
+    try {
+           const response = await api.post(`/estimateFinder`, {task});
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find estimate');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
