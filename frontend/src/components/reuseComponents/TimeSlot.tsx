@@ -4,8 +4,6 @@ import { generateTimeSlots } from "../utilities/functions";
 import { HoverMotionWrapper } from "./ui/MotionWrapper ";
 
 
-
-
 const TimeSlot = ({selectedTime,setSelectedTime,wokingTime}:TimeSlotProps) => {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
 

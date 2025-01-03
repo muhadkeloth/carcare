@@ -18,8 +18,6 @@ export const chatHandler = (io:Server, socket:Socket) => {
 
     onlineUsers.set(userId, socket.id);
 
-    // io.emit('userOnlineStatus', { userId, isOnline: true });
-    console.log('onlineUsers',Array.from(onlineUsers.entries()).map(([id])=>({userId:id,isOnline:true})))
     io.emit('onlineUsers', Array.from(onlineUsers.entries()).map(([id])=>({userId:id,isOnline:true})));
 
     socket.on('joinRoom', (room) => {
@@ -54,7 +52,6 @@ export const chatHandler = (io:Server, socket:Socket) => {
     socket.on('disconnect', () => {
         if (userId) {
             onlineUsers.delete(userId);
-            // io.emit('userOnlineStatus', { userId, isOnline: false }); 
             io.emit('onlineUsers', Array.from(onlineUsers.entries()).map(([id])=> ({userId:id,isOnline:true})));
           }
         logger.info(`User disconnected: ${socket.id}`)

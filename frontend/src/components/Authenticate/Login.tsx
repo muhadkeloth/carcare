@@ -41,7 +41,6 @@ const Login = ({ role }:RoleProps) => {
         if (response.data.accessToken && response.data.refreshToken ) {
           localStorage.setItem(`${role}_access_token`, response.data.accessToken);
           localStorage.setItem(`${role}_refresh_token`, response.data.refreshToken);
-          // localStorage.setItem(`${role}_token`, response.data.token);
           navigateHome(navigate, role);
         } else if (response.data?.validotp) {
           navigatePasswordChange(navigate, email, role);
@@ -58,7 +57,6 @@ const Login = ({ role }:RoleProps) => {
   useEffect(()=>{
     const rol = role == '' ? 'user' : role ;
     const token = localStorage.getItem(`${rol}_access_token`);
-    // const token = localStorage.getItem(`${rol}_token`);
     if(token){
       navigateHome(navigate, rol)
     }

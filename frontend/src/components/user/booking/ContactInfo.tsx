@@ -9,6 +9,7 @@ import { BookingProps } from "../../utilities/interface";
 import DropOffTemp from "../../reuseComponents/DropOffTemp";
 import { DropMotionWrapper } from "../../reuseComponents/ui/MotionWrapper ";
 
+
 const ContactInfo: React.FC<BookingProps> = ({ setActiveSection }) => {
   const userfromRedux = useSelector((state: RootState) => state.user.userDetails);
   const [userdetails, setUserdetails] = useState<{firstName: string;lastName: string;email: string;phoneNumber: string;}>({

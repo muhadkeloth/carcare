@@ -12,5 +12,5 @@ use _lib.ts for separate logic and ui;
 
 
 
-
-
+npm uninstall @mui/icons-material
+npm uninstall @mui/icons-material

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IUser } from "../utils/interface";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import Shop from "../models/Shop";
 import { otpgeneraterForSignup } from "./commonController";
 import { AppError } from "../middleware/errorHandler";
@@ -23,12 +22,12 @@ import Pickups from "../models/Pickups";
 import Chat from "../models/Chat";
 import Message from "../models/Message";
 import PickupService from "../services/PickupService";
-import { sendCancelEmail, sendPickupConfirmEmail } from "../utils/emailService";
 import ChatRepository from "../repositories/ChatRepository";
 import ChatService from "../services/ChatService";
 import MessageRepository from "../repositories/MessageRepository";
 import MessageService from "../services/MessageService";
 import { generateAccessTokens, generateTokens } from "../utils/functions";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 
 
@@ -105,12 +104,9 @@ export default class UserController extends BaseController<IUser> {
         email,password: hashedPassword,
       } as IUser);
 
-      // const JWT_SALT = process.env.JWT_SALT || "sem_nem_kim_12@32";
-      // const token = jwt.sign({ id: user._id, role: "user" }, JWT_SALT, {expiresIn: "1D",});
       const { accessToken, refreshToken } = generateTokens({id:user._id, role:'user'})
 
       res.status(HttpStatusCode.CREATED).json({ accessToken, refreshToken, role: "user", message: "User registered successfully" });
-      // res.status(HttpStatusCode.CREATED).json({ token, role: "user", message: "User registered successfully" });
     } catch (error) {
         const err = error as Error;
         logger.error(`error in signup: ${err.message}`);
@@ -133,6 +129,19 @@ export default class UserController extends BaseController<IUser> {
         next(err);
     }
   }
+
+  getShopsforHome = async (req: Request, res: Response, next: NextFunction) => {
+    const limit = 3;
+    try {
+      const shops = await this.shopService.findRandomShops(limit);
+
+      res.status(HttpStatusCode.SUCCESS).json({ shops, message: "successfully fetch shops " });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`error fetching nearby shops: ${err.message}`);
+        next(err);
+    }
+  };
 
   getNearShops = async (req: Request, res: Response, next: NextFunction) => {
     const { latitude, longitude } = req.query;
@@ -352,39 +361,7 @@ export default class UserController extends BaseController<IUser> {
     }
   };
 
-  // bookingConfirm = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
-  //   const { token, bookingDetails, description } = req.body;
-  //   try {
-  //     if (!req.user){
-  //       logger.warn('password change error, user id not found')
-  //       throw new AppError("password change error, user id not found",HttpStatusCode.BAD_REQUEST);
-  //     }
-  //     if (!['booking', 'pickup'].includes(description)) {
-  //       throw new AppError("Invalid description value", HttpStatusCode.BAD_REQUEST);
-  //     }      
-  //     const bookingdetail = {
-  //       ...bookingDetails,
-  //       userId:req.user,
-  //       paymentStatus:'PENDING',
-  //     }
-  //     const paymentResult  = await handlePayment(token,bookingDetails.amount,`${description} payment`);
-  //     const bookingservice = description == 'booking' ? this.bookingService : this.pickupService;
-  //     if(paymentResult.success){
-  //       bookingdetail.paymentStatus = 'PAID';
-  //       await bookingservice.create(bookingdetail);
-  //       res.status(HttpStatusCode.SUCCESS).json({success:true,message:`${description} confirmed and payment successful.`})
-  //     }else{
-  //       await this.service.create(bookingdetail);
-  //         res.status(HttpStatusCode.BAD_REQUEST).json({success:false,message:`${description} failed. Booking status set to pending.`})
-  //     }
-  //   } catch (error) {
-  //     const err = error as Error;
-  //     logger.error(`Error in ${description} confirmation: ${err.message}`);
-  //     next(err);
-  //   }
-  // }
-
-  // 
+ 
   bookingConfirm = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { token, bookingDetails, description } = req.body;
     try {
@@ -422,7 +399,7 @@ export default class UserController extends BaseController<IUser> {
       next(err);
     }
   };
-  // 
+   
 
   getUserBookings = async (req:AuthenticatedRequest,res:Response,next:NextFunction) => {
     const page = parseInt(req.query.page as string) || 1;
@@ -562,6 +539,22 @@ export default class UserController extends BaseController<IUser> {
     }
   }
 
+  randomFeedback = async(req:Request,res:Response,next:NextFunction) => {
+    try {
+
+      const allReviewsByBookings = await this.bookingService.getRandomReviews()
+      const allReviewsByPickups = await this.pickupService.getRandomReviews()
+      const combinedReviews  = [...allReviewsByBookings,...allReviewsByPickups];
+      const shuffledReviews = combinedReviews.sort(() => Math.random() - 0.5);
+    const allReviews = shuffledReviews.slice(0, 5);
+      res.status(HttpStatusCode.SUCCESS).json({allReviews,message:'reviews fetch successfuly'});
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`status update error ${err.message}`);
+      next(err);
+    }
+  }
+
   newChatRoomByUser = async(req:AuthenticatedRequest,res:Response,next:NextFunction) => {
     try {
       if (!req.user){
@@ -569,9 +562,7 @@ export default class UserController extends BaseController<IUser> {
         throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
       }
       const {shopId} = req.params;
-      // const userId = req.query.userId;
       const chatRooms = await this.chatService.createNewRoom(req.user as string,shopId)
-      // const chatRooms = await this.chatService.createNewRoom(userId as string,shopId)
       if(!chatRooms){
         logger.warn(`error to create chat room`);
         throw new AppError("error to create chat room", HttpStatusCode.BAD_REQUEST);
@@ -648,56 +639,44 @@ export default class UserController extends BaseController<IUser> {
   }
 
 
+  estimateFinder = async (req: Request, res: Response, next: NextFunction) => {
+    const { task } = req.body;
+    if ( !task) {
+      throw new AppError('task fields are required.',HttpStatusCode.BAD_REQUEST)
+    }
+    const apiKey = process.env.GOOGLE_AI_API_KEY || '';
+    const prompt = `Provide the average cost range (₹) for ${task} in India. Format: "₹lower - ₹upper", no commas.`;
+  
+    try {  
+      const genAI = new GoogleGenerativeAI(apiKey);  
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text?.() || 
+        result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+      if (responseText) {
+        const rangeMatch = responseText.match(/₹([\d,]+)\s*(?:-|to)\s*₹([\d,]+)/);
+        if (rangeMatch) {
+          const lowerBound = parseInt(rangeMatch[1].replace(/,/g, ''), 10); 
+          const upperBound = parseInt(rangeMatch[2].replace(/,/g, ''), 10); 
 
-  // 
-  // gpt = async(req:Request,res:Response,next:NextFunction) => {
-      // const {brand,model,year,task} = req.query;
-      // try {
-        // await sendCancelEmail({
-        //   email:'jemuqoha@logsmarter.net',
-        //   username:'hello thing',
-        //   time:'9:30 AM',
-        //   date:'2024-12-17T18:30:00.000Z',
-        // },'Booking')
-        // await sendCancelEmail({
-        //   email:'jemuqoha@logsmarter.net',
-        //   username:'hello pick thing',
-        //   time:'10:30 AM',
-        //   date:'2024-12-17T18:30:00.000Z',
-        // },'Pickup')
-        // await sendPickupConfirmEmail({
-        //   email:'jemuqoha@logsmarter.net',
-        //   username:'things  ',
-        //   address:'Payyanur, Kerala, 670307, India',
-        //   time:'11:30 AM',
-        //   date:'2024-12-17T18:30:00.000Z'
-        // })
-        // const prompt = `Provide an average cost estimate for ${task} for a ${brand} ${model} (${year}) in India.`;
-        // const prompt1 = `
-        // Based on the following data, provide an average cost for ${task} for a ${brand} ${model} (${year}) in india.`
-        // console.log('prompt',prompt)
-        // const response = await openai.chat.completions.create({
-          // model: 'gpt-3.5-turbo',
-          // model: 'text-davinci-003',
-          // model: 'gpt-3.5-turbo',
-          // messages:[{role: "user",content: "Hello!"}],
-          // messages:[{role: "system",content: "You are a helpful assistant."},{role: "user",content: "Hello!"}],
-          // messages: [{role:'system',content:'you are a car repair cost estimator'},{ role:'user', content: prompt }],
-          // max_tokens:400,
-        // })
-        // const estimate = response.choices[0]?.text.trim();
-        // console.log('response',response)
-        // res.json({estimate})
-  //     } catch (error) {
-  //       const err = error as Error;
-  //       console.error('some',err)
-  //       next(err)
-  //     }
-  // }
-
- 
-
-
+  
+           res.status(HttpStatusCode.SUCCESS).json({ upperBound, lowerBound });
+        } else {
+          logger.error('Cost range not found from response.');
+          res.status(HttpStatusCode.BAD_REQUEST).json({ error: 'Could not extract cost range.' });
+        }
+      } else {
+        logger.error('No candidates or text in response.');
+        res.status(HttpStatusCode.BAD_REQUEST).json({ error: 'No valid response from GPT model.' });
+      }
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error in find estimate: ${err.message}`);
+      next(err);
+    }
+  };
 
 
 }

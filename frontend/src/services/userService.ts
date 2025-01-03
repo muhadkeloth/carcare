@@ -4,6 +4,17 @@ import api from "./axiosConfig";
 import { navigateLogin } from "../components/utilities/navigate/common";
 
 
+export const fetchTopShops = async ():Promise<Shop[]> => {
+    try{
+        const response = await api.get('/getshopsforHome');
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error find shops for homepage');
+        return response.data.shops;
+    }catch(error){
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 export const fetchNearbyShops = async (latitude:number,longitude:number):Promise<Shop[]> => {
     try{
         const {data} = await api.get('/getnearshops', {
@@ -24,6 +35,17 @@ export const fetchUserData = async (navigate:any):Promise<{status:number,data:an
         localStorage.removeItem('user_access_token')
         localStorage.removeItem('user_refresh_token')
         navigateLogin(navigate,'user')
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchRandomFeedback = async ():Promise<{status:number,data:any}> => {
+    try {
+       const response =  await api.get(`/randomfeedback`)  
+       if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error find feedback');
+       return {status:response.status,data:response.data}
+    } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);
     }
@@ -235,6 +257,17 @@ export const saveMessage = async(chatId:string,message:string,imagePath:string|n
     try {
            const response = await api.post(`/saveMessage`,{chatId,message,imagePath});
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save messages');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const estimateFinder = async(task:string):Promise<{status:number,data:any}> => {
+    try {
+           const response = await api.post(`/estimateFinder`, {task});
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find estimate');
         return response;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>

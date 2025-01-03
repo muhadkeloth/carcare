@@ -111,7 +111,7 @@ export default class AdminController extends BaseController<IUser> {
       }
       await sendOtpEmail(email, otp);
 
-      const newShop = new Shop({//make a obj and pass it
+      const newShop = new Shop({
         shopName, ownerName,
         email, phoneNumber,
         address: parseAddress, otp,
@@ -122,9 +122,8 @@ export default class AdminController extends BaseController<IUser> {
         },
         image: req.file ? req.file.path : null,
       });
-      console.log("admin shop add");
 
-      const updatedShop = await newShop.save(); // create shop
+      const updatedShop = await newShop.save(); 
       logger.info("shop created successfully");
       res.status(HttpStatusCode.CREATED)
          .json({ message: "shop added successfully", shop: updatedShop });

@@ -11,8 +11,7 @@ export default class UserService extends BaseService<IUser> {
     };
     
 
-    // ******************************************
-    async create(data: IUser): Promise<IUser> {//make it base wiith save()
+    async create(data: IUser): Promise<IUser> {
         const user =  await this.repository.create(data);
         if(!user){
             logger.error('error in create')
@@ -20,7 +19,6 @@ export default class UserService extends BaseService<IUser> {
         } 
         return user;
       }
-// *******************************************
 
 async updateById(id:string, updateData:any):Promise<IUser> {
     const updateddata = await this.repository.updateById(id, updateData);

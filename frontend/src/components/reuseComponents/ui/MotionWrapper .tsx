@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { Children, ReactNode } from "react";
 
 interface MotionWrapperProps {
     children: ReactNode; 
@@ -28,7 +28,6 @@ export const DropMotionWrapper = ({children, className}:MotionWrapperProps) => {
         initial={{ y: -50, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{once:true}}
-        // exit={{ y: 50, opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
         {children}
@@ -72,7 +71,6 @@ export const ZoomInMotionWrapper = ({children, className}:MotionWrapperProps) =>
         className={className ?? ''}
         initial={{  scale: 0.8, opacity: 0 }}
         whileInView={{  scale: 1, opacity: 1 }}
-        // whileHover={{ scale: 1.05 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4 }}
       >
@@ -93,6 +91,8 @@ export const FloatMotionWrapper = ({children, className}:MotionWrapperProps) => 
       </motion.div>
     );
 }
+
+
 
 export default MotionWrapper;
 

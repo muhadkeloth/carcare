@@ -35,7 +35,6 @@ const Error:React.FC<RoleProps> = ({role}) => {
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );

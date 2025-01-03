@@ -9,8 +9,6 @@ import PickupManagement from './mainblock/PickupManage/PickupManagement';
 import ChatHistory from './mainblock/Chats/ChatHistory';
 
 
-
-
 const ShopMain: React.FC<SectionMainProps> = ({ activeSection }) => {
 
   const renderSection = () => {
@@ -38,7 +36,6 @@ const ShopMain: React.FC<SectionMainProps> = ({ activeSection }) => {
     </div>
   )
 }
-
 
 
 export default ShopMain

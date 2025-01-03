@@ -37,6 +37,7 @@ const EditProfile: React.FC = () => {
     setEditedShopUser((prev) => (prev ? { ...prev, [key]: value } : null));
   };
 
+
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -68,7 +69,7 @@ const EditProfile: React.FC = () => {
       return;
     }
     if (!editedShopUser?.shopName || nameValidation(editedShopUser?.shopName)) {
-      setErrors((prev) => ({ ...prev, shopName: "Shop Name is required." }));
+      setErrors((prev) => ({ ...prev, shopName: "Shop Name is required. max 16 char" }));
       flag = true;
     }
     if (

@@ -67,6 +67,17 @@ export default class BookingRepository extends BaseRepository<IBookings>{
             .select("review ueserId updatedAt")
             .populate('userId',"username image")
     }
+   
+    async findRandomReviwes():Promise<Partial<IBookings[] | null>>{
+        return await this.model.aggregate([
+            { $match:{review:{$exists:true},"review.rating": { $gt: 3 }, "review.feedback": { $exists: true, $ne: "" }, },},
+            { $sample: { size: 5 } },
+            { $lookup: {  from: "users", localField: "userId", foreignField: "_id", as: "userDetails", }},
+            { $unwind: "$userDetails" },
+            { $project: { review: 1, userId: 1, updatedAt: 1, "userDetails.username": 1, "userDetails.image": 1, },
+            },
+        ])
+    }
 
     async findBookingsCountForChart (filter:any):Promise<any[] | null> {
         return await this.model.aggregate([

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import upload from '../middleware/upload';
-// import { authenticateToken } from '../middleware/auth';
 import AdminController from '../controllers/adminController';
 import AdminService from '../services/AdminService';
 import AdminRepository from '../repositories/AdminRepository';
@@ -15,7 +14,6 @@ const adminController = new AdminController(adminService);
 
 
 router.post('/login', adminController.login );
-
 router.post('/otpgenerate', adminController.otpgenerate);
 router.post('/otpvalidation', adminController.otpvalidation);
 router.post('/resetPassword', adminController.resetPassword);
@@ -25,7 +23,6 @@ router.post('/refreshToken', adminController.refreshToken);
 router.use(authenticateToken);
 router.use(roleBasedAccess(['admin']));
 
-// router.get('/users',authenticateTokenOfAdmin, adminController.userDetails);
 router.get('/users', adminController.userDetails);
 router.patch('/user/:id', adminController.toggleStatus);
 

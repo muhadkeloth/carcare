@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import { AppError } from "../middleware/errorHandler";
 import { AuthenticatedRequest, HttpStatusCode } from "../utils/interface";
 import Vehicle from "../models/Vehicle";
-import mongoose from "mongoose";
 import ShopService from "../services/ShopService";
 import VehicleService from "../services/VehicleService";
 import BaseController from "./BaseController";
@@ -289,7 +288,7 @@ export class ShopController extends BaseController<any> {
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
         shopdetails.password = hashedNewPassword;
-        await shopdetails.save(); //update here
+        await shopdetails.save();
 
         res.status(HttpStatusCode.CREATED).json({ success: true, message: "password updated successfully" });
       } else{
@@ -509,6 +508,8 @@ export class ShopController extends BaseController<any> {
         this.bookingService.getTotalBookingRevenue(shopId),
         this.pickupService.getTotalPickupRevenue(shopId),
       ])
+
+
       res.status(HttpStatusCode.SUCCESS).json({message:"successsfully fetch dash statistics",
         bookingsCountforChart,
         pickupsCountforChart,
@@ -607,13 +608,11 @@ export class ShopController extends BaseController<any> {
         throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
       }
       const {userId} = req.params;
-      // const userId = req.query.userId;
       if(!userId){
         logger.warn(`error to create chat room`);
         throw new AppError("error to create chat room", HttpStatusCode.BAD_REQUEST);
       }
       const chatRooms = await this.chatService.createNewRoom(userId,req.user as string)
-      // const chatRooms = await this.chatService.createNewRoom(userId as string,shopId)
       if(!chatRooms){
         logger.warn(`error to create chat room`);
         throw new AppError("error to create chat room", HttpStatusCode.BAD_REQUEST);

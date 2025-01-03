@@ -1,9 +1,8 @@
 import { AppError } from "../middleware/errorHandler";
 import logger from "../middleware/logger";
 import PickupRepository from "../repositories/PickupRepository";
-import UserRepository from "../repositories/UserRepository";
 import { dateFilterforChart } from "../utils/functions";
-import { HttpStatusCode, IBookings, paymentStatus, pickupStatus } from "../utils/interface";
+import { HttpStatusCode, IBookings, pickupStatus } from "../utils/interface";
 import BaseService from "./BaseService";
 
 export default class PickupService extends BaseService<IBookings> {
@@ -30,22 +29,8 @@ export default class PickupService extends BaseService<IBookings> {
         } 
         pickups.paymentStatus = data.paymentStatus;
         return await pickups.save();
-        // const updatedPickup = await this.repository.update(id,data);
-        // if(!updatedPickup){
-        //     logger.error('error in create')
-        //     throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
-        // }
-        // return updatedPickup;
     }
 
-    // async findPickupById(_id:string): Promise<IBookings | null> {
-    //     const pickups =  await this.repository.findPickupsById(_id);
-    //     if(!pickups){
-    //         logger.error('error find pickup details')
-    //         throw new AppError('error find pickup details',HttpStatusCode.BAD_REQUEST);
-    //     } 
-    //     return pickups;
-    // }
 
     async findBrokerage(skip:number,limit:number): Promise<IBookings[] | null> {
         const pickups =  await this.repository.findBrokerage({status:'COMPLETED'},skip,limit);
@@ -100,7 +85,6 @@ export default class PickupService extends BaseService<IBookings> {
                 actionFrom:role,
             };
         }
-        // return  await pickupdetails.save();
         const updatedDetails =  await pickupdetails.save();
         return await this.repository.findPickupsById({_id:updatedDetails._id})
     }
@@ -112,7 +96,6 @@ export default class PickupService extends BaseService<IBookings> {
           throw new AppError('pickup details not found',HttpStatusCode.NOT_FOUND);
         } 
         pickupdetails.review = {rating,feedback};
-        // return  await pickupdetails.save();
         const updatedDetails =  await pickupdetails.save();
         return await this.repository.findPickupsById({_id:updatedDetails._id})
     }
@@ -147,6 +130,15 @@ export default class PickupService extends BaseService<IBookings> {
 
     async getReviewsByShopId(shopId:string):Promise<Partial<IBookings[]>>{
         const response =  await this.repository.findReviwesByShopId(shopId)
+        if(!response){
+            logger.warn("reviews not found");
+            throw new AppError("reviews not found", HttpStatusCode.NOT_FOUND);
+        }
+        return response;
+    }
+
+    async getRandomReviews():Promise<Partial<IBookings[]>>{
+        const response =  await this.repository.findRandomReviwes()
         if(!response){
             logger.warn("reviews not found");
             throw new AppError("reviews not found", HttpStatusCode.NOT_FOUND);
@@ -245,26 +237,11 @@ export default class PickupService extends BaseService<IBookings> {
             logger.warn("pickup total revenue for statistic not found");
             throw new AppError("pickup total revenue for statistic not found", HttpStatusCode.NOT_FOUND);
         }
+        if(result.length == 0){
+            result = [ { _id: null, totalAmount: 0 } ]
+        }
         return result
     }
-
-
- 
-
-
-
-
-    // ******************************************
-// *******************************************
-
-// async updateById(id:string, updateData:any):Promise<IUser> {
-//     const updateddata = await this.repository.updateById(id, updateData);
-//     if(!updateddata){
-//         logger.error('user not found or update failed');
-//         throw new AppError("user not found or update failed", HttpStatusCode.NOT_FOUND);
-//     }
-//     return updateddata;
-// }
 
 
 

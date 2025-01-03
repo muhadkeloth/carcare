@@ -63,7 +63,6 @@ const OtpValidation = () => {
         const response = await fetchSignup('/signup',{...newUserDetails,userOtp:otp});
         if(response.status == HttpStatusCode.CREATED) {
           if(response.data.token){
-            // localStorage.setItem(`${response.data.role}_token`,response.data.token);
             localStorage.setItem(`${response.data.role}_access_token`,response.data.accessToken);
             localStorage.setItem(`${response.data.role}_refresh_token`,response.data.refreshToken);
             navigateHome(navigate,response.data.role);

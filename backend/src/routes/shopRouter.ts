@@ -14,7 +14,6 @@ const shopController = new ShopController(shopService);
 
 
 router.post('/login', shopController.login);
-
 router.post('/otpgenerate', shopController.otpgenerate);
 router.post('/otpvalidation', shopController.otpvalidation);
 router.post('/resetPassword', shopController.resetPassword);
@@ -23,7 +22,6 @@ router.post('/refreshToken', shopController.refreshToken);
 router.use(authenticateToken);
 router.use(roleBasedAccess(['shop']));
 
-// router.get('/allvehicledetails',authenticateTokenOfShop, shopController.getAllvehicleDetails);
 router.get('/allvehicledetails', shopController.getAllvehicleDetails);
 router.get('/vehicledetails', shopController.getvehicleDetails);
 router.post('/addvehicle', shopController.addVehicleDetails);

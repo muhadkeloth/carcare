@@ -12,7 +12,6 @@ export default class ShopRepository extends BaseRepository<IShop> {
     }
 
     async updateById(Id: string, updateData: { shopName: string, ownerName: string, phoneNumber: string, about: string, location: string, image: string}){
-    // async updateById(Id: string, updateData: IShop){
         return  await this.model.findByIdAndUpdate(Id, updateData, { new: true });
     }
 
@@ -43,7 +42,12 @@ export default class ShopRepository extends BaseRepository<IShop> {
     async findShops(skip:number,limit:number):Promise<IShop[] | null> {
         return await this.model.find().sort({createdAt:-1}).skip(skip).limit(limit);
     }
-
+   
+    async findRandomShops(limit:number):Promise<IShop[] | null> {
+        return await this.model.aggregate([
+            { $sample: { size: limit } }
+        ]);
+    }
 
     async findCountShops():Promise<number | null> {
         return await this.model.countDocuments();

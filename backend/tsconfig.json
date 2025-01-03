@@ -1,12 +1,4 @@
-// {
-//     "compilerOptions": {
-//       "target": "es6",
-//       "module": "commonjs",
-//       "rootDir": "./src",
-//       "outDir": "./dist",
-//       "strict": true,
-//     }
-  
+
 {
     "compilerOptions": {
       "target": "es6",

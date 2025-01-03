@@ -13,8 +13,8 @@ import initializeCrons from './crons';
 import { initializeSocket } from './socket/socketManager';
 import { createServer } from 'http';
 
-
 dotenv.config();
+
 const PORT = process.env.PORT || 3000;
 const SOCKETPORT = process.env.SOCKETPORT || 3030;
 const app = express();

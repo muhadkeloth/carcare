@@ -224,7 +224,6 @@ export const mergeRatingCounts = (bookings:RatingData[],pickups:RatingData[]):Ra
   pickups.forEach(({rating,count})=>{
     ratingsMap.set(rating,(ratingsMap.get(rating) || 0) + count);
   })
-  // if need add star;
   return Array.from(ratingsMap.entries()).map(([rating,count])=>({rating,count}));
 }
 

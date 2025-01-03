@@ -30,11 +30,9 @@ export default class VehicleRepository extends BaseRepository<IVehicle> {
     }
 
     async findCountVehicles(): Promise<number | null> {
-        // return await this.model.countDocuments();
         const allVehicles =  await this.findAllVehicles();
         return allVehicles?.length || null ;
     }
-    // edit to count
 
     async findVehiclesByBrand(brand:string):Promise<IVehicle[] | null>{
         return await this.model.find({brand})

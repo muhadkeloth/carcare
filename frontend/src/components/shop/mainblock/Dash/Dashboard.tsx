@@ -96,7 +96,7 @@ const Dashboard = () => {
       setUpComingpickups(UpComingpickups)
     }catch(error){
       const errorMessage = (error as Error).message;
-      ToastActive("error",`statistics not found${errorMessage}`)
+      ToastActive("error",`statistics not found ${errorMessage}`)
     }
   }
   fetchChartData()

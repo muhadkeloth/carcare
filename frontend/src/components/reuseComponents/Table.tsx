@@ -3,8 +3,6 @@ import {  TableProps } from '../utilities/interface';
 import { getPaymentStatusColor } from '../utilities/functions';
 
 
-
-
 const Table:React.FC<TableProps> = ({headers, data, renderActions, onRowClick}) => {
   return (
     <div className="relative overflow-x-auto shadow-md rounded-lg">   

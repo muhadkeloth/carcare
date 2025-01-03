@@ -33,7 +33,6 @@ const AdminDash = () => {
 
 
     useEffect(() => {
-      // const token = localStorage.getItem("admin_token");
       const token = localStorage.getItem("admin_access_token");
       if (!token){
         navigateLogin(navigate, "admin");

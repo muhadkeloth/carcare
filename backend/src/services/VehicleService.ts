@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 import VehicleRepository from "../repositories/VehicleRepository";
 import BaseService from "./BaseService";
 import { HttpStatusCode, IVehicle } from "../utils/interface";
@@ -75,16 +74,5 @@ export default class VehicleService extends BaseService<IVehicle> {
 
 
     
-
-    // async findVehicles(skip:number,limit:number):Promise<any[]>{
-    //     const skip = (page -1) * limit;
-    //     const vehicles = await VehicleRepository.findVehiclesByIds(vehicleIds,skip,limit);
-
-    //     const totalCount = await VehicleRepository.countVehiclesByIds(vehicleIds);
-    //     const totalPages = Math.ceil(totalCount / limit);
-    //     return {vehicles, totalPages}
-    // }
-
-
 
 }

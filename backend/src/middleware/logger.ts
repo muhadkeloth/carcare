@@ -7,8 +7,6 @@ export const loggerhttp = pino({
       options:{
         destination:1,
         all:true,
-        // translateTime: 'HH:MM:ss DD/MM/YYYY',
-        // translateTime: 'SYS:standard',
         translateTime: 'SYS:HH:MM:ss dd-mm-yyyy',
         ignore:"pid,hostname",
       }

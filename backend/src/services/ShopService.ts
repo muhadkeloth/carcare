@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import { Types } from "mongoose";
 import { AppError } from "../middleware/errorHandler";
 import logger from "../middleware/logger";
 import ShopRepository from "../repositories/ShopRepository";
@@ -35,6 +35,10 @@ export default class ShopService extends BaseService<IShop> {
 
         async findShops(skip:number,limit:number):Promise<IShop[] | null>{
             return await this.repository.findShops(skip,limit);
+        }
+
+        async findRandomShops(limit:number):Promise<IShop[] | null>{
+            return await this.repository.findRandomShops(limit);
         }
 
         async findCountShops():Promise<number | null>{
@@ -239,13 +243,6 @@ export default class ShopService extends BaseService<IShop> {
             return await shopdoc.save()
         }
     
-        // async findCountVehicles():Promise<number | null>{
-        //     const vehicledetails =  await this.repository.findVehicles();
-        // }
-
-  
-
-
 
  
 

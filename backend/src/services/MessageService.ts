@@ -35,29 +35,6 @@ export default class MessageService extends BaseService<IMessage> {
     } 
 
     
-
-
-    // async create(data: IBookings): Promise<IBookings> {
-    //     const pickups =  await this.repository.create(data);
-    //     if(!pickups){
-    //         logger.error('error in create')
-    //         throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
-    //     } 
-    //     return pickups;
-    // }
-    
-    // async updatePaymentStatus(_id:string,data: IBookings): Promise<IBookings> {
-    //     const pickups =  await this.repository.findPickupsById({_id});
-    //     if(!pickups){
-    //         logger.error('error in create')
-    //         throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
-    //     } 
-    //     pickups.paymentStatus = data.paymentStatus;
-    //     return await pickups.save();
-    // }
-
-
-
  
 
 

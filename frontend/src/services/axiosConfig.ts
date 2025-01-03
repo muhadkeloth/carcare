@@ -15,7 +15,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
     const publicRoutes = [
-        '/user/login','/signup','/signupOtpGenerate','/otpgenerate','/otpvalidation','/resetPassword','/getnearshops',
+        '/user/login','/signup','/signupOtpGenerate','/otpgenerate','/otpvalidation','/resetPassword','/getshopsforHome','/randomfeedback',
         '/admin/login','/admin/otpgenerate','/admin/otpvalidation','/admin/resetPassword',
         '/shop/login','/shop/otpgenerate','/shop/otpvalidation','/shop/resetPassword'
     ];
@@ -74,7 +74,6 @@ api.interceptors.response.use(
             }
             localStorage.removeItem(`${logoutUrl}_access_token`);
             localStorage.removeItem(`${logoutUrl}_refresh_token`);
-            // window.location.href = `/${logoutUrl}/login`;
         }else if(error.response?.status === HttpStatusCode.UNAUTHORIZED){
             const currentRoute = window.location.pathname;
             let role = 'user';
@@ -96,7 +95,8 @@ api.interceptors.response.use(
             } catch (error) {
                 localStorage.removeItem(`${role}_access_token`);
                 localStorage.removeItem(`${role}_refresh_token`);
-                window.location.href = `/${role}/login`;                
+                const url = role == 'user' ? '/login' : `/${role}/login`;
+                window.location.href = url;                
             }
         }
         return Promise.reject(error);

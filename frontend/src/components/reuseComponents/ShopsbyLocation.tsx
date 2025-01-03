@@ -49,7 +49,7 @@ const ShopsbyLocation = ({setActiveSection,sliceSelector,setShopDetails,nextSect
 
   return (
     <div className="flex justify-center p-5 pt-2">
-    <div className="flex max-w-6xl mx-auto px-4 mb-10 py-12 flex-col mt-24 items-center">
+    <div className="flex max-w-6xl mx-auto px-4 mb-10 py-12 flex-col mt-8 items-center min-h-[70%]">
       <h2 className="text-5xl font-semibold">Choose Nearby Shop</h2>
       <div className="mt-10 w-full ">
         <div className="grid grid-cols-1  gap-6">

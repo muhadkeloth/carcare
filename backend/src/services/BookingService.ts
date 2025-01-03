@@ -13,7 +13,6 @@ export default class BookingService extends BaseService<IBookings> {
     };
     
 
-    // ******************************************
     async create(data: IBookings): Promise<IBookings> {
         const booking =  await this.repository.create(data);
         if(!booking){
@@ -31,12 +30,6 @@ export default class BookingService extends BaseService<IBookings> {
         } 
         booking.paymentStatus = data.paymentStatus;
         return await booking.save();
-        // const updatedBooking = await this.repository.update(id,data);
-        // if(!updatedBooking){
-        //     logger.error('error in create')
-        //     throw new AppError('error in create',HttpStatusCode.BAD_REQUEST);
-        // }
-        // return updatedBooking;
     }
 
 
@@ -138,6 +131,15 @@ export default class BookingService extends BaseService<IBookings> {
         return response;
     }
 
+    async getRandomReviews():Promise<Partial<IBookings[]>>{
+        const response =  await this.repository.findRandomReviwes()
+        if(!response){
+            logger.warn("reviews not found");
+            throw new AppError("reviews not found", HttpStatusCode.NOT_FOUND);
+        }
+        return response;
+    }
+
     async getCompletedBookings(shopId?:string,period:'monthly'|'yearly'|'weekly' = 'monthly'):Promise<any[]> {
         const filter:any = { status:'COMPLETED' }
         if(shopId){
@@ -229,19 +231,12 @@ export default class BookingService extends BaseService<IBookings> {
             logger.warn("booking total revenue for statistic not found");
             throw new AppError("booking total revenue for statistic not found", HttpStatusCode.NOT_FOUND);
         }
+        if(result.length == 0){
+            result = [ { _id: null, totalAmount: 0 } ]
+        }
         return result
     } 
 
-// *******************************************
-
-// async updateById(id:string, updateData:any):Promise<IUser> {
-//     const updateddata = await this.repository.updateById(id, updateData);
-//     if(!updateddata){
-//         logger.error('user not found or update failed');
-//         throw new AppError("user not found or update failed", HttpStatusCode.NOT_FOUND);
-//     }
-//     return updateddata;
-// }
 
 
 

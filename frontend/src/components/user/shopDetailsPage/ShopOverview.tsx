@@ -4,6 +4,8 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { DropMotionWrapper, ZoomMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
+import { motion } from 'framer-motion'
+
 
 const ShopOverview:React.FC = () => {
   const {about, discription, rating, image, shopName} = useSelector((state:RootState) => state.shop.shopDetails) || {};
@@ -57,14 +59,19 @@ const ShopOverview:React.FC = () => {
   return (
     <section id="overview" className="scroll-mt-24">
       <DropMotionWrapper className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="aspect-video w-full">
+        <motion.div
+          className="aspect-video w-full"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <img
             src={image}
             alt={shopName}
             className="w-full h-full object-cover"
           />
-        </div>
-        
+        </motion.div>
+
         <div className="p-6">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
             {stats.map((stat, index) => {
@@ -73,7 +80,10 @@ const ShopOverview:React.FC = () => {
                   key={index}
                   className={`flex items-center gap-3 p-4 ${stat.bgColor} rounded-lg`}
                 >
-                  <FontAwesomeIcon icon={stat.icon} className={stat.iconColor} />
+                  <FontAwesomeIcon
+                    icon={stat.icon}
+                    className={stat.iconColor}
+                  />
                   <div>
                     <h3 className="font-semibold">{stat.value}</h3>
                     <p className="text-sm text-gray-600">{stat.label}</p>
@@ -84,26 +94,25 @@ const ShopOverview:React.FC = () => {
           </div>
 
           <DropMotionWrapper className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900">{ discription?.title }</h2>
-            <p className="text-gray-600 leading-relaxed">{ discription?.discript }
-              {/* Welcome to PV Garagesz, your trusted automotive care partner. We are a full-service 
-              auto repair shop committed to providing professional car care services with state-of-the-art 
-              equipment and certified technicians. Our team specializes in servicing multiple car brands 
-              including Nissan, Honda, Chevy, and Toyota. */}
-            </p>
-            <h2 className="text-2xl font-bold text-gray-900">About Us</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {discription?.title}
+            </h2>
             <p className="text-gray-600 leading-relaxed">
-              { about?.length !== 0 ? about : '' }
-              {/* With over a decade of experience, we've built our reputation on quality workmanship, 
-              honest pricing, and exceptional customer service. Our facility is equipped with the 
-              latest diagnostic tools and equipment to handle everything from routine maintenance 
-              to complex repairs. */}
+              {discription?.discript}
             </p>
+            {about?.length !== 0 && (
+              <>
+                <h2 className="text-2xl font-bold text-gray-900">About Us</h2>
+                <p className="text-gray-600 leading-relaxed">
+                  { about }
+                </p>
+              </>
+            )}
           </DropMotionWrapper>
         </div>
       </DropMotionWrapper>
     </section>
-  )
+  );
 }
 
 export default ShopOverview

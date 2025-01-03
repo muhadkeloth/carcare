@@ -1,4 +1,3 @@
-import { JwtPayload } from "jsonwebtoken";
 import { Request } from "express";
 import { Document, Types } from "mongoose";
 
@@ -95,7 +94,6 @@ export interface IEstimate extends Document {
     createdAt?:Date;
 }
 
-// export interface IBookings extends Document {
 export interface IBookings extends Document {
     userId:Types.ObjectId;
     shopId:Types.ObjectId;
@@ -130,4 +128,3 @@ export type pickupStatus = 'PENDING' | 'CONFIRMED'  | 'COMPLETED' | 'CANCELED';
 
 
 export interface AuthenticatedRequest extends Request { user?: string;userRole?:string }
-// export interface AuthenticatedRequest extends Request { user?: string | JwtPayload; }

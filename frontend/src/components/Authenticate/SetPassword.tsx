@@ -47,7 +47,6 @@ const SetPassword:React.FC = () => {
         const response = await fetchSetPassword(url,{email,password,role});
         if(response.status == HttpStatusCode.CREATED){
           if(role == 'shop'){
-            // localStorage.setItem(`${role}_token`,response.data.token);
             localStorage.setItem(`${role}_access_token`,response.data.accessToken);
             localStorage.setItem(`${role}_refresh_token`,response.data.refreshToken);
             navigateHome(navigate,role);
@@ -66,7 +65,6 @@ const SetPassword:React.FC = () => {
   return (
     <div>
         <NavLogin showBar={false} />
-
       <ToastContainer />
 
       <div className="flex items-center justify-center mt-5 ">
