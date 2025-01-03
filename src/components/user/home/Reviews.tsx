@@ -18,7 +18,9 @@ const Reviews = () => {
        const fetchReviews = async () => {
              try {
                   const response = await fetchRandomFeedback();
-                  setReviews(response.data.allReviews);
+                  if(response?.data?.allReviews instanceof Array){
+                    setReviews(response.data.allReviews);
+                  }
              } catch (error) {
                const errorMessage = (error as Error).message;
                console.error("error fetchingfeedback shops:",errorMessage);

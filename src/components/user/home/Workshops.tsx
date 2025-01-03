@@ -21,7 +21,9 @@ const Workshops = () => {
      const fetchShops = async () => {
            try {
                    const shopsData = await fetchTopShops();
-                   setShops(shopsData);
+                   if(shopsData instanceof Array){
+                     setShops(shopsData);
+                   }
            } catch (error) {
              const errorMessage = (error as Error).message;
              console.error("error fetching nearby shops:",errorMessage);
