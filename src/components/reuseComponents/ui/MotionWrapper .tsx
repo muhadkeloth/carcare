@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Children, ReactNode } from "react";
+import { ReactNode } from "react";
 
 interface MotionWrapperProps {
     children: ReactNode; 
