@@ -7,6 +7,8 @@ import { confirmBooking } from '../../services/userService';
 import { HttpStatusCode, paymentProps } from '../utilities/interface';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentSuccessAnimation from './PaymentSuccessAnimation';
+import { navigateHome } from '../utilities/navigate/common';
+import { useNavigate } from 'react-router-dom';
 
 
 export const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISH_KEY);
@@ -15,6 +17,7 @@ export const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISH_KEY)
 const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, methodofBooking}) => {
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
@@ -62,6 +65,7 @@ const Payment:React.FC<paymentProps> = ({isOpen, closeModal, bookingDetails, met
             setTimeout(() => {
               closeModal();
               setIsPaymentSuccessful(false);
+              navigateHome(navigate,'user')
             }, 4000);
           } catch (error) {
             console.error('in payment',error)

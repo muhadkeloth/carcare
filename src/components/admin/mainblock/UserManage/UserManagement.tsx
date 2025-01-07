@@ -6,6 +6,7 @@ import { fetchAllUsers, toggleuserStatus } from '../../../../services/adminServi
 import { ToastActive } from '../../../utilities/functions';
 import Table from '../../../reuseComponents/Table';
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
+import ConfirmationModal from '../../../reuseComponents/ConfirmationModal';
 
 
 const UserManagement = () => {
@@ -59,10 +60,11 @@ const UserManagement = () => {
 
   const renderActions = (user: any) => (
     <span onClick={() => { setToggleId(user._id); setShowConfirmModal(true); }}
-    className={`cursor-pointer ${
-      user.isActive ? 'text-green-600 hover:text-green-400' : 'text-red-600 hover:text-red-400' }`} >
-    {user.isActive ? 'Active' : 'Block'}
-  </span>
+      className={`cursor-pointer ${ user.isActive
+          ? "text-green-600 hover:text-green-400"
+          : "text-red-600 hover:text-red-400"}`} >
+      {user.isActive ? "Active" : "Block"}
+    </span>
   );
 
   useEffect(()=>{
@@ -103,33 +105,17 @@ const UserManagement = () => {
       </div>
       </ZoomInMotionWrapper>
 
-      {showConfirmModal && (
-        <div className="fixed inset-0  bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">
-              Are you sure you want to confirm change user Status?
-            </h3>
-            <div className="flex items-center justify-end">
-              <button
-                className="btn-secondary mr-2"
-                onClick={() => {
-                  setShowConfirmModal(false);
-                  setToggleId("");
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn-primary"
-                onClick={() => toggleStatus(toggleId)}
-              >
-                {" "}
-                Confirm{" "}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal 
+        isOpen={showConfirmModal}
+        onClose={()=>{
+          setShowConfirmModal(false);
+          setToggleId("");
+        }}
+        onConfirm={()=> toggleStatus(toggleId)}
+        title='Are you sure you want to confirm change user Status?'
+        actionText='Confirm'
+        />
+
     </>
   );
 }

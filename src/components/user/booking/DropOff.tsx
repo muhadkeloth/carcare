@@ -77,6 +77,7 @@ const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
                   setSelectedTime={setSelectedTime}
                   selectedTime={selectedTime}
                   wokingTime={shopdetails?.workingTime}
+                  selectedDate={selectedDate}
                 />
               </div>
             </DropMotionWrapper>

@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { bodyEmailvsRole, returnApiPromise } from "../components/utilities/types";
 import api from "./axiosConfig"
-import { ErrorResponse } from "../components/utilities/interface";
+import { ErrorResponse, HttpStatusCode } from "../components/utilities/interface";
 
 
 export const fetchRefreshToken = async (url:string,refreshToken:string):Promise<returnApiPromise> => {
@@ -60,7 +60,9 @@ export const fetchSetPassword = async (url:string,body:bodyEmailvsRole & {passwo
 
 export const fetchSignup = async (url:string,userData:any):Promise<returnApiPromise> => {
     try {
-        return await api.post(url,userData)
+        const response = await api.post(url,userData)
+        if(response.status !== HttpStatusCode.CREATED) throw new Error('error in validate otp');
+        return response;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message); 

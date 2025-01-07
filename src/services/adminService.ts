@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { ErrorResponse, HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
+import { returnApiPromise } from "../components/utilities/types";
 
 
 
@@ -50,7 +51,7 @@ export const fetchAllUsers = async (page:number):Promise<{users:any[]; totalPage
     }
 }
 
-export const toggleuserStatus = async (id:string):Promise<{status:number,data:any}> => {
+export const toggleuserStatus = async (id:string):Promise<returnApiPromise> => {
     try {
         return api.patch(`/admin/user/${id}`)
     } catch (error) {
@@ -59,7 +60,7 @@ export const toggleuserStatus = async (id:string):Promise<{status:number,data:an
     }
 }
 
-export const toggleShopStatus = async (id:string):Promise<{status:number,data:any}> => {
+export const toggleShopStatus = async (id:string):Promise<returnApiPromise> => {
     try {
         return api.patch(`/admin/shopstatus/${id}`)
     } catch (error) {

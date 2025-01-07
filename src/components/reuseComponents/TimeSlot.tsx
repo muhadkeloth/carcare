@@ -4,10 +4,11 @@ import { generateTimeSlots } from "../utilities/functions";
 import { HoverMotionWrapper } from "./ui/MotionWrapper ";
 
 
-const TimeSlot = ({selectedTime,setSelectedTime,wokingTime}:TimeSlotProps) => {
+const TimeSlot = ({selectedTime,setSelectedTime,wokingTime,selectedDate}:TimeSlotProps) => {
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
 
   useEffect(()=> {
+    console.log('selectedDate',selectedDate)
     if(wokingTime){
       setTimeSlots(generateTimeSlots(wokingTime.opening, wokingTime.closing))
     }else{

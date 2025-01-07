@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import { ErrorResponse, HttpStatusCode, Shop } from "../components/utilities/interface";
 import api from "./axiosConfig";
 import { navigateLogin } from "../components/utilities/navigate/common";
+import { returnApiPromise } from "../components/utilities/types";
 
 
 export const fetchTopShops = async ():Promise<Shop[]> => {
@@ -27,7 +28,7 @@ export const fetchNearbyShops = async (latitude:number,longitude:number):Promise
     }
 }
 
-export const fetchUserData = async (navigate:any):Promise<{status:number,data:any}> => {
+export const fetchUserData = async (navigate:any):Promise<returnApiPromise> => {
     try {
        const response =  await api.get('/userdetails')
        return {status:response.status,data:response.data}
@@ -40,7 +41,7 @@ export const fetchUserData = async (navigate:any):Promise<{status:number,data:an
     }
 }
 
-export const fetchRandomFeedback = async ():Promise<{status:number,data:any}> => {
+export const fetchRandomFeedback = async ():Promise<returnApiPromise> => {
     try {
        const response =  await api.get(`/randomfeedback`)  
        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error find feedback');
@@ -51,7 +52,7 @@ export const fetchRandomFeedback = async ():Promise<{status:number,data:any}> =>
     }
 }
 
-export const fetchShopData = async (id:string):Promise<{status:number,data:any}> => {
+export const fetchShopData = async (id:string):Promise<returnApiPromise> => {
     try {
        const response =  await api.get(`/shopdetails/${id}`)
        return {status:response.status,data:response.data}
@@ -61,7 +62,7 @@ export const fetchShopData = async (id:string):Promise<{status:number,data:any}>
     }
 }
 
-export const fetchPincode = async (pincode:string):Promise<{status:number,data:any}> => {
+export const fetchPincode = async (pincode:string):Promise<returnApiPromise> => {
     try {
        const response =  await api.get(`/shopPincode/${pincode}`)
        return {status:response.status,data:response.data}
@@ -71,7 +72,7 @@ export const fetchPincode = async (pincode:string):Promise<{status:number,data:a
     }
 }
 
-export const fetchShopByPincode = async (pincode:string):Promise<{status:number,data:any}> => {
+export const fetchShopByPincode = async (pincode:string):Promise<returnApiPromise> => {
     try {
        const response =  await api.get(`/shopsFilterByPincode/${pincode}`)
        return {status:response.status,data:response.data}
@@ -81,7 +82,7 @@ export const fetchShopByPincode = async (pincode:string):Promise<{status:number,
     }
 }
 
-export const fetchModeldetail = async (_id:string,make:string):Promise<{status:number,data:any}> => {
+export const fetchModeldetail = async (_id:string,make:string):Promise<returnApiPromise> => {
     try {
         return await api.get(`/getModelByMake`, {params:{ _id,make} })
     } catch (error) {
@@ -141,7 +142,7 @@ export const confirmBooking = async (token:any,bookingDetails:any,description:st
 
 
 
-export const fetchAllBookingsByUser = async (page:number):Promise<{status:number,data:any}> => {
+export const fetchAllBookingsByUser = async (page:number):Promise<returnApiPromise> => {
     const itemsPerPage = 10;
     try {
         const response = await api.get(`/bookingDetailsByUser?page=${page}&limit=${itemsPerPage}`);
@@ -153,7 +154,7 @@ export const fetchAllBookingsByUser = async (page:number):Promise<{status:number
     }
 }
 
-export const cancelBookingStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+export const cancelBookingStatus = async (id:string,status:string,reason:string):Promise<returnApiPromise> => {
     try {
         const response = await api.patch(`/booking/${id}`, {status,reason})
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  booking status');
@@ -164,7 +165,7 @@ export const cancelBookingStatus = async (id:string,status:string,reason:string)
     }
 }
 
-export const fetchAllPickupsByUser = async (page:number):Promise<{status:number,data:any}> => {
+export const fetchAllPickupsByUser = async (page:number):Promise<returnApiPromise> => {
     const itemsPerPage = 10;
     try {
         const response = await api.get(`/pickupsDetailsByUser?page=${page}&limit=${itemsPerPage}`);
@@ -176,7 +177,7 @@ export const fetchAllPickupsByUser = async (page:number):Promise<{status:number,
     }
 }
 
-export const cancelpickupStatus = async (id:string,status:string,reason:string):Promise<{status:number,data:any}> => {
+export const cancelpickupStatus = async (id:string,status:string,reason:string):Promise<returnApiPromise> => {
     try {
         const response = await api.patch(`/pickup/${id}`, {status,reason})
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error to change  pickup status');
@@ -187,7 +188,7 @@ export const cancelpickupStatus = async (id:string,status:string,reason:string):
     }
 }
 
-export const updateFeedback = async (id:string,rating:number,feedback:string,bookingModel:string):Promise<{status:number,data:any}> => {
+export const updateFeedback = async (id:string,rating:number,feedback:string,bookingModel:string):Promise<returnApiPromise> => {
     try {
         const response = await api.patch(`/feedback/${id}`, {rating,feedback,bookingModel})
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error to update feedback and rating');
@@ -198,7 +199,7 @@ export const updateFeedback = async (id:string,rating:number,feedback:string,boo
     }
 }
 
-export const fetchShopReviews = async(id:string|undefined):Promise<{status:number,data:any}> => {
+export const fetchShopReviews = async(id:string|undefined):Promise<returnApiPromise> => {
     try {
         const response = await api.get(`/reviewsByshop/${id}`)
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch reviews');
@@ -209,7 +210,7 @@ export const fetchShopReviews = async(id:string|undefined):Promise<{status:numbe
     }
 }
 
-export const findChatRoom = async(shopId:string):Promise<{status:number,data:any}> => {
+export const findChatRoom = async(shopId:string):Promise<returnApiPromise> => {
     try {
         const response = await api.get(`/createChatRoom/${shopId}`);
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error to fetch create chat room');
@@ -220,7 +221,7 @@ export const findChatRoom = async(shopId:string):Promise<{status:number,data:any
     }
 }
 
-export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
+export const fetchChatRooms = async():Promise<returnApiPromise> => {
     try {
         const response = await api.get('/chatHistory');
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch chathistory');
@@ -231,7 +232,7 @@ export const fetchChatRooms = async():Promise<{status:number,data:any}> => {
     }
 }
 
-export const fetchAllMessages = async(chatRoomId:string):Promise<{status:number,data:any}> => {
+export const fetchAllMessages = async(chatRoomId:string):Promise<returnApiPromise> => {
     try {
         const response = await api.get(`/fetchMessages/${chatRoomId}`);
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to fetch messages');
@@ -242,7 +243,7 @@ export const fetchAllMessages = async(chatRoomId:string):Promise<{status:number,
     }
 }
 
-export const saveImageMessage = async(formData:FormData):Promise<{status:number,data:any}> => {
+export const saveImageMessage = async(formData:FormData):Promise<returnApiPromise> => {
     try {
         const response = await api.post('/saveImageMessage',formData);   
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save image messages');
@@ -253,7 +254,7 @@ export const saveImageMessage = async(formData:FormData):Promise<{status:number,
     }
 }
 
-export const saveMessage = async(chatId:string,message:string,imagePath:string|null):Promise<{status:number,data:any}> => {
+export const saveMessage = async(chatId:string,message:string,imagePath:string|null):Promise<returnApiPromise> => {
     try {
            const response = await api.post(`/saveMessage`,{chatId,message,imagePath});
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to save messages');
@@ -264,7 +265,7 @@ export const saveMessage = async(chatId:string,message:string,imagePath:string|n
     }
 }
 
-export const estimateFinder = async(task:string):Promise<{status:number,data:any}> => {
+export const estimateFinder = async(task:string):Promise<returnApiPromise> => {
     try {
            const response = await api.post(`/estimateFinder`, {task});
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find estimate');

@@ -12,6 +12,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Table from '../../../reuseComponents/Table';
 import { handleInputValue } from '../../../utilities/validation';
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
+import ConfirmationModal from '../../../reuseComponents/ConfirmationModal';
 
 
 const ShopManagement = () => {
@@ -118,13 +119,21 @@ const ShopManagement = () => {
   ];
 
   const renderActions = (shop: any) => (
-    <span onClick={() => toggleStatus(shop._id)}
+    <span onClick={() => { setToggleId(shop._id); setShowConfirmModal(true);}}
       className={`cursor-pointer ${ shop.isActive
                 ? "text-green-600 hover:text-green-400"
                 : "text-red-600 hover:text-red-400" }`} >
       {shop.isActive ? "Active" : "Block"}
     </span>
   );
+  // const renderActions = (shop: any) => (
+  //   <span onClick={() => { toggleStatus(shop._id); setShowConfirmModal(true);}}
+  //     className={`cursor-pointer ${ shop.isActive
+  //               ? "text-green-600 hover:text-green-400"
+  //               : "text-red-600 hover:text-red-400" }`} >
+  //     {shop.isActive ? "Active" : "Block"}
+  //   </span>
+  // );
 
 
   useEffect(() => {
@@ -301,32 +310,17 @@ const ShopManagement = () => {
         </div>
       )}
 
-      {showConfirmModal && (
-        <div className="fixed inset-0  bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">
-              Are you sure you want to confirm change Shop Status?
-            </h3>
-            <div className="flex items-center justify-end">
-              <button
-                className="btn-secondary mr-2"
-                onClick={() => {
-                  setShowConfirmModal(false);
-                  setToggleId("");
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn-primary"
-                onClick={() => toggleStatus(toggleId)}
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => {
+          setShowConfirmModal(false);
+          setToggleId("");
+        }}
+        onConfirm={() => toggleStatus(toggleId)}
+        title="Are you sure you want to confirm change Shop Status?"
+        actionText="Confirm"
+      />
+
     </div>
   );
 };

@@ -2,10 +2,11 @@ import { AxiosError } from "axios";
 import { ErrorResponse, Estimate, HttpStatusCode } from "../components/utilities/interface";
 import api from "./axiosConfig";
 import { navigateLogin } from "../components/utilities/navigate/common";
+import { returnApiPromise } from "../components/utilities/types";
 
 
 
-export const fetchShopUserDetails = async (navigate:any):Promise<{status:number;data:any}> => {
+export const fetchShopUserDetails = async (navigate:any):Promise<returnApiPromise> => {
     try {
         const response = await api.get('/shop/shopdetails');
         if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error to find shopuser details');
@@ -21,7 +22,7 @@ export const fetchShopUserDetails = async (navigate:any):Promise<{status:number;
 
 
 
-export const fetchUploadProfileImage = async (formData:FormData):Promise<{status:number;data:any}> => {
+export const fetchUploadProfileImage = async (formData:FormData):Promise<returnApiPromise> => {
     try {
         const response = await api.put('/shop/uploadprofileimage',formData);
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error when uploading shop profile image');

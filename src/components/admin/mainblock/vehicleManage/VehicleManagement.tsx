@@ -7,6 +7,7 @@ import Table from '../../../reuseComponents/Table';
 import { ToastActive } from '../../../utilities/functions';
 import { nameValidation } from '../../../utilities/validation';
 import { ZoomInMotionWrapper } from '../../../reuseComponents/ui/MotionWrapper ';
+import ConfirmationModal from '../../../reuseComponents/ConfirmationModal';
 
 
 const VehicleManagement = () => { 
@@ -314,7 +315,15 @@ const VehicleManagement = () => {
         </div>
       )}
 
-      {showConfirmModal && (
+      <ConfirmationModal 
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={actionType === "delete" ? confirmDelete : confirmEdit}
+        title={`Are you sure you want to ${actionType} this vehicle?`}
+        actionText='Confirm'
+        />
+
+      {/* {showConfirmModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
             <h3 className="text-lg font-bold mb-4">
@@ -336,7 +345,7 @@ const VehicleManagement = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
