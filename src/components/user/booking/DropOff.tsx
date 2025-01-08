@@ -13,6 +13,7 @@ import DropOffTemp from '../../reuseComponents/DropOffTemp';
 import CalendarPicker from '../../reuseComponents/CalendarPicker';
 import { navigateFindWorkShop } from '../../utilities/navigate/userNavigator';
 import { useNavigate } from 'react-router-dom';
+import { fetchReservedTimes } from '../../../services/userService';
 
 
 
@@ -20,6 +21,7 @@ const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [reservedTimes, setReservedTimes] = useState<string[]>([]);
     const dispatch = useDispatch()
     const navigate = useNavigate();
     const shopdetails = useSelector((state:RootState)=>{
@@ -49,6 +51,22 @@ const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
       setActiveSection('Vehicle')     
   }
 
+  useEffect(()=>{
+    const fetchAvailableTimes = async() => {
+          try {
+            if (!selectedDate) return; 
+            const date = new Date(selectedDate);
+            const dateInUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const formattedDate = dateInUTC.toISOString().split('T')[0];
+            const response = await fetchReservedTimes(formattedDate,'booking',shopdetails?._id);
+            setReservedTimes(response.data.reservedTimes)            
+          } catch (error) {
+            console.log('fetch reserved times error')
+          }
+    }
+    fetchAvailableTimes()
+  },[selectedDate])
+
 
   const handlePrevMonth = () => setCurrentMonth(addMonths(currentMonth, -1));
   const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
@@ -77,7 +95,7 @@ const DropOff:React.FC<BookingProps> = ({ setActiveSection}) => {
                   setSelectedTime={setSelectedTime}
                   selectedTime={selectedTime}
                   wokingTime={shopdetails?.workingTime}
-                  selectedDate={selectedDate}
+                  reservedTimes={reservedTimes}
                 />
               </div>
             </DropMotionWrapper>

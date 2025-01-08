@@ -14,7 +14,7 @@ const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
   const [year,setYear] = useState('')
   const [model,setModel] = useState('')
   const [description, setDescription] = useState('');
-  const [modelDetails, setModelDetails] = useState([]);
+  const [modelDetails, setModelDetails] = useState<string[]>([]);
   const dispatch = useDispatch();
   const shopdetails = useSelector((state:RootState)=>state.pickMyCar.PickCarDetails?.shopdetails );
 
@@ -30,15 +30,17 @@ const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
 
   const handleMakeChange = async (e:React.ChangeEvent<HTMLSelectElement>) => {
     setMake(e.target.value)
-    try {
-      const response = await fetchModeldetail(shopdetails?._id as string,e.target.value);
-      if(response.status !== HttpStatusCode.SUCCESS){
-        throw new Error('models not find by brand')
-      }      
-      setModelDetails(response.data.models)
-    } catch (error) {
-      console.log('error in find model details',error);
-    }
+    const models = shopdetails?.vehicleIds?.find(ele => ele.brand ===e.target.value)
+      setModelDetails(models?.vehicleModel || [])
+    // try {
+    //   const response = await fetchModeldetail(shopdetails?._id as string,e.target.value);
+    //   if(response.status !== HttpStatusCode.SUCCESS){
+    //     throw new Error('models not find by brand')
+    //   }      
+    //   setModelDetails(response.data.models)
+    // } catch (error) {
+    //   console.log('error in find model details',error);
+    // }
   }
 
 
@@ -87,7 +89,7 @@ const Vehicle:React.FC<BookingProps> = ({setActiveSection}) => {
             value={year}
             onChange={(e)=> setYear(e.target.value)}>
               <option value="" disabled>Select Year</option>
-              {Array.from({ length: 2024 - 2010 + 1 }, (_, i) => 2010 + i).map((year) => (
+              {Array.from({ length: 2025 - 2015 + 1 }, (_, i) => 2010 + i).map((year) => (
                 <option key={year} value={year}>
                   {year}
                   </option>

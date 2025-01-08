@@ -102,7 +102,6 @@ export const addNewVehicle = async (newVehicle:any):Promise<{status:number;messa
 export const editVehicle = async (newVehicle:any):Promise<{status:number;data:any}> => {
     try {
         const response = await api.put(`/admin/editvehicle`, newVehicle);
-
         if(response.status !== HttpStatusCode.CREATED) throw new Error('error in updat fetch vehicle');
         return {status:response.status,data:response.data}
     } catch (error) {

@@ -82,7 +82,7 @@ export interface TimeSlotProps {
   selectedTime: string | null;
   setSelectedTime: React.Dispatch<React.SetStateAction<string | null>>;
   wokingTime?:{opening:string,closing:string}
-  selectedDate?:Date;
+  reservedTimes?:string[];
 }
 
 
@@ -148,7 +148,7 @@ export interface Shop extends BaseShop {
   address:Address;
   vehicleIds?: {
     brand:string;
-    vehicleModelIds:string;
+    vehicleModel:string[];
 }[];
 estimate?:Estimate[];
   location?: Location; 

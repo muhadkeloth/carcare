@@ -23,14 +23,8 @@ import { ZoomInMotionWrapper } from "../../../reuseComponents/ui/MotionWrapper "
 
 const VehicleManagement: React.FC = () => {
   const [shopvehicles, setShopVehicles] = useState<Vehicle[]>([]);
-  const [newVehicle, setNewVehicle] = useState<Vehicle>({
-    brand: "",
-    vehicleModel: [],
-  });
-  const [newVehicleError, setNewVehicleError] = useState<Record<
-    string,
-    string
-  > | null>(null);
+  const [newVehicle, setNewVehicle] = useState<Vehicle>({brand: "",vehicleModel: [],});
+  const [newVehicleError, setNewVehicleError] = useState<Record<string,string> | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [actionType, setActionType] = useState("");
@@ -47,6 +41,7 @@ const VehicleManagement: React.FC = () => {
       const vehicleDetails = await fetchAllShopVehicle(page);
       if (!vehicleDetails || !vehicleDetails.Vehicle)
         throw new Error("shop vehicle fetching error");
+      console.log('vehicleDetails',vehicleDetails)
       setShopVehicles(vehicleDetails.Vehicle);
       setTotalPages(vehicleDetails.totalPages);
     } catch (error) {

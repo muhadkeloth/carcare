@@ -125,6 +125,17 @@ export const changePasswordUser = async (body:{currentPassword:string; newPasswo
     }
 }
 
+export const fetchReservedTimes = async (date:any,action:string,shopId:any):Promise<{status:number;data:any}> => {
+    try {
+        const response = await api.get('/bookingAvailableTime',{params:{date,action,shopId}})
+        if(response.status !== HttpStatusCode.SUCCESS)throw new Error('fetch reserved times error');
+        return response;
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
 export const confirmBooking = async (token:any,bookingDetails:any,description:string):Promise<{status:number;data:any}> => {
     try {
         const response = await api.post('/bookingConfirm',{

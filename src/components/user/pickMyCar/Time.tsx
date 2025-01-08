@@ -10,11 +10,12 @@ import { addTimeinDate, generateDaysInMonth } from '../../utilities/functions';
 import { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 import CalendarPicker from '../../reuseComponents/CalendarPicker';
 import { RootState } from '../../../store';
+import { fetchReservedTimes } from '../../../services/userService';
 
 
 const Time:React.FC<BookingProps> = ({setActiveSection}) => {
   const { shopdetails } = useSelector((state: RootState) => state.pickMyCar.PickCarDetails) || {};
-
+    const [reservedTimes, setReservedTimes] = useState<string[]>([]);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [date, setDate] = useState<Date | null>(null);
     const [time, setTime] = useState<string | null>(null);
@@ -36,6 +37,22 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
       }
       setActiveSection('Summary')     
   }
+
+    useEffect(()=>{
+      const fetchAvailableTimes = async() => {
+            try {
+              if (!date) return; 
+              const datez = new Date(date);
+              const dateInUTC = new Date(Date.UTC(datez.getFullYear(), datez.getMonth(), datez.getDate()));
+              const formattedDate = dateInUTC.toISOString().split('T')[0];
+              const response = await fetchReservedTimes(formattedDate,'pickup',shopdetails?._id);
+              setReservedTimes(response.data.reservedTimes)            
+            } catch (error) {
+              console.log('fetch reserved times error')
+            }
+      }
+      fetchAvailableTimes()
+    },[date])
 
   useEffect(()=> {
     if(!shopdetails)setActiveSection('Location')
@@ -70,6 +87,7 @@ const Time:React.FC<BookingProps> = ({setActiveSection}) => {
               setSelectedTime={setTime}
               selectedTime={time}
               wokingTime={shopdetails?.workingTime}
+              reservedTimes={reservedTimes}
             />
           </div>
         
