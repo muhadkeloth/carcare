@@ -55,8 +55,36 @@ export default class ShopService extends BaseService<IShop> {
             return shop
         }
 
-        async createVehicle(shopId:string,vehicledetails:IVehicle[] ,vehicleModel:string[]):Promise<void>{
-            if (shopId.length == 0 || vehicledetails.length == 0 || vehicleModel.length == 0 ) {
+        // async createVehicle(shopId:string,vehicledetails:IVehicle[] ,vehicleModel:string[]):Promise<void>{
+        //     if (shopId.length == 0 || vehicledetails.length == 0 || vehicleModel.length == 0 ) {
+        //         logger.warn('Invalid vehicle details')
+        //         throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
+        //     }
+
+        //     const shopUser = await this.repository.findShopById(shopId);
+        //     if(!shopUser){
+        //         logger.warn("Shop not found");
+        //         throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
+        //     }
+
+        //     if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
+
+        //     const brand = vehicledetails[0].brand;
+            
+        //     const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
+
+        //     const exisitingBrand = shopUser.vehicleIds.find((v) => v.brand === brand);
+        //     if(exisitingBrand){
+        //         exisitingBrand.vehicleModelIds = [...new Set([...exisitingBrand.vehicleModelIds, ...vehicleModelIds ])];
+        //     }else{
+        //         shopUser.vehicleIds.push({ brand, vehicleModelIds, })
+        //     };
+        //     await shopUser.save();
+            
+        //     logger.info(`Vehicle details updated for shop: ${shopId}`);
+        // }
+        async createVehicle(shopId:string,brand:string ,vehicleModel:string[]):Promise<void>{
+            if (shopId.length == 0 || brand.length == 0 || vehicleModel.length == 0 ) {
                 logger.warn('Invalid vehicle details')
                 throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
             }
@@ -67,17 +95,14 @@ export default class ShopService extends BaseService<IShop> {
                 throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
             }
 
-            if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
-
-            const brand = vehicledetails[0].brand;
-            
-            const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
+            if(!shopUser.vehicleIds) shopUser.vehicleIds = [];            
+            // const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
 
             const exisitingBrand = shopUser.vehicleIds.find((v) => v.brand === brand);
             if(exisitingBrand){
-                exisitingBrand.vehicleModelIds = [...new Set([...exisitingBrand.vehicleModelIds, ...vehicleModelIds ])];
+                exisitingBrand.vehicleModel = [...new Set(vehicleModel)];
             }else{
-                shopUser.vehicleIds.push({ brand, vehicleModelIds, })
+                shopUser.vehicleIds.push({ brand, vehicleModel })
             };
             await shopUser.save();
             
@@ -87,18 +112,48 @@ export default class ShopService extends BaseService<IShop> {
         async findVehicles(_id:string,skip:number,limit:number):Promise<any |null >{
             const shop =  await this.repository.findVehicles(_id);
             if(!shop || !shop.vehicleIds) return null;
-            const vehicles = shop.vehicleIds.map(vehicle => ({
-                brand:vehicle.brand,
-                vehicleModel:vehicle.vehicleModelIds.map((v:any) => v.vehicleModel)
-            }));
+            // const vehicles = shop.vehicleIds.map(vehicle => ({
+            //     brand:vehicle.brand,
+            //     vehicleModel:vehicle.vehicleModelIds.map((v:any) => v.vehicleModel)
+            // }));
+            console.log('shop in shop service fnd vehicle',shop)
+            const vehicles = shop.vehicleIds;
             const totalVehicles = vehicles.length;
             const paginatedVehicles = vehicles.slice(skip,skip + limit);
 
             return {Vehicle:paginatedVehicles, totalVehicles}
         }
 
-        async updateVehilce(shopId:string,vehicledetails:IVehicle[] ,vehicleModel:string[]):Promise<any | null> {
-            if (shopId.length == 0 || vehicledetails.length == 0 || vehicleModel.length == 0 ) {
+        // async updateVehilce(shopId:string,vehicledetails:IVehicle[] ,vehicleModel:string[]):Promise<any | null> {
+        //     if (shopId.length == 0 || vehicledetails.length == 0 || vehicleModel.length == 0 ) {
+        //         logger.warn('Invalid vehicle details')
+        //         throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
+        //     }
+
+        //     const shopUser = await this.repository.findShopById(shopId);
+        //     if(!shopUser){
+        //         logger.warn("Shop not found");
+        //         throw new AppError("Shop not found", HttpStatusCode.NOT_FOUND);
+        //     }
+
+        //     if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
+
+        //     const brand = vehicledetails[0].brand;
+        //     const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
+
+        //     const exisitingBrand = shopUser.vehicleIds.find((v) => v.brand === brand);
+        //     if(exisitingBrand){
+        //         exisitingBrand.vehicleModelIds = vehicleModelIds;
+        //     }else{
+        //         shopUser.vehicleIds.push({ brand, vehicleModelIds, })
+        //     };
+        //     await shopUser.save();
+            
+        //     logger.info(`Vehicle details updated for shop: ${shopId}`);
+        //     return {brand,vehicleModel}
+        // }
+        async updateVehilce(shopId:string,brand:string ,vehicleModel:string[]):Promise<any | null> {
+            if (shopId.length == 0 || brand.length == 0 || vehicleModel.length == 0 ) {
                 logger.warn('Invalid vehicle details')
                 throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
             }
@@ -111,14 +166,14 @@ export default class ShopService extends BaseService<IShop> {
 
             if(!shopUser.vehicleIds) shopUser.vehicleIds = [];
 
-            const brand = vehicledetails[0].brand;
-            const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
+            // const brand = vehicledetails[0].brand;
+            // const vehicleModelIds = vehicledetails.filter(v => vehicleModel.includes(v.vehicleModel) ).map(v => new Types.ObjectId(v._id));
 
             const exisitingBrand = shopUser.vehicleIds.find((v) => v.brand === brand);
             if(exisitingBrand){
-                exisitingBrand.vehicleModelIds = vehicleModelIds;
+                exisitingBrand.vehicleModel = [...new Set(vehicleModel)];
             }else{
-                shopUser.vehicleIds.push({ brand, vehicleModelIds, })
+                shopUser.vehicleIds.push({ brand,vehicleModel, })
             };
             await shopUser.save();
             

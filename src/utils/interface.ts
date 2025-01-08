@@ -51,7 +51,7 @@ export interface IShop extends Document {
     createdAt?:Date;
     vehicleIds?: {
         brand:string;
-        vehicleModelIds:Types.ObjectId[];
+        vehicleModel:string[];
     }[];
     estimate?:{
         work:string;
@@ -67,7 +67,7 @@ export interface IShop extends Document {
 export interface IVehicle extends Document {
     _id: string | Types.ObjectId;
     brand:string;
-    vehicleModel:string;
+    vehicleModel:string[];
     createdAt?:Date;
 }
 
@@ -85,14 +85,14 @@ export interface IMessage extends Document {
     createdAt?:Date;
 }
 
-export interface IEstimate extends Document {
-    work:string;
-    details:[{
-        price:number;
-        vehicles: Types.ObjectId[];
-    }],
-    createdAt?:Date;
-}
+// export interface IEstimate extends Document {
+//     work:string;
+//     details:[{
+//         price:number;
+//         vehicles: Types.ObjectId[];
+//     }],
+//     createdAt?:Date;
+// }
 
 export interface IBookings extends Document {
     userId:Types.ObjectId;

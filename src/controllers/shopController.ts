@@ -99,13 +99,14 @@ export class ShopController extends BaseController<any> {
             }
       const { brand, vehicleModel } = req.body;
 
-      const vehicledetails = await this.vehicleService.findVehiclesByBrand(brand);
-      if (!vehicledetails){
-        logger.warn('failed to create or find vehicle');
-        throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
-      }
+      // const vehicledetails = await this.vehicleService.findVehiclesByBrand(brand);
+      // if (!vehicledetails){
+      //   logger.warn('failed to create or find vehicle');
+      //   throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
+      // }
 
-      await this.service.createVehicle(req.user as string, vehicledetails, vehicleModel); 
+      await this.service.createVehicle(req.user as string, brand, vehicleModel); 
+      // await this.service.createVehicle(req.user as string, vehicledetails, vehicleModel); 
     
       res.status(HttpStatusCode.CREATED).json({ message: "Vehicle shop added successfully" });
 
@@ -123,13 +124,14 @@ export class ShopController extends BaseController<any> {
         throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
       }
       const { brand, vehicleModel } = req.body;
-      const vehicledetails = await this.vehicleService.findVehiclesByBrand(brand);
-      if (!vehicledetails){
-        logger.warn('failed to create or find vehicle');
-        throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
-      }
+      // const vehicledetails = await this.vehicleService.findVehiclesByBrand(brand);
+      // if (!vehicledetails){
+      //   logger.warn('failed to create or find vehicle');
+      //   throw new AppError("failed to create or find vehicle ",HttpStatusCode.INTERNAL_SERVER_ERROR);
+      // }
 
-      const vehicleupload = await this.service.updateVehilce(req.user as string,vehicledetails, vehicleModel); 
+      // const vehicleupload = await this.service.updateVehilce(req.user as string,vehicledetails, vehicleModel); 
+      const vehicleupload = await this.service.updateVehilce(req.user as string,brand, vehicleModel); 
       res.status(HttpStatusCode.CREATED).json({ vehicle:vehicleupload, message: "update vehicle details successfully" });
     } catch (error) {
         const err = error as Error;

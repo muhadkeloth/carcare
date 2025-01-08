@@ -254,31 +254,31 @@ export default class UserController extends BaseController<IUser> {
     }
   }
 
-  getModelByMakeVehicle = async(req:Request, res:Response,next:NextFunction) => {
-    try {
-      const { _id, make } = req.query;
+  // getModelByMakeVehicle = async(req:Request, res:Response,next:NextFunction) => {
+  //   try {
+  //     const { _id, make } = req.query;
       
-      const shop = await this.shopService.findOne({ _id });
-      if(!shop) throw new AppError("shop details not found ",HttpStatusCode.NOT_FOUND);
-      const vehicledetails = shop?.vehicleIds?.find(v=> v.brand == make);
+  //     const shop = await this.shopService.findOne({ _id });
+  //     if(!shop) throw new AppError("shop details not found ",HttpStatusCode.NOT_FOUND);
+  //     const vehicledetails = shop?.vehicleIds?.find(v=> v.brand == make);
       
-      if(!vehicledetails) throw new AppError("shop vehicle details not found ",HttpStatusCode.NOT_FOUND);
+  //     if(!vehicledetails) throw new AppError("shop vehicle details not found ",HttpStatusCode.NOT_FOUND);
 
-      const modeldetails = await Promise.all(
-        vehicledetails.vehicleModelIds.map(async (modelId) => {
-          const modelDetails = await this.vehicleService.findOne({ _id:modelId });
-          if(!modelDetails)return null;
-          return modelDetails.vehicleModel;
-        })
-      );
+  //     const modeldetails = await Promise.all(
+  //       vehicledetails.vehicleModelIds.map(async (modelId) => {
+  //         const modelDetails = await this.vehicleService.findOne({ _id:modelId });
+  //         if(!modelDetails)return null;
+  //         return modelDetails.vehicleModel;
+  //       })
+  //     );
       
-      res.status(HttpStatusCode.SUCCESS).json({ models:modeldetails , message: "shop filtered by pincode find successfully" });
-    } catch (error) {
-      const err = error as Error;
-      logger.error(`Error finding model in vehicle collection: ${err.message}`);
-      next(err);
-    }
-  }
+  //     res.status(HttpStatusCode.SUCCESS).json({ models:modeldetails , message: "shop filtered by pincode find successfully" });
+  //   } catch (error) {
+  //     const err = error as Error;
+  //     logger.error(`Error finding model in vehicle collection: ${err.message}`);
+  //     next(err);
+  //   }
+  // }
 
   uploadUserProfileImg = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
     try {
@@ -396,6 +396,42 @@ export default class UserController extends BaseController<IUser> {
     } catch (error) {
       const err = error as Error;
       logger.error(`Error in ${description} confirmation: ${err.message}`);
+      next(err);
+    }
+  };
+
+  bookingAvailableTime = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const { date, action, shopId } = req.query;
+    try {
+      if (!req.user) {
+        logger.warn('Booking confirmation error: User ID not found');
+        throw new AppError("Booking confirmation error: User ID not found", HttpStatusCode.BAD_REQUEST);
+      }  
+      if (!date || !action || !shopId) {
+        throw new AppError("Invalid date", HttpStatusCode.BAD_REQUEST);
+      }   
+    
+      const parsedDate = new Date(date as string);
+      if (isNaN(parsedDate.getTime())) {
+        throw new AppError("Invalid date format", HttpStatusCode.BAD_REQUEST);
+      }
+
+      const bookingservice = action === 'booking' ? this.bookingService : this.pickupService;
+      if (bookingservice) {
+        const inputDateString = parsedDate.toISOString().split('T')[0]; 
+        
+        const reservedTimes = await bookingservice.fetchReservedTimes(inputDateString,shopId as string); 
+        if(Array.isArray(reservedTimes)){
+          res.status(HttpStatusCode.SUCCESS).json({reservedTimes,message:`succesfully fetch reserved times of ${date}`})
+        }else{
+          res.status(HttpStatusCode.SUCCESS).json({reservedTimes,message:`succesfully fetch reserved times of ${date}`})
+        }
+      } else {
+        res.status(HttpStatusCode.BAD_REQUEST).json({  message: `failed to find service ` });
+      }
+    } catch (error) {
+      const err = error as Error;
+      logger.error(`Error fetch reserved times: ${err.message}`);
       next(err);
     }
   };

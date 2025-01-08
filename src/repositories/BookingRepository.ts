@@ -58,6 +58,10 @@ export default class BookingRepository extends BaseRepository<IBookings>{
         return await this.model.findById(id);   
     }
 
+    async findBookingsAvailableTimes(filter:object):Promise<any[] | null>{
+        return await this.model.find(filter,{"shedule.time":1,"_id":0})
+    }
+
     async findBookingsByFilter(filter:object):Promise<IBookings[] | null>{
         return await this.model.find(filter).populate('userId')
     }

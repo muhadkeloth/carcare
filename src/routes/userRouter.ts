@@ -30,7 +30,7 @@ router.use(authenticateToken);
 router.get('/getnearshops', userController.getNearShops);
 router.get('/shopPincode/:pincode', userController.getShopByPincode);
 router.get('/shopsFilterByPincode/:pincode', userController.getShopsFilterByPincode);
-router.get('/getModelByMake', userController.getModelByMakeVehicle);
+// router.get('/getModelByMake', userController.getModelByMakeVehicle);
 
 
 router.get('/userdetails',  userController.userDetails);
@@ -41,6 +41,7 @@ router.put('/uploadprofileimage',  upload.single('image'), userController.upload
 router.put('/updateprofiledetails',  userController.updateUserProfileDetails);
 router.put('/changepassword',  userController.updateUserProfilepassword);
 
+router.get('/bookingAvailableTime',  userController.bookingAvailableTime );
 router.post('/bookingConfirm',  userController.bookingConfirm );
 
 router.get('/pickupsDetailsByUser',  userController.getUserPickups);

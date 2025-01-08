@@ -60,6 +60,10 @@ export default class PickupRepository extends BaseRepository<IBookings>{
     async findPickupsByFilter(filter:object):Promise<IBookings[] | null>{
         return await this.model.find(filter).populate('userId')
     }
+    
+    async findPickupsAvailableTimes(filter:object):Promise<any[] | null>{
+        return await this.model.find(filter,{"shedule.time":1,"_id":0})
+    }
 
     async findReviwesByShopId(shopId:string):Promise<Partial<IBookings[] | null>>{
         return await this.model.find({shopId,review:{$exists:true}})

@@ -38,7 +38,6 @@ router.delete('/deletevehicle/:brand', adminController.deleteVehicleDetails);
 router.get('/dashStatistics', adminController.dashStatistics);
 router.get('/barChartFilter', adminController.barChartFilter);
 router.get('/lineChartFilter', adminController.lineChartFilter);
-
 router.get('/brokerageDetails/:action', adminController.brokeragedetails);
 
 

@@ -12,21 +12,23 @@ export default class VehicleRepository extends BaseRepository<IVehicle> {
     async findVehicles(skip:number, limit:number):Promise<any[] | null>{
         const vehicles = await this.model.aggregate([
             { $sort:{createdAt:-1} },
-            { $group:{ _id:'$brand', vehicleModel:{ $push:"$vehicleModel" } } },
+            // { $group:{ _id:'$brand', vehicleModel:{ $push:"$vehicleModel" } } },
             { $skip: skip },
             { $limit:limit }
         ])
         if(!vehicles) return null;
-        return vehicles.map(({_id:brand, vehicleModel}) => ({brand,vehicleModel}));
+        return vehicles
+        // return vehicles.map(({_id:brand, vehicleModel}) => ({brand,vehicleModel}));
     }
 
     async findAllVehicles():Promise<any[] |null>{
         const vehicles = await this.model.aggregate([
             { $sort:{createdAt:-1} },
-            { $group:{ _id:'$brand', vehicleModel:{ $push:"$vehicleModel" } } },
+            // { $group:{ _id:'$brand', vehicleModel:{ $push:"$vehicleModel" } } },
         ])
         if(!vehicles) return null;
-        return vehicles.map(({_id:brand, vehicleModel}) => ({brand,vehicleModel}));
+        return vehicles
+        // return vehicles.map(({_id:brand, vehicleModel}) => ({brand,vehicleModel}));
     }
 
     async findCountVehicles(): Promise<number | null> {

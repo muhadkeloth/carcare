@@ -100,6 +100,36 @@ export default class PickupService extends BaseService<IBookings> {
         return await this.repository.findPickupsById({_id:updatedDetails._id})
     }
 
+    async fetchReservedTimes(date:any,shopId:string):Promise<string[] | null > {
+        const inputDateString = date;
+        const reservedTimes = await this.repository.findPickupsAvailableTimes({
+          $expr: {
+            $and: [
+              {
+                $eq: [
+                  {
+                    $dateToString: {
+                      format: "%Y-%m-%d",
+                      date: {
+                        $dateFromString: { dateString: "$shedule.date" },
+                      },
+                    },
+                  },
+                  inputDateString,
+                ],
+              },
+              { $eq: ["$shopId", shopId], },
+              { $ne: ["$status", "CANCELED"] },
+            ],
+          },
+        });
+
+        if (!reservedTimes) {
+            return [];
+        }
+        return reservedTimes.map((entry) => entry.shedule.time); 
+    }
+
     async getUpcomingPickups(minutesBefore:number):Promise<IBookings[] | null > {
         const now = new Date();
         const targetTime = new Date(now.getTime() + minutesBefore * 60 * 1000);

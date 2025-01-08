@@ -6,7 +6,7 @@ import { IVehicle } from "../utils/interface";
 const VehicleSchema: Schema<IVehicle> = new Schema(
     {
         brand: { type: String, required: true },
-        vehicleModel: { type: String, required: true, unique: true },
+        vehicleModel: { type: [String],required:true, unique: true },
         createdAt: { type: Date, default: Date.now },
     },
     { timestamps: true }

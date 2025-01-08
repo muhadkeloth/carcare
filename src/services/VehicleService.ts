@@ -29,12 +29,16 @@ export default class VehicleService extends BaseService<IVehicle> {
             throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
         }
 
-        for(const model of vehicleModel){
-            let vehicle = await this.repository.findOne({brand,vehicleModel:model});
+        // for(const model of vehicleModel){
+
+            let vehicle = await this.repository.findOne({brand});
             if(!vehicle){
-                vehicle = await this.repository.create({brand,vehicleModel:model})
+                vehicle = await this.repository.create({brand,vehicleModel})
+            }else{
+                vehicle.vehicleModel = [...new Set(vehicleModel)];
+                await vehicle.save();
             }
-        }
+        // }
     }
 
     async editVehicle(brand:string,vehicleModel:string[]):Promise<any | null>{
@@ -42,26 +46,28 @@ export default class VehicleService extends BaseService<IVehicle> {
             logger.warn('Invalid vehicle details')
             throw new AppError("Invalid vehicle details",HttpStatusCode.BAD_REQUEST);
         }
-        const existingVehicles = await this.repository.findVehiclesByBrand(brand);
+        const existingVehicles = await this.repository.findOne({brand});
         if(!existingVehicles) return null;
 
-        const existingModels = existingVehicles.map((v) => v.vehicleModel );
-        const modelsToAdd = vehicleModel.filter((v)=> !existingModels.includes(v) );
+        // const existingModels = existingVehicles.map((v) => v.vehicleModel );
+        // const modelsToAdd = vehicleModel.filter((v)=> !existingModels.includes(v) );
+        existingVehicles.vehicleModel = [...new Set(vehicleModel)];
+        // if(modelsToAdd.length > 0){
+        //     const vehicleToCreate = modelsToAdd.map((model) => ({
+        //         brand,vehicleModel:model
+        //     }));
+        const updatedVehicle = await existingVehicles.save();
+        console.log('updatedVehicle',updatedVehicle)
+        return updatedVehicle
+            // await this.repository.createMany(vehicleToCreate)
+        // }
 
-        if(modelsToAdd.length > 0){
-            const vehicleToCreate = modelsToAdd.map((model) => ({
-                brand,vehicleModel:model
-            }));
-
-            await this.repository.createMany(vehicleToCreate)
-        }
-
-        await this.repository.deleteVehiclesNotInModels(brand,vehicleModel)
-        const updatedVehicle =  await this.repository.findVehiclesByBrand(brand);
-        if(!updatedVehicle) return null;
-        return { brand,
-                 vehicleModel:updatedVehicle.map(vehicle => vehicle.vehicleModel),
-        }
+        // await this.repository.deleteVehiclesNotInModels(brand,vehicleModel)
+        // const updatedVehicle =  await this.repository.findVehiclesByBrand(brand);
+        // if(!updatedVehicle) return null;
+        // return { brand,
+        //          vehicleModel:updatedVehicle.map(vehicle => vehicle.vehicleModel),
+        // }
     }
 
     async deleteByBrand(brand:string):Promise<void> {

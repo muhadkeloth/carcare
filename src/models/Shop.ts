@@ -30,7 +30,7 @@ const ShopSchema:Schema = new Schema(
         image:{type:String,required:true},
         vehicleIds: [{
             brand: {type:String,required:true},
-            vehicleModelIds:[{type:Schema.Types.ObjectId,ref:"Vehicle"}],
+            vehicleModel: { type: [String], unique: true },
         }] ,
         estimate:[{
             work:{type:String,unique:true},

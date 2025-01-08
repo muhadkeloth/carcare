@@ -108,6 +108,33 @@ export default class BookingService extends BaseService<IBookings> {
         return await this.repository.findBookingsById({_id:updatedDetails._id})
     }
 
+    async fetchReservedTimes(date:any,shopId:string):Promise<string[] | null > {
+        const inputDateString = date;
+        const reservedTimes = await this.repository.findBookingsAvailableTimes({
+            $expr: {
+              $and: [
+                {
+                  $eq: [
+                    {
+                      $dateToString: {
+                        format: "%Y-%m-%d",
+                        date: { $dateFromString: { dateString: "$shedule.date" }, },
+                      },
+                    },
+                    inputDateString,
+                  ],
+                },
+                { $eq: ["$shopId", shopId], },
+                { $ne: ["$status", "CANCELED"] },
+              ],
+            },
+          });
+        if (!reservedTimes) {
+            return [];
+        }
+        return reservedTimes.map((entry) => entry.shedule.time); 
+    }
+
     async getOverdueBookings(minutesAfter:number):Promise<IBookings[] | null > {
         const now = new Date();
         const overdueTime = new Date(now.getTime() - minutesAfter * 60 * 1000);
