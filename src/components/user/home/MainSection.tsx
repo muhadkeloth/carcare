@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faMapPin } from '@fortawesome/free-solid-svg-icons';
 import car_main_block from '../../../assets/images/car_main_block.jpg';
 import { motion } from 'framer-motion'
+import { ScrollArea } from '../../reuseComponents/ui/scroll-area';
 
 
 const MainSection:React.FC = () => {
@@ -116,6 +117,7 @@ const MainSection:React.FC = () => {
             />
             {suggestions.length > 0 && (
               <ul className="absolute z-10 left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+                <ScrollArea className='h-[200px]'>
                 {suggestions.map((suggestion, index) => (
                   <li
                     key={index}
@@ -125,6 +127,7 @@ const MainSection:React.FC = () => {
                     {suggestion.description}
                   </li>
                 ))}
+                </ScrollArea>
               </ul>
             )}
             {isLoading && (

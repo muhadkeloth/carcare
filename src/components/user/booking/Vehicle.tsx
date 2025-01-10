@@ -4,8 +4,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setVehicleDetails } from '../../../features/bookingSlice';
-import { fetchModeldetail } from '../../../services/userService';
-import { BookingProps, HttpStatusCode } from '../../utilities/interface';
+import { BookingProps } from '../../utilities/interface';
 import DropOffTemp from '../../reuseComponents/DropOffTemp';
 import { DropMotionWrapper } from '../../reuseComponents/ui/MotionWrapper ';
 

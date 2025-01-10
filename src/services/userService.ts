@@ -27,6 +27,17 @@ export const fetchNearbyShops = async (latitude:number,longitude:number):Promise
         throw new Error(err?.response?.data?.message);
     }
 }
+// export const fetchNearbyShops = async (latitude:number,longitude:number,query?:any,skip?:number):Promise<Shop[]> => {
+//     try{
+//         const {data} = await api.get('/getnearshops', {
+//             params: { latitude, longitude, query, skip },
+//         });
+//         return data.shops;
+//     }catch(error){
+//         const err = error as AxiosError<ErrorResponse>
+//         throw new Error(err?.response?.data?.message);
+//     }
+// }
 
 export const fetchUserData = async (navigate:any):Promise<returnApiPromise> => {
     try {
@@ -46,6 +57,23 @@ export const fetchRandomFeedback = async ():Promise<returnApiPromise> => {
        const response =  await api.get(`/randomfeedback`)  
        if(response.status !== HttpStatusCode.SUCCESS) throw new Error('error find feedback');
        return {status:response.status,data:response.data}
+    } catch (error) {
+        const err = error as AxiosError<ErrorResponse>
+        throw new Error(err?.response?.data?.message);
+    }
+}
+
+export const fetchAllVehicle = async():Promise<{Vehicle:any[];}> => {
+    try {
+        const response = await api.get(`/allvehicledetails`);
+        if(response.status !== HttpStatusCode.SUCCESS) throw new Error(`unexpected status code when fetching vehicle details: ${response.status}`)
+        
+        const {data} = response;
+        if(data && data.Vehicle){
+            return {Vehicle:data.Vehicle}
+        }else{
+            throw new Error('invalid vehicle response structure.')
+        }
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>
         throw new Error(err?.response?.data?.message);

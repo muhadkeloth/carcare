@@ -29,6 +29,7 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
        });    
   },[dispatch]);
   
+  console.log('chats',chats)
   
   useEffect(()=>{
     onNotification((data) => {
@@ -121,10 +122,12 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
               <h3 className="font-medium truncate">{chat.shopId.shopName}</h3>
               <span className="text-xs text-muted-foreground">
                 {/* {users[0].lastMessageTime} */}
+                {/* {chat.lastMessageTime ? format(chat.lastMessageTime, "hh:mm a") : ""} */}
               </span>
             </div>
             <p className="text-sm text-muted-foreground truncate">
               {/* {users[0].lastMessage} */}
+              {chat.lastMessage || "No messages yet"}
             </p>
           </div>
           {unreadCounts[chat._id] > 0 && (
