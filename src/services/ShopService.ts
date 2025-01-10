@@ -26,6 +26,9 @@ export default class ShopService extends BaseService<IShop> {
         async findNearbyShops(latitude:number,longitude:number,radiusInKm:number,limit:number):Promise<IShop[] | null>{
             return await this.repository.findNearbyShops(latitude,longitude,radiusInKm,limit)
         }
+        // async findNearbyShops(latitude:number,longitude:number,query:any,skip:number,limit:number):Promise<IShop[] | null>{
+        //     return await this.repository.findNearbyShops(latitude,longitude,query, skip, limit)
+        // }
 
         
         async findShopDetailsById(id:string):Promise<IShop | null>{

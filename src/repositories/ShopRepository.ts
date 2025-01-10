@@ -28,11 +28,42 @@ export default class ShopRepository extends BaseRepository<IShop> {
             {
                 $match: { isActive: true },
             },
-            {
-                $limit: limit,
-            },
+            // {
+            //     $limit: limit,
+            // },
         ])
     }
+    //  async findNearbyShops(latitude:number,longitude:number,query:any,skip:number,limit:number){
+    //     return await this.model.aggregate([
+    //         {
+    //             $geoNear: {
+    //                 near: { type: "Point", coordinates: [longitude, latitude] }, // Correct coordinate order
+    //                 distanceField: "distance",
+    //                 maxDistance: 20000, // 20 km radius in meters
+    //                 spherical: true,
+    //             },
+    //         },
+    //         {
+    //             $match: { 
+    //                 isActive: true, 
+    //                 ...query, // Merge additional filters from the query object
+    //             },
+    //         },
+    //         {
+    //             $skip: skip, // Skip the first `skip` number of documents
+    //         },
+    //         {
+    //             $limit: limit, // Limit the number of results
+    //         },
+    //         {
+    //             $project: {
+    //                 name: 1,
+    //                 location: 1,
+    //                 distance: 1, // Include distance field in results
+    //             },
+    //         },
+    //     ])
+    // }
 
 
     async findShopById(id:string):Promise<IShop | null> {

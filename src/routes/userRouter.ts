@@ -27,6 +27,9 @@ router.get('/getshopsforHome', userController.getShopsforHome);
 
 router.use(authenticateToken);
 
+router.get('/allvehicledetails', userController.getAllvehicleDetails);
+
+
 router.get('/getnearshops', userController.getNearShops);
 router.get('/shopPincode/:pincode', userController.getShopByPincode);
 router.get('/shopsFilterByPincode/:pincode', userController.getShopsFilterByPincode);

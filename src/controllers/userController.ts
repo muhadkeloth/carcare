@@ -143,8 +143,20 @@ export default class UserController extends BaseController<IUser> {
     }
   };
 
+  getAllvehicleDetails = async (req:Request,res:Response,next:NextFunction) => {
+    try {
+      const Vehicle = await this.vehicleService.findAllVehicles();
+
+      res.status(HttpStatusCode.SUCCESS).json({ Vehicle });
+    } catch (error) {
+        const err = error as Error;
+        logger.error(`error fetching vehicle details in shop: ${err.message}`);
+        next(err);
+    }
+  }
+
   getNearShops = async (req: Request, res: Response, next: NextFunction) => {
-    const { latitude, longitude } = req.query;
+    const { latitude, longitude  } = req.query;
     const radiusInKm = 20;
     const limit = 10;
 
@@ -165,6 +177,34 @@ export default class UserController extends BaseController<IUser> {
         next(err);
     }
   };
+  // getNearShops = async (req: Request, res: Response, next: NextFunction) => {
+  //   const { latitude, longitude, query, skip,  } = req.query;
+  //   const radiusInKm = 20;
+  //   const limit = 10;
+  //   console.log('query',query)
+
+  //   if (!latitude || !longitude) {
+  //       logger.warn('Latitude and longitude are required.')
+  //       throw new AppError("Latitude and longitude are required.",HttpStatusCode.BAD_REQUEST);
+  //   }
+  //   try {
+  //     const shops = await this.shopService.findNearbyShops(
+  //       parseFloat(latitude as string), 
+  //       parseFloat(longitude as string),
+  //       query || {},
+  //       parseFloat(skip as string) || 0,
+  //       limit,
+
+  //       // radiusInKm, limit
+  //     );
+
+  //     res.status(HttpStatusCode.SUCCESS).json({ shops, message: "successfully fetch shops " });
+  //   } catch (error) {
+  //       const err = error as Error;
+  //       logger.error(`error fetching nearby shops: ${err.message}`);
+  //       next(err);
+  //   }
+  // };
 
   userDetails = async (req: AuthenticatedRequest,res: Response,next: NextFunction) => {
     if (!req.user){
