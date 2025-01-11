@@ -31,6 +31,8 @@ const ChatHistory = () => {
       }
     },[userId,dispatch]);
 
+    
+
     useEffect(()=>{
       const fetchRooms = async()=>{
         try {

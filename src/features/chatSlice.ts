@@ -26,6 +26,14 @@ const chatSlice = createSlice({
     setChats(state, action:PayloadAction<any[]>) {
       state.chats = action.payload;
     },
+    updateLastMessage(state, action: PayloadAction<{ roomId: string; message: string; createdAt: string }>) {
+      const { roomId, message, createdAt } = action.payload;
+      const room = state.chats.find((chat) => chat._id === roomId);
+      if (room) {
+        room.lastMessage = message;
+        room.lastMessageDate = createdAt;
+      }
+    },
     setActiveChat(state, action: PayloadAction<string|null>) {
       state.activeChat = action.payload;
     },
@@ -41,5 +49,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setMessages, addMessages,setOnlineUsers, setChats, setActiveChat,clearActiveChat ,clearChat} = chatSlice.actions;
+export const { setMessages, addMessages,setOnlineUsers, setChats,updateLastMessage, setActiveChat,clearActiveChat ,clearChat} = chatSlice.actions;
 export default chatSlice.reducer;

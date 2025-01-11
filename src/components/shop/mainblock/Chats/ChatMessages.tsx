@@ -30,9 +30,17 @@ const ChatMessages = () => {
       } 
     },[activeChat, dispatch])
    
-    useEffect(()=> {
-      onNewMessage((message:Message)=> {dispatch(addMessages(message))});      
-    },[dispatch,activeChat]);
+    useEffect(() => {
+      onNewMessage((message: Message) => {
+        dispatch(addMessages(message));
+        // dispatch(updateLastMessage({
+        //     roomId: message.chatId,
+        //     message: message.message,
+        //     createdAt: message.createdAt,
+        //   })
+        // );
+      });
+    }, [dispatch, activeChat]);
 
     useEffect(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

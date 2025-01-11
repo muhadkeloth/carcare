@@ -6,9 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser, faMessage, faX } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import { setActiveChat, setOnlineUsers } from '../../../features/chatSlice';
-import { getOnlineUsers, leaveRoom, onNotification } from '../../../services/socketService';
+import { setActiveChat, setOnlineUsers, updateLastMessage } from '../../../features/chatSlice';
+import { getOnlineUsers, leaveRoom, onlastMessageUpdate, onNotification } from '../../../services/socketService';
 import { useLocation } from 'react-router-dom';
+import { formatDate } from '../../utilities/functions';
+import { Message } from '../../utilities/types';
 
 interface ChatSidebarProps {
     isOpen:boolean;
@@ -19,6 +21,7 @@ interface ChatSidebarProps {
 
 const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
   const [unreadCounts, setUnreadCounts] = useState<{[key:string]:number}>({})
+  const [sortedChats, setSortedChats] = useState<any[]>([]);
   const {chats,activeChat,onlineUsers} = useSelector((state:RootState)=>state.chat);
   const dispatch = useDispatch();
   const location = useLocation();
@@ -28,8 +31,18 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
       dispatch(setOnlineUsers(users))
        });    
   },[dispatch]);
+
+  useEffect(()=>{
+    onlastMessageUpdate((message:Message) => {
+      console.log('in last message fn',message)
+      dispatch(updateLastMessage({
+        roomId: message.chatId,
+        message: message.message,
+        createdAt: message.createdAt,
+      }));
+    });
+  },[dispatch]);
   
-  console.log('chats',chats)
   
   useEffect(()=>{
     onNotification((data) => {
@@ -44,6 +57,13 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
   },[activeChat])
 
     useEffect(() => {
+      const sorted = [...chats].sort((a, b) => {
+        const dateA = a.lastMessageDate ? new Date(a.lastMessageDate).getTime() : 0;
+        const dateB = b.lastMessageDate ? new Date(b.lastMessageDate).getTime() : 0;
+        return dateB - dateA; 
+    });
+    setSortedChats(sorted);
+
       const searchParams = new URLSearchParams(location.search);
       const roomId = searchParams.get('roomId');
       if(roomId && !activeChat) {
@@ -97,7 +117,7 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
       </Button>
     </div>
     <ScrollArea className="h-[calc(100vh-5rem)]">
-      {chats.map((chat) => (
+      {sortedChats.map((chat) => (
         <div
           key={chat._id}
           className="flex items-center gap-3 p-4 hover:bg-muted/50 cursor-pointer relative"
@@ -121,13 +141,14 @@ const ChatSidebar = ({isOpen,onClose,onSelectUser}:ChatSidebarProps) => {
             <div className="flex justify-between items-start">
               <h3 className="font-medium truncate">{chat.shopId.shopName}</h3>
               <span className="text-xs text-muted-foreground">
-                {/* {users[0].lastMessageTime} */}
-                {/* {chat.lastMessageTime ? format(chat.lastMessageTime, "hh:mm a") : ""} */}
+                { chat.lastMessageDate && formatDate(chat.lastMessageDate)}
               </span>
             </div>
             <p className="text-sm text-muted-foreground truncate">
-              {/* {users[0].lastMessage} */}
-              {chat.lastMessage || "No messages yet"}
+              {chat?.lastMessage? chat.lastMessage.length > 20 
+                ? `${chat.lastMessage.slice(0,20)} . . .`
+                : chat.lastMessage
+              : ""}
             </p>
           </div>
           {unreadCounts[chat._id] > 0 && (

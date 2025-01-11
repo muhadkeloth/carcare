@@ -50,6 +50,13 @@ export const onNewMessage = (callback: (message: Message) => void) => {
     }
 };
 
+export const onlastMessageUpdate = (callback: (message: Message) => void) => {
+    if (socket) {
+        socket.off('lastMessageUpdate');
+        socket.on('lastMessageUpdate', callback);
+    }
+};
+
 export const getOnlineUsers = (callback: (users: { userId: string; isOnline: boolean }[]) => void) => {
     if (socket) {
         socket.off('onlineUsers'); 

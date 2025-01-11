@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ScrollArea } from '../../reuseComponents/ui/scroll-area';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import { addMessages, setMessages } from '../../../features/chatSlice';
+import { addMessages, setMessages, updateLastMessage } from '../../../features/chatSlice';
 import { fetchAllMessages } from '../../../services/userService';
 import { joinRoom,  leaveRoom,  onNewMessage } from '../../../services/socketService';
 import { format } from 'date-fns';
@@ -31,7 +31,14 @@ const ChatMessages = () => {
   },[activeChat, dispatch]);
 
   useEffect(()=>{
-    onNewMessage((message:Message) => {dispatch(addMessages(message))});
+    onNewMessage((message:Message) => {
+      dispatch(addMessages(message));
+      // dispatch(updateLastMessage({
+      //   roomId: message.chatId,
+      //   message: message.message,
+      //   createdAt: message.createdAt,
+      // }));
+    });
   },[dispatch,activeChat]);
 
   useEffect(() => {
