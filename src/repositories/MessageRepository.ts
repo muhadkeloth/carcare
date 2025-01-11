@@ -12,6 +12,10 @@ export default class MessageRepository extends BaseRepository<IMessage> {
     async fetchAllMessagesByChatId(chatId:string):Promise<IMessage[] | null>{
         return await this.model.find({ chatId });
     }
+   
+    async findChatMessagesByRoomId(filter:any):Promise<any | null>{
+        return await this.model.findOne(filter).sort({createdAt:-1}).select("message createdAt")
+    }
 
 
     

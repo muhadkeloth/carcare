@@ -634,8 +634,19 @@ export class ShopController extends BaseController<any> {
         throw new AppError("error to find shopid", HttpStatusCode.BAD_REQUEST);
       }
       const chatRooms = await this.chatService.findAllChatsbyId({shopId:req.user as string})
-      
-      res.status(HttpStatusCode.SUCCESS).json({chatRooms,message:'fetch successfully all chat rooms'})
+      const chatRoomsWithLastMessage = await Promise.all(
+        chatRooms.map(async (chatRoom) => {
+          const lastMessage = await this.messageService.findChatMessagesByRoomId({chatId:chatRoom._id});
+          return {
+            ...chatRoom.toObject(),
+            lastMessage:lastMessage?.message || "",
+            lastMessageDate: lastMessage?.createdAt || null,
+          }
+
+        })
+      )
+      res.status(HttpStatusCode.SUCCESS).json({chatRooms:chatRoomsWithLastMessage,message:'fetch successfully all chat rooms'})
+      // res.status(HttpStatusCode.SUCCESS).json({chatRooms,message:'fetch successfully all chat rooms'})
     } catch (error) {
       const err = error as Error;
       logger.error(`status update error ${err.message}`);
