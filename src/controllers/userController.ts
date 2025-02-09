@@ -617,7 +617,6 @@ export default class UserController extends BaseController<IUser> {
 
   randomFeedback = async(req:Request,res:Response,next:NextFunction) => {
     try {
-
       const allReviewsByBookings = await this.bookingService.getRandomReviews()
       const allReviewsByPickups = await this.pickupService.getRandomReviews()
       const combinedReviews  = [...allReviewsByBookings,...allReviewsByPickups];
@@ -671,7 +670,6 @@ export default class UserController extends BaseController<IUser> {
       ) 
       
       res.status(HttpStatusCode.SUCCESS).json({chatRooms:chatRoomsWithLastMessage,message:'fetch successfully all chat rooms'})
-      // res.status(HttpStatusCode.SUCCESS).json({chatRooms,message:'fetch successfully all chat rooms'})
     } catch (error) {
       const err = error as Error;
       logger.error(`status update error ${err.message}`);

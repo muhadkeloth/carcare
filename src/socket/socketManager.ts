@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { chatHandler } from "./chatHandler";
+import logger from "../middleware/logger";
 
 
 export const initializeSocket = (server: any) => {
@@ -13,8 +14,16 @@ export const initializeSocket = (server: any) => {
       credentials:true,
     },
   });
+
+  logger.warn("✅ WebSocket server initialized on the same port as Express");
+
   io.on("connection", (socket) => {
+    logger.warn(`✅ WebSocket Connected: ${socket.id}`);
     chatHandler(io, socket);
+  });
+
+  io.on("error", (error) => {
+    logger.error("❌ WebSocket Server Error:", error);
   });
 };
 

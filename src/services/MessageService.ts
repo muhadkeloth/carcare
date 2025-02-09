@@ -36,9 +36,9 @@ export default class MessageService extends BaseService<IMessage> {
     
     async findChatMessagesByRoomId(filter: any): Promise<any> {
         const chatRooms = await this.repository.findChatMessagesByRoomId(filter);
+        
         if (!chatRooms) {
-          logger.error('Error in fetching all chat rooms with last messages');
-          throw new AppError('Error in fetching all chat rooms', HttpStatusCode.BAD_REQUEST);
+            return {}
         }
         return chatRooms;
       }

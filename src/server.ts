@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -16,18 +16,21 @@ import { createServer } from 'http';
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-const SOCKETPORT = process.env.SOCKETPORT || 3030;
 const app = express();
+const server = createServer(app);
+
+initializeSocket(server);
 
 app.use(cors({
     origin:[process.env.ENDPORT_FRONTEND || '', process.env.ENDPORT_FRONTEND_LOCAL || ''],
     methods:['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials:true,
-}));
-
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(pinoHttp({logger:loggerhttp}));
+  }));
+  
+  app.use(express.json());
+  app.use(express.urlencoded({extended:true}));
+  app.use(pinoHttp({logger:loggerhttp}));
+    
 
 // cronJob initialization
 initializeCrons();
@@ -35,8 +38,8 @@ initializeCrons();
 app.use('/public',express.static(path.join(__dirname,'../public')))
 
 mongoose.connect(process.env.MONGODB_URI || '')
-  .then(() => logger.warn('MongoDB connected'))
-  .catch(err => logger.error('connectiong mongo error: ',err));
+.then(() => logger.warn('MongoDB connected'))
+.catch(err => logger.error('connectiong mongo error: ',err));
 
 
 app.use('/admin',adminRouter)
@@ -44,14 +47,8 @@ app.use('/shop',shopRouter)
 app.use('/',userRouter)
 
 app.use(errorHandler)
-
-
-const socketServer = createServer().listen(SOCKETPORT,()=>{
-  logger.warn(`Socket.IO server running on port ${SOCKETPORT}`)
-})
-initializeSocket(socketServer);
-
-app.listen(PORT, () => logger.warn(`Server running on port ${PORT}`));
+  
+server.listen(PORT, () => logger.warn(`Server running on port ${PORT}`));
 
 
 
